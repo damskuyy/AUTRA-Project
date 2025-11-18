@@ -530,6 +530,69 @@ button,
   -webkit-appearance: button;
 }
 
+  /* Sidebar: enable proper scrolling while keeping it fixed */
+    #sidenav-main {
+      position: fixed !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      height: 100vh !important;
+      padding-bottom: 30px !important;
+      overflow: hidden !important;
+    }
+
+    /* Make the collapsible area scrollable (accounts for header space) */
+    #sidenav-collapse-main {
+      height: calc(100vh - 120px) !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      display: block !important;
+      padding-bottom: 12px !important;
+      /* Hide native scrollbar visuals but keep scrolling functional */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE 10+ */
+    }
+
+    /* WebKit browsers: hide the scrollbar track/thumb */
+    #sidenav-collapse-main::-webkit-scrollbar {
+      width: 0; /* remove scrollbar space */
+      height: 0;
+      background: transparent;
+    }
+    #sidenav-collapse-main::-webkit-scrollbar-thumb {
+      background: transparent;
+    }
+
+    /* Make .navbar-nav behave as a vertical list inside the scrollable area */
+    .navbar-nav {
+      display: block !important;
+      width: 100% !important;
+    }
+
+    /* Keep outer sidenav overflow hidden, inner collapse will scroll */
+    .sidenav {
+      overflow: hidden !important;
+    }
+
+    /* Optional: reduce wrapping & keep items readable */
+    .sidenav .nav-link {
+      white-space: nowrap;
+    }
+    .nav-link[data-bs-toggle="collapse"]::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: auto;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      transition: transform 0.3s ease;
+    }
+    .nav-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
+      transform: rotate(180deg);
+    }
+
 button:not(:disabled),
 [type=button]:not(:disabled),
 [type=reset]:not(:disabled),
