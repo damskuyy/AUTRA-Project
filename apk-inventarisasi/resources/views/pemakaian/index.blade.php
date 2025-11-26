@@ -39,21 +39,16 @@
             <div class="card">
                 <div class="card-body p-3">
                     <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Hari Ini</p>
-                                <h5 class="font-weight-bolder mb-0">5 Items</h5>
-                                <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">+2</span>
-                                    dari kemarin
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                                <i class="fas fa-calendar-day text-lg opacity-10"></i>
-                            </div>
-                        </div>
+                        <div class="col-12">
+                             <div class="numbers">
+                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Hari Ini</p>
+                                 <h5 class="font-weight-bolder mb-0">5 Items</h5>
+                                 <p class="mb-0">
+                                     <span class="text-success text-sm font-weight-bolder">+2</span>
+                                     dari kemarin
+                                 </p>
+                             </div>
+                         </div>
                     </div>
                 </div>
             </div>
@@ -62,21 +57,16 @@
             <div class="card">
                 <div class="card-body p-3">
                     <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Minggu Ini</p>
-                                <h5 class="font-weight-bolder mb-0">18 Items</h5>
-                                <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">+8</span>
-                                    dari minggu lalu
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
-                                <i class="fas fa-calendar-week text-lg opacity-10"></i>
-                            </div>
-                        </div>
+                        <div class="col-12">
+                             <div class="numbers">
+                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Minggu Ini</p>
+                                 <h5 class="font-weight-bolder mb-0">18 Items</h5>
+                                 <p class="mb-0">
+                                     <span class="text-success text-sm font-weight-bolder">+8</span>
+                                     dari minggu lalu
+                                 </p>
+                             </div>
+                         </div>
                     </div>
                 </div>
             </div>
@@ -85,20 +75,15 @@
             <div class="card">
                 <div class="card-body p-3">
                     <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Menunggu</p>
-                                <h5 class="font-weight-bolder mb-0">3 Items</h5>
-                                <p class="mb-0">
-                                    <span class="text-warning text-sm font-weight-bolder">Perlu persetujuan</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
-                                <i class="fas fa-clock text-lg opacity-10"></i>
-                            </div>
-                        </div>
+                        <div class="col-12">
+                             <div class="numbers">
+                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Menunggu</p>
+                                 <h5 class="font-weight-bolder mb-0">3 Items</h5>
+                                 <p class="mb-0">
+                                     <span class="text-warning text-sm font-weight-bolder">Perlu persetujuan</span>
+                                 </p>
+                             </div>
+                         </div>
                     </div>
                 </div>
             </div>
@@ -107,20 +92,15 @@
             <div class="card">
                 <div class="card-body p-3">
                     <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Disetujui</p>
-                                <h5 class="font-weight-bolder mb-0">25 Items</h5>
-                                <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">Bulan ini</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-info shadow-info text-center rounded-circle">
-                                <i class="fas fa-check-circle text-lg opacity-10"></i>
-                            </div>
-                        </div>
+                        <div class="col-12">
+                             <div class="numbers">
+                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Disetujui</p>
+                                 <h5 class="font-weight-bolder mb-0">25 Items</h5>
+                                 <p class="mb-0">
+                                     <span class="text-success text-sm font-weight-bolder">Bulan ini</span>
+                                 </p>
+                             </div>
+                         </div>
                     </div>
                 </div>
             </div>
@@ -154,11 +134,6 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <div class="icon icon-shape icon-sm bg-gradient-primary shadow text-center border-radius-md me-3">
-                                                    <i class="fas fa-vial text-white opacity-10"></i>
-                                                </div>
-                                            </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0 text-sm">Tabung Reaksi</h6>
                                                 <p class="text-xs text-secondary mb-0">Bahan Kimia</p>
@@ -187,11 +162,6 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <div class="icon icon-shape icon-sm bg-gradient-success shadow text-center border-radius-md me-3">
-                                                    <i class="fas fa-wine-glass-alt text-white opacity-10"></i>
-                                                </div>
-                                            </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0 text-sm">Beker Gelas</h6>
                                                 <p class="text-xs text-secondary mb-0">Alat Lab</p>
@@ -220,11 +190,6 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <div class="icon icon-shape icon-sm bg-gradient-info shadow text-center border-radius-md me-3">
-                                                    <i class="fas fa-flask text-white opacity-10"></i>
-                                                </div>
-                                            </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0 text-sm">Asam Sulfat</h6>
                                                 <p class="text-xs text-secondary mb-0">Bahan Kimia</p>

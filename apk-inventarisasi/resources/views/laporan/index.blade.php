@@ -9,148 +9,133 @@
 @endsection
 
 @section('main')
-<!-- ======================= STYLE ======================= -->
-<style>
-    body {
-        background: #eef1f7;
-    }
 
-    .page-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: #2b2f42;
-    }
+<div class="container-fluid">
 
-    .card-custom {
-        background: #fff;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        border: none;
-    }
-
-    .filter-label {
-        font-weight: 600;
-        font-size: 14px;
-        color: #2f3b52;
-    }
-
-    .dataTables_wrapper .dataTables_filter input {
-        border-radius: 10px;
-        padding: 6px 12px;
-        border: 1px solid #bfc3d4;
-    }
-
-    .dataTables_wrapper .dataTables_length select {
-        border-radius: 8px;
-    }
-
-    .badge-status {
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .badge-pinjam { background: #4f6bed; color: #fff; }
-    .badge-pakai { background: #28c76f; color: #fff; }
-    .badge-rusak { background: #ea5455; color: #fff; }
-    .badge-hilang { background: #ff9f43; color: #fff; }
-</style>
-
-
-<!-- ======================= TITLE ======================== -->
-<div class="d-flex justify-content-between mb-4">
-    <h2 class="page-title">Laporan Inventaris</h2>
-</div>
-
-
-<!-- ================= FILTER ==================== -->
-<div class="card-custom mb-4">
-    <div class="row g-3">
-
-        <div class="col-md-3">
-            <label class="filter-label">Tanggal</label>
-            <input type="date" id="filterTanggal" class="form-control">
-        </div>
-
-        <div class="col-md-3">
-            <label class="filter-label">Kelas</label>
-            <select id="filterKelas" class="form-select">
-                <option value="">Semua</option>
-                <option>XI RPL 1</option>
-                <option>XI RPL 2</option>
-                <option>X TKJ 1</option>
-                <option>XII DKV</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label class="filter-label">Jenis Barang</label>
-            <select id="filterJenis" class="form-select">
-                <option value="">Semua</option>
-                <option>Proyektor</option>
-                <option>Kabel</option>
-                <option>Komputer</option>
-                <option>Alat Praktikum</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label class="filter-label">Status</label>
-            <select id="filterStatus" class="form-select">
-                <option value="">Semua</option>
-                <option>Peminjaman</option>
-                <option>Pemakaian</option>
-                <option>Rusak</option>
-                <option>Hilang</option>
-                <option>Pengembalian</option>
-                <option>Pelanggaran</option>
-            </select>
-        </div>
-
+    <!-- TITLE -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Laporan Inventaris</h3>
     </div>
+
+    <!-- FILTER SECTION -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <label class="form-label">Tanggal</label>
+                    <input type="date" id="filterTanggal" class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Kelas</label>
+                    <select id="filterKelas" class="form-select">
+                        <option value="">Semua</option>
+                        <option>XI RPL 1</option>
+                        <option>XI RPL 2</option>
+                        <option>X TKJ 1</option>
+                        <option>XII DKV</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Jenis Barang</label>
+                    <select id="filterJenis" class="form-select">
+                        <option value="">Semua</option>
+                        <option>Proyektor</option>
+                        <option>Kabel</option>
+                        <option>Komputer</option>
+                        <option>Alat Praktikum</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select id="filterStatus" class="form-select">
+                        <option value="">Semua</option>
+                        <option>Peminjaman</option>
+                        <option>Pemakaian</option>
+                        <option>Rusak</option>
+                        <option>Hilang</option>
+                        <option>Pengembalian</option>
+                        <option>Pelanggaran</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <div>
+                <h5 class="mb-0">Laporan Inventaris</h5>
+                <small class="text-muted">Ringkasan kegiatan & status barang</small>
+            </div>
+            <div class="d-flex gap-2">
+                <button id="exportExcel" class="btn btn-sm btn-success d-none">Excel</button>
+                <button id="exportPdf" class="btn btn-sm btn-danger d-none">PDF</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="laporanTable" class="table table-hover table-custom align-middle mb-0">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th style="width:60px;">No</th>
+                            <th style="width:120px;">Tanggal</th>
+                            <th>Nama Siswa</th>
+                            <th style="width:120px;">Kelas</th>
+                            <th style="width:150px;">Jenis Barang</th>
+                            <th style="width:150px;">Kegiatan</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for ($i = 1; $i <= 12; $i++)
+                        <tr>
+                            <td class="text-center">{{ $i }}</td>
+                            <td class="text-nowrap">2025-02-15</td>
+                            <td><strong>Rafi Nur</strong></td>
+                            <td class="text-center">XI RPL 1</td>
+                            <td>Proyektor</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary">Peminjaman</span>
+                            </td>
+                            <td>Untuk presentasi kelas</td>
+                        </tr>
+                        @endfor
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* table visual improvements */
+        .table-custom thead tr {
+            background: linear-gradient(90deg, rgba(2,136,209,0.06), rgba(99,102,241,0.03));
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+        }
+        .table-custom tbody tr:hover {
+            background-color: rgba(99,102,241,0.03);
+        }
+        .table-custom th, .table-custom td {
+            vertical-align: middle;
+            padding: 0.85rem;
+        }
+        .table-custom td small { color: #6c757d; }
+        @media (max-width: 576px) {
+            .table-custom thead { display: none; }
+            .table-custom tbody td { display: block; width: 100%; }
+            .table-custom tbody tr { margin-bottom: 0.75rem; display: block; border: 1px solid #eee; border-radius: .5rem; padding: .5rem; }
+            .table-custom tbody td::before { font-weight: 600; content: attr(data-label); display: inline-block; width: 110px; color: #6c757d; }
+        }
+    </style>
+
 </div>
 
-
-<!-- ======================= TABEL LAPORAN ======================= -->
-<div class="card-custom">
-
-    <table id="laporanTable" class="table table-bordered table-striped align-middle" style="width:100%">
-        <thead class="bg-primary text-white">
-            <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Nama Siswa</th>
-                <th>Kelas</th>
-                <th>Jenis Barang</th>
-                <th>Kegiatan</th>
-                <th>Keterangan</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @for ($i = 1; $i <= 12; $i++)
-            <tr>
-                <td>{{ $i }}</td>
-                <td>2025-02-15</td>
-                <td>Rafi Nur</td>
-                <td>XI RPL 1</td>
-                <td>Proyektor</td>
-                <td>
-                    <span class="badge-status badge-pinjam">Peminjaman</span>
-                </td>
-                <td>Untuk presentasi kelas</td>
-            </tr>
-            @endfor
-        </tbody>
-    </table>
-
-</div>
-
-
-
-<!-- ======================= JS & DATATABLES ======================= -->
 
 {{-- jQuery --}}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -161,20 +146,15 @@
 {{-- DataTables + Buttons --}}
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
-
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-
 <script>
 $(function () {
 
-    /* ================================================
-       INIT DATATABLE
-    ================================================= */
     const table = $('#laporanTable').DataTable({
         responsive: true,
         lengthChange: false,
@@ -205,10 +185,7 @@ $(function () {
         }
     });
 
-
-    /* ================================================
-       FILTER: TANGGAL, KELAS, JENIS, STATUS
-    ================================================= */
+    // FILTERING
     $('#filterTanggal, #filterKelas, #filterJenis, #filterStatus').on('change', function () {
 
         const tanggal = $('#filterTanggal').val();
@@ -224,11 +201,7 @@ $(function () {
             const matchJenis = !jenis || row[4] === jenis;
             const matchStatus = !status || row[5].includes(status);
 
-            if (matchTanggal && matchKelas && matchJenis && matchStatus) {
-                $(this.node()).show();
-            } else {
-                $(this.node()).hide();
-            }
+            $(this.node()).toggle(matchTanggal && matchKelas && matchJenis && matchStatus);
         });
     });
 

@@ -121,7 +121,7 @@
                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Inventaris</p>
                                 <h5 class="font-weight-bolder mb-0">45+ Items</h5>
                                 <p class="mb-0">
-                                    <span class="text-info text-sm font-weight-bolder">Available</span>
+                                    <span class="text-info text-sm font-weight-bolder">Sedia</span>
                                     untuk dipinjam
                                 </p>
                             </div>

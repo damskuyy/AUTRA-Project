@@ -7,10 +7,51 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::get('/', function () {
-    return view('data-pengembalian.index');
-});
+// Route::get('/', function () {
+//     return view('data-pengembalian.index');
+// });
 
 // Route::get('/', function () {
-//     return view('manage.index');
+//     return view('inventaris.index');
 // });
+
+// Route::get('/', function () {
+//     return view('laporan.index');
+// });
+
+// Route::get('/', function () {
+//     return view('manage-user.index');
+// });
+
+
+// Route::get('/', function () {
+//     return view('notifikasi.index');
+// });
+
+// Route::get('/', function () {
+//     return view('pemakaian.index');
+// });
+
+// Route::get('/', function () {
+//     return view('peminjaman.index');
+// });
+
+// Route::get('/', function () {
+//     return view('pengembalian.index');
+// });
+
+// Route::get('/', function () {
+//     return view('persetujuan-alat.index');
+// });
+
+// Route::get('/', function () {
+//     return view('persetujuan-bahan.index');
+// });
+
+// Route::get('/', function () {
+//     return view('siswa.index');
+// });
+
+Route::get('/', function () {
+    return view('admin.index');
+});
