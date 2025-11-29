@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('detail_peminjaman', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('email')->unique();
-            $table->string('username')->unique();
-            $table->string('password');
-            $table->enum('role', ['admin', 'guru', 'siswa']);
+            $table->foreignId('peminjaman_id')->constrained('peminjaman')->onDelete('cascade');
+            $table->foreignId('alat_id')->constrained('alat');
+            $table->unsignedInteger('jumlah');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('detail_peminjaman');
     }
 };
