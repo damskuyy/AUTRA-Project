@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="{{asset('be/img/apple-icon.png')}}">
-  <link rel="icon" type="image/png" href="{{asset('be/img/favicon.png')}}">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{asset('assets/img/logo/logo-autra-nonBG.png')}}">
+  <link rel="icon" type="image/png" href="{{asset('assets/img/logo/logo-autra-nonBG.png')}}">
   <title>
-    Inventaris
+    AUTRA - Monitoring Dashboard
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
@@ -17,7 +17,7 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <!-- CSS Files -->
-  <link id="pagestyle" href="{{asset('be/css/soft-ui-dashboard.css?v=1.1.0')}}" rel="stylesheet" />
+  <link id="pagestyle" href="{{asset('assets/css/soft-ui-dashboard.css?v=1.1.0')}}" rel="stylesheet" />
   <!-- Nepcha Analytics (nepcha.com) -->
   <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
   <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -69,8 +69,8 @@
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href="" target="_blank">
-        <img src="{{asset('be/img/logo-ct-dark.png')}}" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="ms-1 font-weight-bold">Dashboard Autra</span>
+        <img src="{{asset('assets/img/logo/logo-autra-nonBG.png')}}" class="navbar-brand-img h-100" alt="main_logo">
+        <span class="ms-1 font-weight-bold">AUTRA</span>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
@@ -263,7 +263,7 @@
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl d-flex align-items-center justify-content-between" id="navbarBlur" navbar-scroll="true">
       <div class="py-1 px-3">
         <nav aria-label="breadcrumb">
-          <h6 class="font-weight-bolder mb-0">Dashboard</h6>
+          <h6 class="font-weight-bolder mb-0">AUTRA DASHBOARD FOR MONITORING</h6>
         </nav>
       </div>
       <div class="py-1 px-3 ms-auto">
@@ -297,7 +297,7 @@
                   <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="my-auto">
-                        <img src="{{asset('be/img/team-2.jpg')}}" class="avatar avatar-sm  me-3 ">
+                        <img src="{{asset('assets/img/team-2.jpg')}}" class="avatar avatar-sm  me-3 ">
                       </div>
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="text-sm font-weight-normal mb-1">
@@ -315,7 +315,7 @@
                   <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="my-auto">
-                        <img src="{{asset('be/img/small-logos/logo-spotify.svg')}}" class="avatar avatar-sm bg-gradient-dark  me-3 ">
+                        <img src="{{asset('assets/img/small-logos/logo-spotify.svg')}}" class="avatar avatar-sm bg-gradient-dark  me-3 ">
                       </div>
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="text-sm font-weight-normal mb-1">
@@ -530,16 +530,16 @@
     </div>
   </main>
   <!--   Core JS Files   -->
-  <script src="{{asset('be/js/core/popper.min.js')}}"></script>
-  <script src="{{asset('be/js/core/bootstrap.min.js')}}"></script>
-  <script src="{{asset('be/js/plugins/perfect-scrollbar.min.js')}}"></script>
-  <script src="{{asset('be/js/plugins/smooth-scrollbar.min.js')}}"></script>
-  <script src="{{asset('be/js/plugins/chartjs.min.js')}}"></script>
+  <script src="{{asset('assets/js/core/popper.min.js')}}"></script>
+  <script src="{{asset('assets/js/core/bootstrap.min.js')}}"></script>
+  <script src="{{asset('assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
+  <script src="{{asset('assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
+  <script src="{{asset('assets/js/plugins/chartjs.min.js')}}"></script>
 
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="{{asset('be/js/soft-ui-dashboard.min.js?v=1.1.0')}}"></script>
+  <script src="{{asset('assets/js/soft-ui-dashboard.min.js?v=1.1.0')}}"></script>
 </body>
 
 </html>
