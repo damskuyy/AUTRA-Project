@@ -1,0 +1,194 @@
+/* Login Page Custom Styles */
+/* File ini bisa di-import ke resources/css/app.css jika perlu */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Typography */
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Glass Morphism */
+.glass-card {
+    backdrop-filter: blur(10px) saturate(125%);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Avatar Circle with Gradient & Shadow */
+.avatar-circle {
+    background: linear-gradient(135deg, #ffc857 0%, #ffb84d 100%);
+    box-shadow: 0 8px 20px rgba(255, 184, 77, 0.35);
+}
+
+/* Input Icon Container */
+.icon-box {
+    width: 50px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Input Field Styling */
+.login-input {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #333;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+.login-input::placeholder {
+    color: #aaa;
+    font-weight: 400;
+}
+
+.login-input:focus {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.2);
+    border-color: rgba(255, 184, 77, 0.3);
+    outline: none;
+}
+
+/* Input Wrapper */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.input-wrapper:focus-within {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Login Button */
+.btn-login {
+    background: linear-gradient(180deg, #663d1e 0%, #3d2110 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 0;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(61, 33, 16, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background: linear-gradient(180deg, #794a24 0%, #4a2713 100%);
+    box-shadow: 0 10px 28px rgba(61, 33, 16, 0.5), inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(61, 33, 16, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Checkbox */
+.remember-check {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ffc857;
+}
+
+/* Links */
+.link-light {
+    color: #fff5e6;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.link-light:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Error Message */
+.error-msg {
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    color: #fecaca;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* Success Message */
+.success-msg {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    color: #bbf7d0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    html, body {
+        padding: 1rem;
+    }
+
+    .glass-card {
+        padding: 1.5rem;
+    }
+
+    .avatar-circle {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-login {
+        font-size: 14px;
+        padding: 11px 0;
+    }
+
+    .login-input {
+        font-size: 13px;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    .glass-card {
+        background: rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Animation for form errors */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.error-msg {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Accessibility */
+.login-input:focus-visible,
+.btn-login:focus-visible {
+    outline: 2px solid #ffc857;
+    outline-offset: 2px;
+}
+
+input[type="checkbox"]:focus-visible {
+    outline: 2px solid #ffc857;
+    outline-offset: 2px;
+}

@@ -55,3 +55,20 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('admin.index');
 });
+
+// Custom responsive login for design mock
+Route::get('/login', function () {
+    return view('login.login');
+});
+
+// Simple POST handler for the custom login (stub)
+Route::post('/login', function (\Illuminate\Http\Request $request) {
+    // This is a simple stub that validates minimal input and redirects back.
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|min:4',
+    ]);
+
+    // For now, just redirect back with a success message (replace with real auth later)
+    return back()->with('status', 'Login attempt received for ' . $request->input('email'));
+});
