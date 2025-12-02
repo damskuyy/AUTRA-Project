@@ -9,6 +9,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    // Eksplisitkan tabel tanpa prefix (meskipun default sudah 'users')
+    protected $table = 'users';
+
     protected $fillable = [
         'nama',
         'email',
@@ -17,16 +20,27 @@ class User extends Authenticatable
         'role',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = [
+        'password',
+        'remember_token',  // Tambahkan jika menggunakan remember token
+    ];
 
+    // Tambahkan casts untuk tipe data enum dan timestamps
+    protected $casts = [
+        'role' => 'string',  // Atau enum jika perlu validasi khusus
+        'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    // Relasi yang sudah ada
     public function siswa()
     {
         return $this->hasOne(Siswa::class);
     }
-
-    public function guru()
+    public function admin()
     {
-        return $this->hasOne(Guru::class);
+        return $this->hasOne(Admin::class);
     }
 
     public function notifikasi()

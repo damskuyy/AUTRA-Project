@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Guru extends Model
+class admin extends Model
 {
-    protected $table = 'guru';
+    protected $table = 'admin';
 
     protected $fillable = [
         'user_id',
