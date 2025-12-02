@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pemakaian_bahan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswa');
+            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjaman');
             $table->foreignId('bahan_id')->constrained('bahan');
             $table->unsignedInteger('jumlah_digunakan');
             $table->string('mapel');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->date('tanggal_pakai');
             $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai'])->default('menunggu');
             $table->text('alasan_penolakan')->nullable();
+            $table->enum('tipe', ['single', 'multi'])->default('single');
             $table->timestamps();
         });
     }

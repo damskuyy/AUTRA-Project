@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string('mapel');
             $table->foreignId('ruangan_id')->constrained('ruangan');
             $table->timestamp('waktu_pinjam');
-            $table->timestamp('waktu_kembali_rencana')->nullable();
+            $table->timestamp('waktu_kembali_rencana')->nullable(); // Ubah jadi nullable
             $table->timestamp('waktu_kembali_real')->nullable();
-            $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai'])->default('menunggu');       	$table->string('kode_pinjam')->unique();
+            $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai'])->default('menunggu');
             $table->string('kode_verifikasi', 6)->nullable();
             $table->timestamp('expired_at')->nullable();
             $table->text('alasan_penolakan')->nullable();
+            $table->enum('tipe', ['single', 'multi'])->default('single');
             $table->timestamps();
         });
     }
