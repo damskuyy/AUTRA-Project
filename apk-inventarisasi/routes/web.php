@@ -56,16 +56,8 @@ Route::get('/', function () {
     return view('admin.index');
 });
 
+// Custom responsive login for design mock
 Route::get('/login', function () {
     return view('login.login');
 });
 
-Route::post('/login', function (\Illuminate\Http\Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|min:4',
-    ]);
-
-
-    return back()->with('status', 'Login attempt received for ' . $request->input('email'));
-});
