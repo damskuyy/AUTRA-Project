@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pelanggaran', function (Blueprint $table) {
+        Schema::create('pelanggarans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswa');
-            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjaman');
+            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjamans');
             $table->enum('jenis_pelanggaran', ['keterlambatan', 'kerusakan', 'kehilangan']);
             $table->timestamp('tanggal_pelanggaran');
             $table->enum('status', ['aktif', 'selesai'])->default('aktif');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pelanggaran');
+        Schema::dropIfExists('pelanggarans');
     }
 };

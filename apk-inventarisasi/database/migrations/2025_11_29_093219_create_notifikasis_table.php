@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifikasi', function (Blueprint $table) {
+        Schema::create('notifikasis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');  // Hapus constrained('users') di sini
             $table->string('judul');
@@ -20,9 +20,9 @@ return new class extends Migration
             $table->boolean('status_baca')->default(false);
             $table->timestamp('tanggal_kirim');
             $table->enum('jenis', ['peminjaman', 'pemakaian', 'pengembalian', 'pelanggaran', 'blokir', 'system']);
-            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjaman');  // Tetap, karena tabel lain mendapat prefix
-            $table->foreignId('pemakaian_bahan_id')->nullable()->constrained('pemakaian_bahan');
-            $table->foreignId('pelanggaran_id')->nullable()->constrained('pelanggaran');
+            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjamans');  // Tetap, karena tabel lain mendapat prefix
+            $table->foreignId('pemakaian_bahan_id')->nullable()->constrained('pemakaian_bahans');
+            $table->foreignId('pelanggaran_id')->nullable()->constrained('pelanggarans');
             $table->timestamps();
         });
 
@@ -36,6 +36,6 @@ return new class extends Migration
     public function down(): void
     {
         DB::statement('ALTER TABLE inv_notifikasi DROP FOREIGN KEY inv_notifikasi_user_id_foreign');
-        Schema::dropIfExists('notifikasi');
+        Schema::dropIfExists('notifikasis');
     }
 };

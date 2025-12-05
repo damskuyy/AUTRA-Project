@@ -18,7 +18,8 @@ return new class extends Migration
                 email VARCHAR(255) UNIQUE NOT NULL,
                 username VARCHAR(255) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
-                role ENUM("admin", "guru", "siswa") NOT NULL,
+                role ENUM("admin", "guru", "siswa", "ketua_kelas") NOT NULL,
+                
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             )

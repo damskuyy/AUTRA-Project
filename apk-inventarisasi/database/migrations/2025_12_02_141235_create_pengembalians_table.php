@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengembalian', function (Blueprint $table) {
+        Schema::create('pengembalians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjaman')->unique();
+            $table->foreignId('peminjaman_id')->constrained('peminjamans')->unique();
             $table->timestamp('tanggal_pengembalian');
             $table->enum('kondisi_barang', ['baik', 'rusak', 'hilang'])->default('baik');
             $table->text('keterangan')->nullable();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengembalian');
+        Schema::dropIfExists('pengembalians');
     }
 };

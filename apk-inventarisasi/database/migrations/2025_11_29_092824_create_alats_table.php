@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alat', function (Blueprint $table) {
+        Schema::create('alats', function (Blueprint $table) {
             $table->id();
             $table->string('kode_alat')->unique();
             $table->string('nama_alat');
-            $table->foreignId('kategori_id')->constrained('kategori_barang');
+            $table->foreignId('kategori_id')->constrained('kategori_barangs');
             $table->unsignedInteger('jumlah_total');
             $table->unsignedInteger('jumlah_tersedia');
             $table->enum('kondisi', ['baik', 'rusak', 'hilang'])->default('baik');
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('alat');
+        Schema::dropIfExists('alats');
     }
 };
