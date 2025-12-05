@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('siswa', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');  // Hapus references di sini
+            $table->string('ketua_kelas')->nullable();
             $table->string('nis')->unique();
             $table->foreignId('kelas_id')->constrained('kelas');
             $table->enum('status', ['aktif', 'banned'])->default('aktif');
