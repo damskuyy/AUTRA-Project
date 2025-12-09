@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse w-auto show" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link  active" href="../dashboard.html">
+          <a class="nav-link  active" href="admin">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>shop </title>
@@ -30,7 +30,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../inventaris.html">
+          <a class="nav-link  " href="inventaris">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -50,7 +50,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../peminjaman.html">
+          <a class="nav-link  " href="inventaris">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -70,7 +70,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../pemakaian.html">
+          <a class="nav-link  " href="peminjaman">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -90,7 +90,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../pengembalian.html">
+          <a class="nav-link  " href="pemakaian">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -110,7 +110,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../data-inventaris.html">
+          <a class="nav-link  " href="pengembalian">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -151,12 +151,12 @@
           <div class="collapse ms-2" id="collapsePersetujuan">
             <ul class="nav flex-column ms-3">
               <li class="nav-item">
-                <a class="nav-link" href="../persetujuan-alat.html">
+                <a class="nav-link" href="persetujuan-alat">
                   <span class="nav-link-text">Persetujuan Alat</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="../persetujuan-bahan.html">
+                <a class="nav-link" href="persetujuan-bahan">
                   <span class="nav-link-text">Persetujuan Bahan</span>
                 </a>
               </li>
@@ -164,7 +164,7 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../data-pengembalian.html">
+          <a class="nav-link  " href="data-pengembalian">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>box-3d-50</title>
@@ -185,7 +185,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../laporan.html">
+          <a class="nav-link  " href="data-pengembalian">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>settings</title>
@@ -206,7 +206,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../notifikasi.html">
+          <a class="nav-link  " href="laporan">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>customer-support</title>
@@ -227,7 +227,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../manage user.html">
+          <a class="nav-link  " href="notifikasi">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 40 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>document</title>
@@ -247,7 +247,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../logout.html">
+          <a class="nav-link  " href="manage-user">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>

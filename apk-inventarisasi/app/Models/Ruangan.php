@@ -2,21 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Ruangan extends Model
 {
-    protected $table = 'ruangan';
+    use HasFactory;
 
-    protected $fillable = ['nama_ruangan', 'lokasi'];
+    protected $table = 'ruangans';
 
-    public function peminjaman()
+    protected $fillable = [
+        'kode_ruangan',
+        'nama_ruangan',
+    ];
+
+    // Relasi
+    public function inventories()
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->hasMany(Inventory::class, 'ruangan_id');
     }
 
-    public function pemakaianBahan()
+    public function pemakaians()
     {
-        return $this->hasMany(PemakaianBahan::class);
+        return $this->hasMany(Pemakaian::class, 'ruangan_id');
     }
 }

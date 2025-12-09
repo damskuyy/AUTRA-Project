@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('pengembalians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('peminjaman_id')->constrained('peminjamans')->unique();
-            $table->timestamp('tanggal_pengembalian');
-            $table->enum('kondisi_barang', ['baik', 'rusak', 'hilang'])->default('baik');
-            $table->text('keterangan')->nullable();
-            $table->text('foto_bukti')->nullable();
+            $table->foreignId('peminjaman_id')->constrained('peminjamans')->onDelete('cascade'); // Relasi ke transaksi peminjaman
+            $table->foreignId('admin_id')->constrained('users'); // Admin yang memproses pengembalian
+            $table->timestamp('waktu_kembali');
+            $table->enum('kondisi', ['BAIK', 'RUSAK_RINGAN', 'RUSAK_BERAT']);
+            $table->text('catatan')->nullable();
             $table->timestamps();
         });
     }

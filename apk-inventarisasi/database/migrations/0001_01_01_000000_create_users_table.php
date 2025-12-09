@@ -11,19 +11,18 @@ return new class extends Migration
     {
         // Buat tabel users TANPA prefix dengan menggunakan DB::statement
         // Ini memastikan tabel dibuat sebagai 'users' murni, bukan 'inv_users'
-        DB::statement('
+        DB::statement("
             CREATE TABLE users (
                 id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                nama VARCHAR(255) NOT NULL,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                username VARCHAR(255) UNIQUE NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE,
+                email_verified_at TIMESTAMP NULL,
                 password VARCHAR(255) NOT NULL,
-                role ENUM("admin", "guru", "siswa", "ketua_kelas") NOT NULL,
-                
-                created_at TIMESTAMP NULL,
-                updated_at TIMESTAMP NULL
+                remember_token VARCHAR(100) NULL,
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
-        ');
+        ");
     }
 
     public function down()

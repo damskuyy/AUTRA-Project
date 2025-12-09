@@ -2,48 +2,72 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Peminjaman extends Model
 {
-    protected $table = 'peminjaman';
+    use HasFactory;
+
+    protected $table = 'peminjamans';
 
     protected $fillable = [
         'siswa_id',
-        'mapel',
-        'ruangan_id',
+        'inventory_id',
+        'admin_id',
         'waktu_pinjam',
-        'waktu_kembali_rencana',
-        'waktu_kembali_real',
-        'status',
-        'kode_pinjam',
-        'kode_verifikasi',
-        'expired_at',
-        'alasan_penolakan',
+        'waktu_kembali_aktual',
+        'kondisi_pinjam',
+        'catatan_pinjam',
     ];
 
+    protected $casts = [
+        'waktu_pinjam' => 'datetime',
+        'waktu_kembali_aktual' => 'datetime',
+    ];
+
+    // Relasi
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
-    public function ruangan()
+    public function inventory()
     {
-        return $this->belongsTo(Ruangan::class);
+        return $this->belongsTo(Inventory::class, 'inventory_id');
     }
 
-    public function detail()
+    public function admin()
     {
-        return $this->hasMany(DetailPeminjaman::class);
+        return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function pelanggaran()
+    public function pengembalian()
     {
-        return $this->hasMany(Pelanggaran::class);
+        return $this->hasOne(Pengembalian::class, 'peminjaman_id');
     }
 
-    public function notifikasi()
+    public function pelanggarans()
     {
-        return $this->hasMany(Notifikasi::class);
+        return $this->hasMany(Pelanggaran::class, 'peminjaman_id');
+    }
+
+    public function activityLogs()
+    {
+        return $this->morphMany(ActivityLog::class, 'subject');
+    }
+
+    // Helper methods
+    public function isBelumKembali()
+    {
+        return is_null($this->waktu_kembali_aktual);
+    }
+
+    public function isTelat()
+    {
+        if ($this->waktu_kembali_aktual) {
+            return false;
+        }
+        return now()->greaterThan($this->waktu_kembali_rencana);
     }
 }

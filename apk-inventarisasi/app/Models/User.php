@@ -2,49 +2,58 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
-
-    // Eksplisitkan tabel tanpa prefix (meskipun default sudah 'users')
-    protected $table = 'users';
+    use HasFactory, Notifiable;
 
     protected $fillable = [
-        'nama',
+        'name',
         'email',
-        'username',
         'password',
-        'role',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',  // Tambahkan jika menggunakan remember token
+        'remember_token',
     ];
 
-    // Tambahkan casts untuk tipe data enum dan timestamps
     protected $casts = [
-        'role' => 'string',  // Atau enum jika perlu validasi khusus
         'email_verified_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
-    // Relasi yang sudah ada
-    public function siswa()
+    // Relasi
+    public function peminjamans()
     {
-        return $this->hasOne(Siswa::class);
-    }
-    public function admin()
-    {
-        return $this->hasOne(Admin::class);
+        return $this->hasMany(Peminjaman::class, 'admin_id');
     }
 
-    public function notifikasi()
+    public function pengembalians()
     {
-        return $this->hasMany(Notifikasi::class);
+        return $this->hasMany(Pengembalian::class, 'admin_id');
+    }
+
+    public function pemakaians()
+    {
+        return $this->hasMany(Pemakaian::class, 'admin_id');
+    }
+
+    public function pelanggarans()
+    {
+        return $this->hasMany(Pelanggaran::class, 'admin_id');
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class, 'admin_id');
+    }
+
+    public function barangMasuk()
+    {
+        return $this->hasMany(BarangMasuk::class, 'admin_id');
     }
 }

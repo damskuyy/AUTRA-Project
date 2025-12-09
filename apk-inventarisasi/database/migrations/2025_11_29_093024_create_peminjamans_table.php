@@ -13,17 +13,13 @@ return new class extends Migration
     {
         Schema::create('peminjamans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained('siswa');
-            $table->string('mapel');
-            $table->foreignId('ruangan_id')->constrained('ruangans');
+            $table->foreignId('siswa_id')->constrained('siswas');
+            $table->foreignId('inventory_id')->constrained('inventories'); // Barang yang dipinjam
+            $table->foreignId('user_id')->constrained('users'); // Teknisi yang memproses
             $table->timestamp('waktu_pinjam');
-            $table->timestamp('waktu_kembali_rencana')->nullable(); // Ubah jadi nullable
-            $table->timestamp('waktu_kembali_real')->nullable();
-            $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai'])->default('menunggu');
-            $table->string('kode_verifikasi', 6)->nullable();
-            $table->timestamp('expired_at')->nullable();
-            $table->text('alasan_penolakan')->nullable();
-            $table->enum('tipe', ['single', 'multi'])->default('single');
+            $table->timestamp('waktu_kembali_aktual')->nullable();
+            $table->enum('kondisi_pinjam', ['BAIK', 'RUSAK_RINGAN', 'RUSAK_BERAT']);
+            $table->text('catatan_pinjam')->nullable();
             $table->timestamps();
         });
     }

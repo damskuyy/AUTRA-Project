@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('pelanggarans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained('siswa');
-            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjamans');
-            $table->enum('jenis_pelanggaran', ['keterlambatan', 'kerusakan', 'kehilangan']);
-            $table->timestamp('tanggal_pelanggaran');
-            $table->enum('status', ['aktif', 'selesai'])->default('aktif');
-            $table->text('deskripsi');
-            $table->text('sanksi')->nullable();
+            $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
+            $table->foreignId('peminjaman_id')->nullable()->constrained('transactions')->onDelete('cascade');
+            $table->enum('tipe', ['TELAT_KEMBALI', 'KERUSAKAN', 'HILANG']);
+            $table->integer('poin'); // Poin pelanggaran
+            $table->text('keterangan')->nullable();
+            $table->timestamp('tanggal_kejadian');
+            $table->foreignId('admin_id')->constrained('users');
             $table->timestamps();
         });
     }

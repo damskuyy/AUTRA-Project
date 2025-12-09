@@ -13,16 +13,13 @@ return new class extends Migration
     {
         Schema::create('pemakaian_bahans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained('siswa');
-            $table->foreignId('peminjaman_id')->nullable()->constrained('peminjamans');
-            $table->foreignId('bahan_id')->constrained('bahans');
-            $table->unsignedInteger('jumlah_digunakan');
-            $table->string('mapel');
+            $table->foreignId('siswa_id')->constrained('siswas');
+            $table->foreignId('inventory_id')->constrained('inventories'); // Bahan yang dipakai
+            $table->foreignId('admin_id')->constrained('users'); // Teknisi yang memproses
+            $table->integer('jumlah');
+            $table->timestamp('waktu_pakai');
             $table->foreignId('ruangan_id')->constrained('ruangans');
-            $table->date('tanggal_pakai');
-            $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai'])->default('menunggu');
-            $table->text('alasan_penolakan')->nullable();
-            $table->enum('tipe', ['single', 'multi'])->default('single');
+            $table->text('catatan')->nullable();
             $table->timestamps();
         });
     }

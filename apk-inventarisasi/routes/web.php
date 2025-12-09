@@ -2,51 +2,51 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('data-inventaris.index');
-// });
+Route::get('/data-inventaris', function () {
+    return view('data-inventaris.index');
+});
 
 
-// Route::get('/', function () {
-//     return view('data-pengembalian.index');
-// });
+Route::get('/data-pengembalian', function () {
+    return view('data-pengembalian.index');
+});
 
-// Route::get('/', function () {
-//     return view('inventaris.index');
-// });
+Route::get('/inventaris', function () {
+    return view('inventaris.index');
+});
 
-// Route::get('/', function () {
-//     return view('laporan.index');
-// });
+Route::get('/laporan', function () {
+    return view('laporan.index');
+});
 
-// Route::get('/', function () {
-//     return view('manage-user.index');
-// });
+Route::get('/manage-user', function () {
+    return view('manage-user.index');
+});
 
 
-// Route::get('/', function () {
-//     return view('notifikasi.index');
-// });
+Route::get('/notifikasi', function () {
+    return view('notifikasi.index');
+});
 
-// Route::get('/', function () {
-//     return view('pemakaian.index');
-// });
+Route::get('/pemakaian', function () {
+    return view('pemakaian.index');
+});
 
-// Route::get('/', function () {
-//     return view('peminjaman.index');
-// });
+Route::get('/peminjaman', function () {
+    return view('peminjaman.index');
+});
 
-// Route::get('/', function () {
-//     return view('pengembalian.index');
-// });
+Route::get('/pengembalian', function () {
+    return view('pengembalian.index');
+});
 
-// Route::get('/', function () {
-//     return view('persetujuan-alat.index');
-// });
+Route::get('/persetujuan-alat', function () {
+    return view('persetujuan-alat.index');
+});
 
-// Route::get('/', function () {
-//     return view('persetujuan-bahan.index');
-// });
+Route::get('/persetujuan-bahan', function () {
+    return view('persetujuan-bahan.index');
+});
 
 // Route::get('/', function () {
 //     return view('siswa.index');
