@@ -18,7 +18,9 @@
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h4 class="font-weight-bolder text-dark">Data Inventaris</h4>
             <button class="btn btn-primary px-4">
-                <i class="fas fa-plus me-2"></i>Tambah Inventaris
+                <a href="{{ route('inventaris.create') }}" class="btn btn-primary px-4">
+                    <i class="fas fa-plus me-2"></i>Tambah Inventaris
+                </a>
             </button>
         </div>
     </div>
@@ -66,56 +68,39 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($alat as $a)
+                                    <tr>
+                                        <td>{{ $a->item->kode_barang }}</td>
+                                        <td>{{ $a->item->nama_barang }}</td>
+                                        <td>{{ $a->serial_number ?? '-' }}</td>
+                                        <td>{{ $a->nomor_inventaris ?? '-' }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {{ $a->status === 'TERSEDIA' ? 'bg-success' : 
+                                                ($a->status === 'RUSAK' ? 'bg-danger' : 'bg-warning') }}">
+                                                {{ $a->status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('inventaris.show', $a->id) }}" class="action-btn action-view">
+                                                <i class="fas fa-eye me-1"></i> Lihat
+                                            </a>
 
-                                <!-- Contoh Dummy Row -->
-                                <tr>
-                                    <td>ALT-0021</td>
-                                    <td>Multimeter Digital</td>
-                                    <td>DT9205A</td>
-                                    <td>INV-3342</td>
-                                    <td>
-                                        <span class="badge bg-success">AVAILABLE</span>
-                                    </td>
-                                    <td>
-    <button class="action-btn action-view">
-        <i class="fas fa-eye me-1"></i> Lihat
-    </button>
+                                            <a href="{{ route('inventaris.edit', $a->id) }}" class="action-btn action-edit">
+                                                <i class="fas fa-edit me-1"></i> Edit
+                                            </a>
 
-    <button class="action-btn action-edit">
-        <i class="fas fa-edit me-1"></i> Edit
-    </button>
-
-    <button class="action-btn action-delete">
-        <i class="fas fa-trash me-1"></i> Hapus
-    </button>
-</td>
-                                </tr>
-
-                                <tr>
-                                    <td>ALT-0047</td>
-                                    <td>Obeng Set</td>
-                                    <td>PRO-12P</td>
-                                    <td>INV-1193</td>
-                                    <td>
-                                        <span class="badge bg-danger">RUSAK</span>
-                                    </td>
-                                    <td>
-    <button class="action-btn action-view">
-        <i class="fas fa-eye me-1"></i> Lihat
-    </button>
-
-    <button class="action-btn action-edit">
-        <i class="fas fa-edit me-1"></i> Edit
-    </button>
-
-    <button class="action-btn action-delete">
-        <i class="fas fa-trash me-1"></i> Hapus
-    </button>
-</td>
-                                </tr>
-
-                                <!-- Tambahkan baris baru sesuai kebutuhan tampilan -->
+                                            <form action="{{ route('inventaris.destroy', $a->id) }}" method="POST" class="d-inline">
+                                                @csrf @method('DELETE')
+                                                <button class="action-btn action-delete" onclick="return confirm('Yakin hapus?')">
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
+
                         </table>
                     </div>
 
@@ -147,50 +132,33 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($bahan as $b)
+                                    <tr>
+                                        <td>{{ $b->item->kode_barang }}</td>
+                                        <td>{{ $b->item->nama_barang }}</td>
+                                        <td>{{ $b->item->jenis }}</td>
+                                        <td>{{ $b->stok }}</td>
 
-                                <!-- Dummy Row -->
-                                <tr>
-                                    <td>BHN-0013</td>
-                                    <td>Timah Gulung</td>
-                                    <td>Elektronik</td>
-                                    <td>42</td>
-                                    <td>
-    <button class="action-btn action-view">
-        <i class="fas fa-eye me-1"></i> Lihat
-    </button>
+                                        <td>
+                                            <a href="{{ route('inventaris.show', $b->id) }}" class="action-btn action-view">
+                                                <i class="fas fa-eye me-1"></i> Lihat
+                                            </a>
 
-    <button class="action-btn action-edit">
-        <i class="fas fa-edit me-1"></i> Edit
-    </button>
+                                            <a href="{{ route('inventaris.edit', $b->id) }}" class="action-btn action-edit">
+                                                <i class="fas fa-edit me-1"></i> Edit
+                                            </a>
 
-    <button class="action-btn action-delete">
-        <i class="fas fa-trash me-1"></i> Hapus
-    </button>
-</td>
-                                </tr>
-
-                                <tr>
-                                    <td>BHN-0028</td>
-                                    <td>Kabel NYA 1.5mm</td>
-                                    <td>Listrik</td>
-                                    <td>120</td>
-                                    <td>
-    <button class="action-btn action-view">
-        <i class="fas fa-eye me-1"></i> Lihat
-    </button>
-
-    <button class="action-btn action-edit">
-        <i class="fas fa-edit me-1"></i> Edit
-    </button>
-
-    <button class="action-btn action-delete">
-        <i class="fas fa-trash me-1"></i> Hapus
-    </button>
-</td>
-                                </tr>
-
-                                <!-- Tambahan row lainnya jika mau -->
+                                            <form action="{{ route('inventaris.destroy', $b->id) }}" method="POST" class="d-inline">
+                                                @csrf @method('DELETE')
+                                                <button class="action-btn action-delete" onclick="return confirm('Yakin hapus?')">
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
+
                         </table>
                     </div>
 

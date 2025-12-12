@@ -53,18 +53,18 @@ class Inventory extends Model
     }
 
     // Helper methods
-    public function isTersedia()
-    {
-        return $this->status === 'TERSEDIA';
-    }
+    // public function isTersedia()
+    // {
+    //     return $this->status === 'TERSEDIA';
+    // }
 
-    public function isAlat()
-    {
-        return $this->item->jenis === 'alat';
-    }
+    // public function isAlat()
+    // {
+    //     return $this->item->jenis === 'alat';
+    // }
 
-    public function isBahan()
-    {
-        return $this->item->jenis === 'bahan';
-    }
+    // public function isBahan()
+    // {
+    //     return $this->item->jenis === 'bahan';
+    // }
 }

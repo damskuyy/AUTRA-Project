@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+Use App\Http\Controllers\{
+    InventoriesController
+};
 
 // Arahkan root ke login
 Route::get('/', function () {
@@ -21,9 +24,7 @@ Route::get('/barang-masuk', function () {
     return view('barang-masuk.index');
 });
 
-Route::get('/inventaris', function () {
-    return view('inventaris.index');
-});
+Route::resource('inventaris', InventoriesController::class);
 
 Route::get('/pemakaian-bahan', function () {
     return view('pemakaian-bahan.index');

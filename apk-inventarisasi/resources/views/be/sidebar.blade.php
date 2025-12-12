@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse w-auto show" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link  active" href="dashboard">
+          <a class="nav-link" href="dashboard">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>shop </title>
@@ -30,7 +30,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="scan-qr">
+          <a class="nav-link" href="scan-qr">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -50,7 +50,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="inventaris">
+          <a class="nav-link" href="inventaris">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -70,7 +70,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="barang-masuk">
+          <a class="nav-link" href="barang-masuk">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -90,7 +90,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="peminjaman">
+          <a class="nav-link" href="peminjaman">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -110,7 +110,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="pemakaian-bahan">
+          <a class="nav-link" href="pemakaian-bahan">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -130,7 +130,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="siswa">
+          <a class="nav-link" href="siswa">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>box-3d-50</title>
@@ -151,7 +151,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="riwayat-aktivitas">
+          <a class="nav-link" href="riwayat-aktivitas">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>box-3d-50</title>
@@ -172,3 +172,29 @@
           </a>
         </li>
   </aside>
+
+  <script>
+    // Set active menu berdasarkan URL saat ini
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ambil path URL saat ini
+      const currentPath = window.location.pathname.split('/').pop();
+      
+      // Ambil semua link di sidebar
+      const navLinks = document.querySelectorAll('.sidenav .nav-link');
+      
+      // Hapus class active dari semua link
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      // Tambahkan class active ke link yang sesuai
+      navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        
+        // Cek apakah href sesuai dengan URL saat ini
+        if (currentPath === href || (currentPath === '' && href === 'dashboard')) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
