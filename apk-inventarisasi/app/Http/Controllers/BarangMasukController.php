@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangMasuk;
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,41 +12,25 @@ class BarangMasukController extends Controller
     // INDEX — tempat form + riwayat dropdown
     public function index()
     {
-        // Riwayat nama bahan
-        $riwayatNamaBahan = BarangMasuk::where('jenis_barang', 'bahan')
-            ->select('nama_barang')
-            ->distinct()
-            ->get();
+        $inventories = Inventory::all();
 
-        // Riwayat jenis bahan
-        $riwayatJenisBahan = BarangMasuk::where('jenis_barang', 'bahan')
-            ->select('satuan')
-            ->distinct()
-            ->get();
+        $riwayatNamaBahan = BarangMasuk::where('jenis_barang','bahan')
+            ->pluck('nama_barang')->unique();
 
-        // Riwayat nama alat
-        $riwayatNamaAlat = BarangMasuk::where('jenis_barang', 'alat')
-            ->select('nama_barang')
-            ->distinct()
-            ->get();
+        $riwayatNamaAlat = BarangMasuk::where('jenis_barang','alat')
+            ->pluck('nama_barang')->unique();
 
-        // Riwayat seri alat
-        $riwayatSeriAlat = BarangMasuk::where('jenis_barang', 'alat')
-            ->select('nomor_dokumen')
-            ->distinct()
-            ->get();
-
-        // Riwayat sumber
-        $riwayatSumber = BarangMasuk::select('sumber')->distinct()->get();
+        $riwayatSeriAlat = BarangMasuk::where('jenis_barang','alat')
+            ->pluck('nomor_dokumen')->unique();
 
         return view('barang-masuk.index', compact(
+            'inventories',
             'riwayatNamaBahan',
-            'riwayatJenisBahan',
             'riwayatNamaAlat',
-            'riwayatSeriAlat',
-            'riwayatSumber'
+            'riwayatSeriAlat'
         ));
     }
+
 
     // STORE BARANG MASUK
     public function store(Request $request)

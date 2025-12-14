@@ -34,9 +34,7 @@
 
     <div class="tab-content">
 
-        <!-- ================================================================= -->
-        <!-- ============================ BAHAN =============================== -->
-        <!-- ================================================================= -->
+        <!-- ============================= BAHAN =============================== -->
         <div class="tab-pane fade show active" id="tabBahan">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
@@ -46,6 +44,18 @@
                     <form action="{{ route('barang-masuk.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="jenis_barang" value="bahan">
+
+                        <!-- Inventory -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pilih Inventory</label>
+                            <select name="inventory_id" class="form-select" required>
+                                <option value="">-- pilih inventory --</option>
+                                @foreach($inventories as $inv)
+                                    <option value="{{ $inv->id }}">{{ $inv->nama_barang }}</option>
+                                @endforeach
+                                <option value="__new">+ Inventory Baru</option>
+                            </select>
+                        </div>
 
                         <!-- Nama Bahan -->
                         <div class="mb-3">
@@ -73,16 +83,17 @@
                             <input type="text" name="satuan" class="form-control" placeholder="contoh: pcs, gulung">
                         </div>
 
-                        <!-- Jumlah Masuk -->
+                        <!-- Jumlah -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Jumlah</label>
                             <input type="number" name="jumlah" class="form-control">
                         </div>
 
-                        <!-- Sumber -->
+                        <!-- Sumber Manual -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Sumber Barang</label>
-                            <input type="text" name="sumber" class="form-control" placeholder="Ketik sumber barang..."> 
+                            <input type="text" name="sumber" class="form-control"
+                                   placeholder="Ketik sumber barang...">
                         </div>
 
                         <!-- Tanggal -->
@@ -91,7 +102,6 @@
                             <input type="date" name="tanggal_masuk" class="form-control">
                         </div>
 
-                        <!-- Catatan -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Catatan</label>
                             <textarea name="catatan" class="form-control"></textarea>
@@ -100,15 +110,13 @@
                         <button class="btn btn-primary px-4">
                             <i class="fas fa-save me-2"></i>Simpan Data Bahan
                         </button>
-
                     </form>
+
                 </div>
             </div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- ============================= ALAT =============================== -->
-        <!-- ================================================================= -->
+        <!-- ============================ ALAT =============================== -->
         <div class="tab-pane fade" id="tabAlat">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
@@ -118,6 +126,18 @@
                     <form action="{{ route('barang-masuk.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="jenis_barang" value="alat">
+
+                        <!-- Inventory -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pilih Inventory</label>
+                            <select name="inventory_id" class="form-select" required>
+                                <option value="">-- pilih inventory --</option>
+                                @foreach($inventories as $inv)
+                                    <option value="{{ $inv->id }}">{{ $inv->nama_barang }}</option>
+                                @endforeach
+                                <option value="__new">+ Inventory Baru</option>
+                            </select>
+                        </div>
 
                         <!-- Nama Alat -->
                         <div class="mb-3">
@@ -134,7 +154,7 @@
                                 <input type="text" name="nama_barang_new" id="namaAlatNew"
                                        class="form-control mt-2 d-none">
                             @else
-                                <input type="text" name="nama_barang" class="form-control" placeholder="Ketik nama alat...">
+                                <input type="text" name="nama_barang" class="form-control">
                             @endif
                         </div>
 
@@ -150,17 +170,17 @@
                                     @endforeach
                                     <option value="__new">+ Tambah Seri Baru</option>
                                 </select>
-                                <input type="text" name="nomor_dokumen_new"
-                                       id="seriNew" class="form-control mt-2 d-none">
+                                <input type="text" name="nomor_dokumen_new" id="seriNew"
+                                       class="form-control mt-2 d-none">
                             @else
                                 <input type="text" name="nomor_dokumen" class="form-control">
                             @endif
                         </div>
 
-                        <!-- Sumber -->
+                        <!-- Sumber Manual -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Sumber Barang</label>
-                            <input type="text" name="sumber" class="form-control" placeholder="Ketik sumber barang...">
+                            <input type="text" name="sumber" class="form-control">
                         </div>
 
                         <!-- Tanggal -->
@@ -178,7 +198,6 @@
                         <button class="btn btn-primary px-4">
                             <i class="fas fa-save me-2"></i>Simpan Data Alat
                         </button>
-
                     </form>
 
                 </div>
@@ -189,20 +208,17 @@
 </div>
 
 <script>
-    // Input baru untuk Bahan
-    document.getElementById('namaBahanSelect')?.addEventListener('change', function () {
-        document.getElementById('namaBahanNew').classList.toggle('d-none', this.value !== '__new');
-    });
+document.getElementById('namaBahanSelect')?.addEventListener('change', function () {
+    document.getElementById('namaBahanNew').classList.toggle('d-none', this.value !== '__new');
+});
 
-    // Input baru untuk Alat
-    document.getElementById('namaAlatSelect')?.addEventListener('change', function () {
-        document.getElementById('namaAlatNew').classList.toggle('d-none', this.value !== '__new');
-    });
+document.getElementById('namaAlatSelect')?.addEventListener('change', function () {
+    document.getElementById('namaAlatNew').classList.toggle('d-none', this.value !== '__new');
+});
 
-    // Input baru untuk seri alat
-    document.getElementById('seriSelect')?.addEventListener('change', function () {
-        document.getElementById('seriNew').classList.toggle('d-none', this.value !== '__new');
-    });
+document.getElementById('seriSelect')?.addEventListener('change', function () {
+    document.getElementById('seriNew').classList.toggle('d-none', this.value !== '__new');
+});
 </script>
 
 @endsection
