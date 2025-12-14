@@ -10,6 +10,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $connection = 'mysql_no_prefix';
     protected $table = 'users';
 
     public function getTable()
