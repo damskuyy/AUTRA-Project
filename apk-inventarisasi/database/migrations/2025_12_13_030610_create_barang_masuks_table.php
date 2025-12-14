@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('jenis_barang', ['alat', 'bahan']);
             $table->integer('jumlah');
             $table->string('satuan')->nullable();
-            $table->enum('sumber', ['SARPRAS_PUSAT', 'PEMBELIAN', 'HIBAH', 'PENGADAAN', 'RETUR'])->default('SARPRAS_PUSAT');
+            $table->string('sumber');
             $table->string('nomor_dokumen')->nullable();
             $table->timestamp('tanggal_masuk');
             $table->text('catatan')->nullable();
