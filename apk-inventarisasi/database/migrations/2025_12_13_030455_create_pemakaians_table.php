@@ -3,19 +3,20 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('pemakaian_bahans', function (Blueprint $table) {
+        Schema::create('pemakaians', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswas');
-            $table->foreignId('inventory_id')->constrained('inventories'); // Bahan yang dipakai
-            $table->foreignId('admin_id')->constrained('users'); // Teknisi yang memproses
+            $table->foreignId('inventory_id')->constrained('inventories');
+            $table->unsignedBigInteger('admin_id');
+            $table->foreign('admin_id')
+                ->references('id')
+                ->on(DB::raw('`users`'));
             $table->integer('jumlah');
             $table->timestamp('waktu_pakai');
             $table->foreignId('ruangan_id')->constrained('ruangans');
@@ -24,11 +25,8 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('pemakaian_bahans');
+        Schema::dropIfExists('pemakaians');
     }
 };

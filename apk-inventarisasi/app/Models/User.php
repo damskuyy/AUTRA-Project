@@ -10,6 +10,13 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'users';
+
+    public function getTable()
+    {
+        return 'users'; // penting! supaya prefix tidak ditambah
+    }
+
     protected $fillable = [
         'name',
         'email',

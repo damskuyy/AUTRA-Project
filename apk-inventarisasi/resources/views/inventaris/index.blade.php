@@ -18,7 +18,7 @@
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h4 class="font-weight-bolder text-dark">Data Inventaris</h4>
             <button class="btn btn-primary px-4">
-                <a href="{{ route('inventaris.create') }}" class="btn btn-primary px-4">
+                <a href="{{ route('inventaris.create') }}">
                     <i class="fas fa-plus me-2"></i>Tambah Inventaris
                 </a>
             </button>

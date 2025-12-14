@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inventories;
+use App\Models\Inventory;
 use App\Models\Item;
+use App\Models\Items;
 use App\Models\Ruangan;
 use Illuminate\Http\Request;
 
@@ -11,18 +12,18 @@ class InventoriesController extends Controller
 {
     public function index()
     {
-        $alat = Inventories::with('item', 'ruangan')->whereNull('stok')->get();
-        $bahan = Inventories::with('item', 'ruangan')->whereNotNull('stok')->get();
+        $alat = Inventory::with('item', 'ruangan')->whereNull('stok')->get();
+        $bahan = Inventory::with('item', 'ruangan')->whereNotNull('stok')->get();
 
-        return view('be.inventaris.index', compact('alat', 'bahan'));
+        return view('inventaris.index', compact('alat', 'bahan'));
     }
 
     public function create()
     {
-        $items = Item::all();
+        $items = Items::all();
         $ruangan = Ruangan::all();
 
-        return view('be.inventaris.create', compact('items', 'ruangan'));
+        return view('inventaris.create', compact('items', 'ruangan'));
     }
 
     public function store(Request $request)
@@ -38,25 +39,25 @@ class InventoriesController extends Controller
             'kode_qr_jurusan' => 'nullable|unique:inventories,kode_qr_jurusan',
         ]);
 
-        Inventories::create($request->all());
+        Inventory::create($request->all());
 
         return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil ditambahkan.');
     }
 
-    public function show(Inventories $inventaris)
+    // public function show(Inventory $inventaris)
+    // {
+    //     return view('inventaris.show', compact('inventaris'));
+    // }
+
+    public function edit(Inventory $inventaris)
     {
-        return view('be.inventaris.show', compact('inventaris'));
+        $items = Items::all();
+        $ruangans = Ruangan::all();
+
+        return view('inventaris.edit', compact('inventaris', 'items', 'ruangan'));
     }
 
-    public function edit(Inventories $inventaris)
-    {
-        $items = Item::all();
-        $ruangan = Ruangan::all();
-
-        return view('be.inventaris.edit', compact('inventaris', 'items', 'ruangan'));
-    }
-
-    public function update(Request $request, Inventories $inventaris)
+    public function update(Request $request, Inventory $inventaris)
     {
         $request->validate([
             'item_id' => 'required|exists:items,id',
@@ -74,7 +75,7 @@ class InventoriesController extends Controller
         return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui.');
     }
 
-    public function destroy(Inventories $inventaris)
+    public function destroy(Inventory $inventaris)
     {
         $inventaris->delete();
 

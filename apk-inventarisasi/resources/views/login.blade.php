@@ -131,4 +131,3 @@
     <script src="{{asset('be/js/soft-ui-dashboard.min.js?v=1.1.0')}}"></script>
 </body>
 </html>
-
