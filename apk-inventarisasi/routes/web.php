@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController};
 
 // Arahkan root ke login
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
