@@ -5,33 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pelanggaran extends Model
+class Pengembalian extends Model
 {
     use HasFactory;
 
-    protected $table = 'pelanggarans';
+    protected $table = 'pengembalian';
 
     protected $fillable = [
-        'siswa_id',
         'peminjaman_id',
-        'tipe',
-        'poin',
-        'keterangan',
-        'tanggal_kejadian',
         'admin_id',
+        'waktu_kembali',
+        'kondisi',
+        'catatan',
     ];
 
     protected $casts = [
-        'tanggal_kejadian' => 'datetime',
-        'poin' => 'integer',
+        'waktu_kembali' => 'datetime',
     ];
 
     // Relasi
-    public function siswa()
-    {
-        return $this->belongsTo(Siswa::class, 'siswa_id');
-    }
-
     public function peminjaman()
     {
         return $this->belongsTo(Peminjaman::class, 'peminjaman_id');

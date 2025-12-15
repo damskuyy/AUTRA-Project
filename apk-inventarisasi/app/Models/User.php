@@ -2,35 +2,66 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory, Notifiable;
+
+    protected $connection = 'mysql_no_prefix';
+    protected $table = 'users';
+
+    public function getTable()
+    {
+        return 'users'; // penting! supaya prefix tidak ditambah
+    }
 
     protected $fillable = [
-        'nama',
+        'name',
         'email',
-        'username',
         'password',
-        'role',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function siswa()
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    // Relasi
+    public function peminjamans()
     {
-        return $this->hasOne(Siswa::class);
+        return $this->hasMany(Peminjaman::class, 'admin_id');
     }
 
-    public function guru()
+    public function pengembalians()
     {
-        return $this->hasOne(Guru::class);
+        return $this->hasMany(Pengembalian::class, 'admin_id');
     }
 
-    public function notifikasi()
+    public function pemakaians()
     {
-        return $this->hasMany(Notifikasi::class);
+        return $this->hasMany(Pemakaian::class, 'admin_id');
+    }
+
+    public function pelanggarans()
+    {
+        return $this->hasMany(Pelanggaran::class, 'admin_id');
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class, 'admin_id');
+    }
+
+    public function barangMasuk()
+    {
+        return $this->hasMany(BarangMasuk::class, 'admin_id');
     }
 }

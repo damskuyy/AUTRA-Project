@@ -2,51 +2,69 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Siswa extends Model
 {
-    protected $table = 'siswa';
+    use HasFactory;
+
+    protected $table = 'siswas';
 
     protected $fillable = [
-        'user_id',
-        'nis',
-        'kelas_id',
-        'status',
-        'tanggal_blokir',
-        'tanggal_aktif_kembali',
-        'no_hp',
-        'alamat',
-        'foto_profil',
+        'nama',
+        'kelas',
+        'total_poin',
+        'is_active',
+        'is_banned',
+        'banned_until',
+        'alasan_ban',
     ];
 
-    public function user()
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_banned' => 'boolean',
+        'banned_until' => 'datetime',
+        'total_poin' => 'integer',
+    ];
+
+    // Relasi
+    public function peminjamans()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Peminjaman::class, 'siswa_id');
     }
 
-    public function kelas()
+    public function pemakaians()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->hasMany(Pemakaian::class, 'siswa_id');
     }
 
-    public function peminjaman()
+    public function pelanggarans()
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->hasMany(Pelanggaran::class, 'siswa_id');
     }
 
-    public function pemakaianBahan()
+    public function activityLogs()
     {
-        return $this->hasMany(PemakaianBahan::class);
+        return $this->hasMany(ActivityLog::class, 'siswa_id');
     }
 
-    public function pelanggaran()
+    // Helper methods
+    public function isBanned()
     {
-        return $this->hasMany(Pelanggaran::class);
-    }
+        if (!$this->is_banned) {
+            return false;
+        }
 
-    public function keranjang()
-    {
-        return $this->hasMany(KeranjangPeminjaman::class);
+        if ($this->banned_until && $this->banned_until->isPast()) {
+            $this->update([
+                'is_banned' => false,
+                'banned_until' => null,
+                'alasan_ban' => null,
+            ]);
+            return false;
+        }
+
+        return true;
     }
 }
