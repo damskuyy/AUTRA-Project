@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function InformationSection() {
   return (
-    <section className="py-16" 
+    <section id="about" className="py-16" 
     style={{ 
       background: 'hsl(var(--brown-medium))',
       marginTop: '-400px',
@@ -36,7 +36,7 @@ export default function InformationSection() {
           <div className="flex justify-center md:justify-end">
             <div style={{ borderRadius: '12px', overflow: 'hidden', border: '6px solid rgba(255,255,255,0.95)', boxShadow: '0 10px 30px rgba(0,0,0,0.25)' }}>
               <Image
-                src="/assets/foto-lab.png"
+                src="/foto-lab.jpeg"
                 alt="Foto Laboratorium Otomasi"
                 width={360}
                 height={240}

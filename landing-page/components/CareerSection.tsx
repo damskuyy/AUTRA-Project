@@ -7,7 +7,7 @@ export default function CareerSection() {
   ];
 
   return (
-    <section className="py-16" style={{ background: 'hsl(var(--brown-dark))' }}>
+    <section id="career" className="py-16" style={{ background: 'hsl(var(--brown-dark))' }}>
       <div className="container mx-auto px-6">
         <div className="text-center mb-8">
           <div className="inline-block bg-orange-bright rounded-3xl px-12 py-6 mb-4">

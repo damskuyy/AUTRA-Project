@@ -17,7 +17,7 @@ export default function StaffSection() {
   }));
 
   return (
-    <section className="py-16 w-full" style={{ background: 'hsl(var(--brown-medium))', border: 'none', boxShadow: 'none', outline: 'none' }}>
+    <section id="tendik" className="py-16 w-full" style={{ background: 'hsl(var(--brown-medium))', border: 'none', boxShadow: 'none', outline: 'none' }}>
       <div className="mx-auto px-6">
         <div className="text-center mb-8">
           <div className="inline-block rounded-3xl px-12 py-4" style={{ background: 'hsl(var(--orange-bright))' }}>
@@ -27,7 +27,7 @@ export default function StaffSection() {
 
         <div className="max-w-8xl mx-auto" style={{ border: 'none' }}>
           <div className="flex justify-center">
-            <div className="w-full max-w-7xl" style={{ height: 720 }}>
+            <div className="w-full max-w-7xl" style={{ height: 450 }}>
               <CircularGallery items={galleryItems} bend={0} scrollSpeed={2} scrollEase={0.06} font={"bold 36px Figtree"} />
             </div>
           </div>

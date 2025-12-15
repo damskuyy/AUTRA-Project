@@ -10,11 +10,12 @@ export default function Navigation() {
     { label: "Home", href: "/" },
     { label: "About", href: "/#about" },
     { label: "Skills", href: "/#skills" },
-    { label: "Tekdik", href: "/#tekdik" },
+    { label: "Tendik", href: "/#tendik" },
     { label: "Jenjang Karir", href: "/#career" },
   ];
 
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
   const navRef = useRef<HTMLElement | null>(null);
   const logoRef = useRef<HTMLDivElement | null>(null);
   const pillRef = useRef<HTMLDivElement | null>(null);
@@ -26,6 +27,39 @@ export default function Navigation() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = ['home', 'about', 'skills', 'tendik', 'career'];
+    const handleScroll = () => {
+      const scrollY = window.scrollY + window.innerHeight / 2; // center of viewport
+      let current = 'home';
+      let maxBottom = 0;
+      let bottomOfHome = 0;
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const top = rect.top + window.scrollY;
+          const bottom = top + rect.height;
+          maxBottom = Math.max(maxBottom, bottom);
+          if (id === 'home') bottomOfHome = bottom;
+          if (scrollY >= top && scrollY < bottom) {
+            current = id;
+          }
+        }
+      });
+      if (scrollY < bottomOfHome) {
+        current = 'home';
+      }
+      if (scrollY > maxBottom) {
+        current = '';
+      }
+      setActiveSection(current);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // initial check
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Smooth transition using GSAP (replaces Web Animations API)
@@ -109,10 +143,11 @@ export default function Navigation() {
               <NavLink
                 key={item.label}
                 href={item.href}
+                activeSection={activeSection}
                 className={
-                  "transition-colors px-12 py-3 text-base font-semibold rounded-full hover:text-[hsl(var(--orange-bright))] text-[hsl(var(--yellow-warm))]"
+                  "transition-all duration-300 px-12 py-3 text-base font-semibold rounded-full hover:text-[hsl(var(--orange-bright))] hover:scale-105 text-[hsl(var(--yellow-warm))]"
                 }
-                activeClassName={"bg-[hsl(var(--yellow-warm))] text-[hsl(var(--brown-dark))] font-bold"}
+                activeClassName={"bg-[hsl(var(--yellow-warm))] text-[hsl(var(--brown-dark))] font-bold scale-105"}
               >
                 {item.label}
               </NavLink>

@@ -9,7 +9,7 @@ export default function SkillsSection() {
   ];
 
   return (
-    <section
+    <section id="skills"
       className="py-16"
       style={{ background: 'linear-gradient(135deg, hsl(var(--brown-medium)) 0%, hsl(var(--brown-dark)) 50%, hsl(var(--brown-medium)) 100%)' }}
     >

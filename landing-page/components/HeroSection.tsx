@@ -7,7 +7,7 @@ export default function HeroSection() {
     <div style={{ position: 'relative' }}>
 
       {/* left-bottom orange circle behind mascot (placed low and partially covered by brown curve) */}
-      <div
+      {/* <div
         aria-hidden
         className="absolute rounded-full z-[1]"
         style={{
@@ -17,7 +17,7 @@ export default function HeroSection() {
           height: '400px',
           background: 'hsl(var(--orange-bright))',
         }}
-      />
+      /> */}
 
       {/* Brown background for area below section radius */}
       {/* <div
@@ -32,7 +32,7 @@ export default function HeroSection() {
           zIndex: 2,
         }}
       /> */}
-      <section
+      <section id="home"
         className="relative"
         style={{
           background: 'hsl(var(--cream))',
