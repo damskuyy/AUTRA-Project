@@ -31,11 +31,14 @@ class BarangMasukController extends Controller
         ));
     }
 
+    
+
 
     // STORE BARANG MASUK
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'inventory_id' => 'required|exists:inventories,id',
             'nama_barang' => 'required|string',
             'jenis_barang' => 'required|in:alat,bahan',
             'jumlah' => 'required|integer|min:1',
