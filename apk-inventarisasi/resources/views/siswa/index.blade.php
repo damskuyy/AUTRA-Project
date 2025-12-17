@@ -1,6 +1,9 @@
 @extends('be.layout')
 
-@section('title', 'Dashboard - Sistem Inventaris')
+@php
+  $title = 'Manajemen Siswa';
+  $breadcrumb = 'Siswa';
+@endphp
 
 @section('sidebar')
     @include('be.sidebar')
@@ -15,13 +18,10 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            
                 <div class="card-header pb-0">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6>Manajemen Data Siswa</h6>
-                            <p class="text-sm mb-0">Kelola data siswa dengan fitur lengkap</p>
-                        </div>
+                       
                         <div class="d-flex">
                             <button class="btn bg-gradient-success btn-sm mb-0 me-2" data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="fas fa-file-import me-1"></i> Import Excel
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            
         </div>
     </div>
 

@@ -1,5 +1,10 @@
 @extends ('be.layout')
 
+@php
+  $title = 'Barang Masuk TOI';
+  $breadcrumb = 'Barang Masuk';
+@endphp
+
 @section('sidebar')
     @include('be.sidebar')
 @endsection
@@ -8,15 +13,10 @@
     @include('be.navbar')
 @endsection
 
+
+
 @section('main')
 <div class="container-fluid py-4">
-
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h4 class="font-weight-bolder text-dark">Barang Masuk</h4>
-        </div>
-    </div>
 
     <!-- Tabs -->
     <ul class="nav nav-tabs mb-4">

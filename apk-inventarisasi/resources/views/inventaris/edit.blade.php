@@ -1,6 +1,9 @@
 @extends('be.layout')
 
-@section('title', 'Edit Inventaris - Sistem Inventaris')
+@php
+  $title = 'Edit Inventaris';
+  $breadcrumb = 'Inventaris';
+@endphp
 
 @section('sidebar')
     @include('be.sidebar')
@@ -16,7 +19,6 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <h4 class="font-weight-bolder text-dark">Edit Inventaris</h4>
             <a href="{{ route('inventaris.index') }}" class="btn btn-secondary px-4">
                 <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>

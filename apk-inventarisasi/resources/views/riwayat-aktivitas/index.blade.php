@@ -1,6 +1,9 @@
 @extends ('be.layout')
 
-@section('title', 'Persetujuan Pemakaian Bahan - Sistem Inventaris')
+@php
+  $title = 'Riwayat Aktivitas';
+  $breadcrumb = 'Riwayat';
+@endphp
 
 @section('sidebar')
     @include('be.sidebar')
@@ -13,14 +16,6 @@
 @section('main')
 
 <div class="container-fluid py-4">
-
-    {{-- HEADER --}}
-    <div class="row mb-4">
-        <div class="col-12">
-            <h4 class="fw-bold">Riwayat Aktivitas</h4>
-            <p class="text-muted small">Semua aktivitas dicatat sebagai log transaksi</p>
-        </div>
-    </div>
 
     {{-- FILTER --}}
     <div class="card shadow-sm mb-4">

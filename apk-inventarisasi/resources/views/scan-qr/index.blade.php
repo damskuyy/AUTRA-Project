@@ -1,5 +1,10 @@
 @extends ('be.layout')
 
+@php
+  $title = 'Scan QR';
+  $breadcrumb = 'Scan';
+@endphp
+
 @section('sidebar')
     @include('be.sidebar')
 @endsection
@@ -15,7 +20,6 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="font-weight-bolder text-dark">Scan QR Barang</h4>
                 <button class="btn btn-dark btn-sm px-4" id="dummyOpenCamera">
                     <i class="fas fa-camera me-2"></i>Aktifkan Kamera
                 </button>

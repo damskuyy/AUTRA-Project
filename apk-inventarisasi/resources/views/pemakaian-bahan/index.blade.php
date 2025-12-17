@@ -1,6 +1,9 @@
 @extends('be.layout')
 
-@section('title', 'Pemakaian - Sistem Inventaris')
+@php
+  $title = 'Pemakaian Bahan';
+  $breadcrumb = 'Pemakaian';
+@endphp
 
 @section('sidebar')
     @include('be.sidebar')
@@ -16,7 +19,6 @@
     {{-- Header --}}
     <div class="row mb-4">
         <div class="col-12">
-            <h4 class="fw-bold">Pemakaian Bahan</h4>
             <p class="text-muted small">Form pemakaian bahan habis pakai setelah scan QR</p>
         </div>
     </div>
