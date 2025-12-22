@@ -12,6 +12,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class);
     Route::resource('inventaris', InventoriesController::class);
+    Route::get('inventaris/{inventaris}/generate-qr', [InventoriesController::class, 'generateQr'])->name('inventaris.generateQr');
     Route::resource('items', App\Http\Controllers\ItemsController::class);
     Route::get("/dashboard", [DashboardController::class, "index"])->name('dashboard');
     Route::resource('peminjaman', App\Http\Controllers\PeminjamanController::class);

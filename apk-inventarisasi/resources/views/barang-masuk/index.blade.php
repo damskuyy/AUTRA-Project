@@ -46,16 +46,16 @@
                         <input type="hidden" name="jenis_barang" value="bahan">
 
                         <!-- Inventory -->
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label class="form-label fw-semibold">Pilih Inventory</label>
-                            <select name="inventory_id" class="form-select" required>
+                            <select name="inventory_id" class="form-select">
                                 <option value="">-- pilih inventory --</option>
                                 @foreach($inventories as $inv)
                                     <option value="{{ $inv->id }}">{{ $inv->nama_barang }}</option>
                                 @endforeach
-                                <option value="__new">+ Inventory Baru</option>
+                               
                             </select>
-                        </div>
+                        </div> -->
 
                         <!-- Nama Bahan -->
                         <div class="mb-3">
@@ -83,6 +83,17 @@
                             <input type="text" name="satuan" class="form-control" placeholder="contoh: pcs, gulung">
                         </div>
 
+                        <!-- Ruangan -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ruangan</label>
+                            <select name="ruangan_id" class="form-select">
+                                <option value="">-- pilih ruangan --</option>
+                                @foreach($ruangans as $r)
+                                    <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <!-- Jumlah -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Jumlah</label>
@@ -99,7 +110,7 @@
                         <!-- Tanggal -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Tanggal Masuk</label>
-                            <input type="date" name="tanggal_masuk" class="form-control">
+                            <input type="datetime-local" name="tanggal_masuk" class="form-control">
                         </div>
 
                         <div class="mb-3">
@@ -128,16 +139,16 @@
                         <input type="hidden" name="jenis_barang" value="alat">
 
                         <!-- Inventory -->
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label class="form-label fw-semibold">Pilih Inventory</label>
-                            <select name="inventory_id" class="form-select" required>
+                            <select name="inventory_id" class="form-select">
                                 <option value="">-- pilih inventory --</option>
                                 @foreach($inventories as $inv)
                                     <option value="{{ $inv->id }}">{{ $inv->nama_barang }}</option>
                                 @endforeach
-                                <option value="__new">+ Inventory Baru</option>
+                                
                             </select>
-                        </div>
+                        </div> -->
 
                         <!-- Nama Alat -->
                         <div class="mb-3">
@@ -176,6 +187,24 @@
                                 <input type="text" name="nomor_dokumen" class="form-control">
                             @endif
                         </div>
+
+                        <!-- Jumlah -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jumlah</label>
+                            <input type="number" name="jumlah" class="form-control" value="1" min="1">
+                        </div>
+
+                        <!-- Ruangan -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ruangan</label>
+                            <select name="ruangan_id" class="form-select">
+                                <option value="">-- pilih ruangan --</option>
+                                @foreach($ruangans as $r)
+                                    <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
 
                         <!-- Sumber Manual -->
                         <div class="mb-3">

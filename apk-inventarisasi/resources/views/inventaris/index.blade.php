@@ -72,30 +72,41 @@
                             <tbody>
                                 @foreach ($alat as $a)
                                     <tr>
-                                        <td>{{ $a->item->kode_barang }}</td>
+                                        <td>
+                                            {{ $a->item->kode_barang }} <br>
+                                            @if($a->kode_qr_jurusan)
+                                                <small class="text-muted" style="font-size: 10px;">{{ $a->kode_qr_jurusan }}</small>
+                                            @else
+                                                <small class="text-danger" style="font-size: 10px;">QR Belum Dibuat</small>
+                                            @endif
+                                        </td>
                                         <td>{{ $a->item->nama_barang }}</td>
                                         <td>{{ $a->serial_number ?? '-' }}</td>
                                         <td>{{ $a->nomor_inventaris ?? '-' }}</td>
                                         <td>
-                                            <span class="badge 
-                                                {{ $a->status === 'TERSEDIA' ? 'bg-success' : 
-                                                ($a->status === 'RUSAK' ? 'bg-danger' : 'bg-warning') }}">
+                                            <span class="badge {{ $a->status === 'TERSEDIA' ? 'bg-success' : 'bg-warning' }}">
                                                 {{ $a->status }}
                                             </span>
                                         </td>
                                         <td>
                                             <a href="{{ route('inventaris.show', $a->id) }}" class="action-btn action-view">
-                                                <i class="fas fa-eye me-1"></i> Lihat
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <a href="{{ route('inventaris.generateQr', $a->id) }}" 
+                                            class="action-btn action-qr" 
+                                            title="{{ $a->kode_qr_jurusan ? 'Regenerate QR' : 'Buat QR' }}">
+                                                <i class="fas fa-qrcode"></i>
                                             </a>
 
                                             <a href="{{ route('inventaris.edit', $a->id) }}" class="action-btn action-edit">
-                                                <i class="fas fa-edit me-1"></i> Edit
+                                                <i class="fas fa-edit"></i>
                                             </a>
-
+                                            
                                             <form action="{{ route('inventaris.destroy', $a->id) }}" method="POST" class="d-inline">
                                                 @csrf @method('DELETE')
                                                 <button class="action-btn action-delete" onclick="return confirm('Yakin hapus?')">
-                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
@@ -136,27 +147,30 @@
                             <tbody>
                                 @foreach ($bahan as $b)
                                     <tr>
-                                        <td>{{ $b->item->kode_barang }}</td>
+                                        <td>
+                                            {{ $b->item->kode_barang }} <br>
+                                            @if($b->kode_qr_jurusan)
+                                                <small class="text-muted" style="font-size: 10px;">{{ $b->kode_qr_jurusan }}</small>
+                                            @else
+                                                <small class="text-danger" style="font-size: 10px;">QR Belum Dibuat</small>
+                                            @endif
+                                        </td>
                                         <td>{{ $b->item->nama_barang }}</td>
                                         <td>{{ $b->item->jenis }}</td>
-                                        <td>{{ $b->stok }}</td>
-
+                                        <td><span class="badge bg-info">{{ $b->stok }} Unit</span></td>
                                         <td>
                                             <a href="{{ route('inventaris.show', $b->id) }}" class="action-btn action-view">
-                                                <i class="fas fa-eye me-1"></i> Lihat
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            
+                                            <a href="{{ route('inventaris.generateQr', $b->id) }}" class="action-btn action-qr">
+                                                <i class="fas fa-qrcode"></i>
                                             </a>
 
                                             <a href="{{ route('inventaris.edit', $b->id) }}" class="action-btn action-edit">
-                                                <i class="fas fa-edit me-1"></i> Edit
+                                                <i class="fas fa-edit"></i>
                                             </a>
-
-                                            <form action="{{ route('inventaris.destroy', $b->id) }}" method="POST" class="d-inline">
-                                                @csrf @method('DELETE')
-                                                <button class="action-btn action-delete" onclick="return confirm('Yakin hapus?')">
-                                                    <i class="fas fa-trash me-1"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </td>
+                                            </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -185,6 +199,7 @@
     }
 
     .action-view { background-color: #0ea5e9; }   /* biru  */
+    .action-qr { background-color: #6b7280; }     /* abu */
     .action-edit { background-color: #eab308; }   /* kuning */
     .action-delete { background-color: #ef4444; } /* merah */
 
