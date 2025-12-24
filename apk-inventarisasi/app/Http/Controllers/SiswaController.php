@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\SiswaImport;
 
 class SiswaController extends Controller
 {
@@ -11,7 +13,21 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        //
+        $siswas = Siswa::orderBy('kelas')->orderBy('nama')->get();
+
+        return view('siswa.index', compact('siswas'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        Excel::import(new SiswaImport, $request->file('file'));
+
+        return redirect()->route('siswa.index')
+            ->with('success', 'Data siswa berhasil diimport');
     }
 
     /**

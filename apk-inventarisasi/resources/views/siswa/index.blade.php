@@ -67,121 +67,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="avatar avatar-sm me-3" alt="user1">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Ahmad Rizki</h6>
-                                                <p class="text-xs text-secondary mb-0">ahmad.rizki@example.com</p>
-                                            </div>
+                            @foreach ($siswas as $siswa)
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">{{ $siswa->nama }}</h6>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">20230001</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">XII IPA 1</p>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-sm bg-gradient-success">Aktif</span>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">15 Mar 2023</p>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="btn-group">
-                                            <button class="btn btn-link text-primary mb-0 px-1" data-bs-toggle="modal" data-bs-target="#editSiswaModal" title="Edit">
-                                                <i class="fas fa-pencil-alt text-xs"></i>
-                                            </button>
-                                            <button class="btn btn-link text-warning mb-0 px-1" title="Banned">
-                                                <i class="fas fa-user-slash text-xs"></i>
-                                            </button>
-                                            <button class="btn btn-link text-danger mb-0 px-1" data-bs-toggle="modal" data-bs-target="#hapusSiswaModal" title="Hapus">
-                                                <i class="fas fa-trash-alt text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="avatar avatar-sm me-3" alt="user2">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Siti Nurhaliza</h6>
-                                                <p class="text-xs text-secondary mb-0">siti.nur@example.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">20230002</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">XII IPS 2</p>
-                                    </td>
-                                    <td>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">-</p>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ $siswa->kelas }}</p>
+                                </td>
+                                <td>
+                                    @if ($siswa->isBanned())
                                         <span class="badge badge-sm bg-gradient-danger">Banned</span>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">16 Mar 2023</p>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="btn-group">
-                                            <button class="btn btn-link text-primary mb-0 px-1" data-bs-toggle="modal" data-bs-target="#editSiswaModal" title="Edit">
-                                                <i class="fas fa-pencil-alt text-xs"></i>
-                                            </button>
-                                            <button class="btn btn-link text-success mb-0 px-1" title="Aktifkan">
-                                                <i class="fas fa-user-check text-xs"></i>
-                                            </button>
-                                            <button class="btn btn-link text-danger mb-0 px-1" data-bs-toggle="modal" data-bs-target="#hapusSiswaModal" title="Hapus">
-                                                <i class="fas fa-trash-alt text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="avatar avatar-sm me-3" alt="user3">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Budi Santoso</h6>
-                                                <p class="text-xs text-secondary mb-0">budi.santoso@example.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">20230003</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">XII IPA 3</p>
-                                    </td>
-                                    <td>
+                                    @else
                                         <span class="badge badge-sm bg-gradient-success">Aktif</span>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">17 Mar 2023</p>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="btn-group">
-                                            <button class="btn btn-link text-primary mb-0 px-1" data-bs-toggle="modal" data-bs-target="#editSiswaModal" title="Edit">
-                                                <i class="fas fa-pencil-alt text-xs"></i>
-                                            </button>
-                                            <button class="btn btn-link text-warning mb-0 px-1" title="Banned">
-                                                <i class="fas fa-user-slash text-xs"></i>
-                                            </button>
-                                            <button class="btn btn-link text-danger mb-0 px-1" data-bs-toggle="modal" data-bs-target="#hapusSiswaModal" title="Hapus">
-                                                <i class="fas fa-trash-alt text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    @endif
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ $siswa->created_at->format('d M Y') }}</p>
+                                </td>
+                                <td></td>
+                            </tr>
+                            @endforeach
                             </tbody>
+
                         </table>
                     </div>
                     <div class="px-4 pt-3">
@@ -386,33 +301,42 @@
 <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Import Data Siswa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info text-white">
-                    <i class="fas fa-info-circle me-2"></i>
-                    File harus berformat Excel (.xlsx) dengan kolom: Nama, NIS, Email, Kelas
+
+            <form action="{{ route('siswa.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Import Data Siswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="mb-3">
-                    <label for="formFile" class="form-label">Pilih File Excel</label>
-                    <input class="form-control" type="file" id="formFile">
+
+                <div class="modal-body">
+                    <div class="alert alert-info text-white">
+                        File Excel (.xlsx) dengan kolom minimal:
+                        <strong>nama</strong> dan <strong>kelas</strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Pilih File Excel</label>
+                        <input class="form-control" type="file" name="file" required>
+                    </div>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="overwriteData">
-                    <label class="form-check-label" for="overwriteData">
-                        Timpa data yang sudah ada jika NIS sama
-                    </label>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Import
+                    </button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary">Import</button>
-            </div>
+
+            </form>
+
         </div>
     </div>
 </div>
+
 @endsection
 
 @section('footer')

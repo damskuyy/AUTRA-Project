@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController};
+Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController, SiswaController};
 
 // Arahkan root ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -19,7 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('pemakaian-bahan', App\Http\Controllers\PemakaianBahanController::class);
     Route::resource('riwayat-aktivitas', App\Http\Controllers\LogController::class);
     Route::resource('pengembalian', App\Http\Controllers\PengembalianController::class);
-    Route::resource('siswa', App\Http\Controllers\SiswaController::class);
+    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+    Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
     Route::resource('scan-qr', App\Http\Controllers\ScanController::class);
 });
 
