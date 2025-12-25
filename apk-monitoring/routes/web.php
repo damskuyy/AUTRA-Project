@@ -5,7 +5,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\NotifikasiController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard.index-v3');
 });
 Route::get('/dashboard', function () {
     return view('dashboard.index-v3');
