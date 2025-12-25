@@ -1,5 +1,10 @@
 @extends('be.layout')
 
+@php
+  $title = 'Dashboard';
+  $breadcrumb = 'Dashboard';
+@endphp
+
 @section('sidebar')
     @include('be.sidebar')
 @endsection

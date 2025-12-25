@@ -110,6 +110,26 @@
       }]
     }
   });
+
+  document.addEventListener("DOMContentLoaded", function () {
+      const body = document.body;
+      const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');
+      const iconSidenav = document.getElementById('iconSidenav');
+
+      if (iconNavbarSidenav) {
+          iconNavbarSidenav.addEventListener("click", function () {
+              body.classList.toggle("g-sidenav-pinned");
+              body.classList.toggle("g-sidenav-hidden");
+          });
+      }
+
+      if (iconSidenav) {
+          iconSidenav.addEventListener("click", function () {
+              body.classList.remove("g-sidenav-pinned");
+              body.classList.add("g-sidenav-hidden");
+          });
+      }
+  });
 </script>
 
 

@@ -1,6 +1,9 @@
 @extends('be.layout')
 
-@section('title', 'Peminjaman - Sistem Inventaris')
+@php
+  $title = 'Peminjaman Alat';
+  $breadcrumb = 'Peminjaman';
+@endphp
 
 @section('sidebar')
     @include('be.sidebar')
@@ -16,7 +19,6 @@
     {{-- TITLE --}}
     <div class="row mb-4">
         <div class="col-12">
-            <h4 class="fw-bold">Peminjaman Alat</h4>
             <p class="text-muted small">Proses peminjaman berdasarkan hasil scan QR</p>
         </div>
     </div>

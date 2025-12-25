@@ -44,7 +44,7 @@
 
                                     @if($errors->any())
                                         <div class="alert alert-danger alert-dismissible fade show text-white" role="alert">
-                                            <span class="alert-icon"><i class="ni ni-fat-remove"></i></span>
+                                            <span class="alert-icon"><i class="fas fa-times"></i></span>
                                             <span class="alert-text">
                                                 <ul class="mb-0 ps-3">
                                                     @foreach($errors->all() as $error)

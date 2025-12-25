@@ -1,6 +1,9 @@
 @extends('be.layout')
 
-@section('title', 'Tambah Inventaris')
+@php
+  $title = 'Tambah Inventaris';
+  $breadcrumb = 'Inventaris';
+@endphp
 
 @section('sidebar')
     @include('be.sidebar')
@@ -13,7 +16,6 @@
 @section('main')
 <div class="container-fluid py-4">
 
-    <h4 class="mb-4">Tambah Inventaris</h4>
 
     <form action="{{ route('inventaris.store') }}" method="POST">
         @csrf
