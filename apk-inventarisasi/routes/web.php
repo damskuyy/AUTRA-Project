@@ -19,8 +19,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('pemakaian-bahan', App\Http\Controllers\PemakaianBahanController::class);
     Route::resource('riwayat-aktivitas', App\Http\Controllers\LogController::class);
     Route::resource('pengembalian', App\Http\Controllers\PengembalianController::class);
+
+    //siswa
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
+    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
+    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+
     Route::resource('scan-qr', App\Http\Controllers\ScanController::class);
 });
 
@@ -40,6 +46,3 @@ Route::get('/scan-qr', function () {
     return view('scan-qr.index');
 });
 
-Route::get('/siswa', function () {
-    return view('siswa.index');
-});
