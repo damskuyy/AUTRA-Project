@@ -14,6 +14,17 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                bgMain: "#070b18",
+                bgPanel: "#0b1225",
+                orange: "#ff8a00",
+                yellow: "#ffc700",
+                green: "#2ecc71",
+                textMuted: "#9aa4bf"
+            },
+            boxShadow: {
+                glow: "0 0 30px rgba(255,138,0,0.35)"
+            }
         },
     },
     plugins: [],

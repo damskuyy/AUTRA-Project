@@ -36,7 +36,7 @@ export default function HeroSection() {
         className="relative"
         style={{
           background: 'hsl(var(--cream))',
-          paddingTop: '7.5rem',
+          paddingTop: '10rem',
           paddingBottom: '6.5rem',
           minHeight: '675px',
           borderBottomLeftRadius: '220px',
