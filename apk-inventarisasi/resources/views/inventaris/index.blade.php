@@ -16,14 +16,25 @@
 @section('main')
 <div class="container-fluid py-4">
 
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <button class="btn btn-primary px-4">
-                <a href="{{ route('inventaris.create') }}">
-                    <i class="fas fa-plus me-2"></i>Tambah Inventaris
-                </a>
-            </button>
+            <h4 class="mb-0">Daftar Inventaris</h4>
         </div>
     </div>
 
@@ -53,7 +64,12 @@
                     <!-- Fake Datatable Search -->
                     <div class="d-flex justify-content-between mb-3">
                         <input type="text" class="form-control w-25" placeholder="Cari alat...">
-                        <button class="btn btn-secondary"><i class="fas fa-filter me-2"></i>Filter</button>
+                        <div>
+                            <button class="btn btn-secondary me-2"><i class="fas fa-filter me-2"></i>Filter</button>
+                            <a href="{{ route('inventaris.create', ['type' => 'alat']) }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Tambah Alat
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Tabel Alat -->
@@ -73,14 +89,14 @@
                                 @foreach ($alat as $a)
                                     <tr>
                                         <td>
-                                            {{ $a->item->kode_barang }} <br>
+                                            {{ $a->barangMasuk->nama_barang }} <br>
                                             @if($a->kode_qr_jurusan)
                                                 <small class="text-muted" style="font-size: 10px;">{{ $a->kode_qr_jurusan }}</small>
                                             @else
                                                 <small class="text-danger" style="font-size: 10px;">QR Belum Dibuat</small>
                                             @endif
                                         </td>
-                                        <td>{{ $a->item->nama_barang }}</td>
+                                        <td>{{ $a->barangMasuk->nama_barang }}</td>
                                         <td>{{ $a->serial_number ?? '-' }}</td>
                                         <td>{{ $a->nomor_inventaris ?? '-' }}</td>
                                         <td>
@@ -103,9 +119,9 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             
-                                            <form action="{{ route('inventaris.destroy', $a->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('inventaris.destroy', $a->id) }}" method="POST" class="d-inline" id="delete-form-{{ $a->id }}">
                                                 @csrf @method('DELETE')
-                                                <button class="action-btn action-delete" onclick="return confirm('Yakin hapus?')">
+                                                <button type="button" class="action-btn action-delete" onclick="confirmDelete({{ $a->id }})">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -129,7 +145,12 @@
                     <!-- fake datatable search -->
                     <div class="d-flex justify-content-between mb-3">
                         <input type="text" class="form-control w-25" placeholder="Cari bahan...">
-                        <button class="btn btn-secondary"><i class="fas fa-filter me-2"></i>Filter</button>
+                        <div>
+                            <button class="btn btn-secondary me-2"><i class="fas fa-filter me-2"></i>Filter</button>
+                            <a href="{{ route('inventaris.create', ['type' => 'bahan']) }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Tambah Bahan
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Tabel Bahan -->
@@ -148,16 +169,16 @@
                                 @foreach ($bahan as $b)
                                     <tr>
                                         <td>
-                                            {{ $b->item->kode_barang }} <br>
+                                            {{ $b->barangMasuk->nama_barang }} <br>
                                             @if($b->kode_qr_jurusan)
                                                 <small class="text-muted" style="font-size: 10px;">{{ $b->kode_qr_jurusan }}</small>
                                             @else
                                                 <small class="text-danger" style="font-size: 10px;">QR Belum Dibuat</small>
                                             @endif
                                         </td>
-                                        <td>{{ $b->item->nama_barang }}</td>
-                                        <td>{{ $b->item->jenis }}</td>
-                                        <td><span class="badge bg-info">{{ $b->stok }} Unit</span></td>
+                                        <td>{{ $b->barangMasuk->nama_barang }}</td>
+                                        <td>{{ $b->barangMasuk->jenis_barang }}</td>
+                                        <td><span class="badge bg-info">{{ $b->stok }} {{ $b->barangMasuk?->satuan ?? 'Unit' }}</span></td>
                                         <td>
                                             <a href="{{ route('inventaris.show', $b->id) }}" class="action-btn action-view">
                                                 <i class="fas fa-eye"></i>
@@ -170,7 +191,14 @@
                                             <a href="{{ route('inventaris.edit', $b->id) }}" class="action-btn action-edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            </td>
+
+                                            <form action="{{ route('inventaris.destroy', $b->id) }}" method="POST" class="d-inline" id="delete-form-{{ $b->id }}">
+                                                @csrf @method('DELETE')
+                                                <button type="button" class="action-btn action-delete" onclick="confirmDelete({{ $b->id }})">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -218,3 +246,22 @@
 @section('footer')
     @include('be.footer')
 @endsection
+
+<script>
+function confirmDelete(id) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data inventaris akan dihapus secara permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-form-' + id).submit();
+        }
+    });
+}
+</script>

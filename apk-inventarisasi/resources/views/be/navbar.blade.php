@@ -20,7 +20,7 @@
           </h6>
         </nav>
     </div>
-    <div class="py-1 px-3 ms-auto">
+    {{-- <div class="py-1 px-3 ms-auto">
         <ul class="navbar-nav d-flex align-items-center gap-2" style="flex-direction: row !important;">
             <li class="nav-item d-flex align-items-center">
                 <div class="input-group">
@@ -29,5 +29,39 @@
                 </div>
             </li>
         </ul>
+    </div> --}}
+    <div class="ms-auto d-flex align-items-center">
+        <div class="dropdown">
+            <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="avatar avatar-sm me-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="d-none d-md-block">
+                    <span class="fw-bold text-dark">{{ Auth::user()->name ?? 'User' }}</span>
+                    <br>
+                    <small class="text-muted">{{ Auth::user()->email ?? 'user@example.com' }}</small>
+                </div>
+                <i class="fas fa-chevron-down ms-2 text-dark"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="profileDropdown" style="min-width: 200px;">
+                <li class="dropdown-header bg-light text-center py-3">
+                    <div class="avatar avatar-lg mx-auto mb-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle">
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                    <h6 class="mb-0">{{ Auth::user()->name ?? 'User' }}</h6>
+                    <small class="text-muted">{{ Auth::user()->email ?? 'user@example.com' }}</small>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
+                        @csrf
+                        <button type="submit" class="dropdown-item d-flex align-items-center w-100 border-0 bg-transparent">
+                            <i class="fas fa-sign-out-alt me-3"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>

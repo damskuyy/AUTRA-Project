@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Inventory extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'inventories';
 
     protected $fillable = [
-        'item_id',
-        'ruangan_id',
+        'barang_masuk_id',
         'status',
         'kondisi',
         'nomor_inventaris',
@@ -27,14 +27,9 @@ class Inventory extends Model
     ];
 
     // Relasi
-    public function item()
+    public function barangMasuk()
     {
-        return $this->belongsTo(Item::class, 'item_id');
-    }
-
-    public function ruangan()
-    {
-        return $this->belongsTo(Ruangan::class, 'ruangan_id');
+        return $this->belongsTo(BarangMasuk::class, 'barang_masuk_id');
     }
 
     public function peminjamans()
@@ -47,10 +42,10 @@ class Inventory extends Model
         return $this->hasMany(Pemakaian::class, 'inventory_id');
     }
 
-    public function barangMasuk()
-    {
-        return $this->hasMany(BarangMasuk::class, 'inventory_id');
-    }
+    // public function barangMasuk()
+    // {
+    //     return $this->hasMany(BarangMasuk::class, 'inventory_id');
+    // }
 
     // Helper methods
     // public function isTersedia()

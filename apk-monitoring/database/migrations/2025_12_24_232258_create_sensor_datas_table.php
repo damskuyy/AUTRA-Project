@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('sensor_datas', function (Blueprint $table) {
             $table->id();
-            $table->string('waktu'); // Format: 25/12/2025, 06.12.47
-            $table->decimal('suhu', 5, 1); // Temperature in Celsius
-            $table->integer('cahaya'); // Light in Lux
-            $table->decimal('kelembapan', 5, 1); // Humidity in percentage
+            $table->dateTime('waktu');
+            $table->decimal('suhu', 5, 2); // Temperature in Celsius (e.g., 28.50)
+            $table->integer('cahaya'); // Light intensity in Lux
+            $table->decimal('kelembapan', 5, 2); // Humidity in percentage (e.g., 65.50)
             $table->enum('status', ['Normal', 'Warning', 'Danger'])->default('Normal');
             $table->timestamps();
+            
+            // Indexes for better query performance
+            $table->index('waktu');
+            $table->index('status');
+            $table->index('created_at');
         });
     }
 
