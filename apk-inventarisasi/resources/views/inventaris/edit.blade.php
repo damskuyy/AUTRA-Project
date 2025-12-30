@@ -29,36 +29,30 @@
     <div class="card shadow-sm border-0">
         <div class="card-body">
 
-            <form action="{{ route('inventaris.update', $inventaris->id) }}" method="POST">
+            <form action="{{ route('inventaris.update', $inventaris) }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="row">
 
-                    <!-- Item -->
+                    <!-- Barang Masuk -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Pilih Barang</label>
-                        <select name="item_id" class="form-select" required>
-                            <option value="">-- Pilih Item --</option>
-                            @foreach ($ruangan as $r)
-                                <option value="{{ $r->id }}" {{ $inventaris->ruangan_id == $r->id ? 'selected' : '' }}>
-                                    {{ $r->nama_ruangan }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Ruangan -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Ruangan</label>
-                        <select name="ruangan_id" class="form-select" required>
-                            <option value="">-- Pilih Ruangan --</option>
-                            @foreach ($ruangans as $ruangan)
-                                <option value="{{ $ruangan->id }}"
-                                    {{ $inventaris->ruangan_id == $ruangan->id ? 'selected' : '' }}>
-                                    {{ $ruangan->nama_ruangan }}
-                                </option>
-                            @endforeach
+                        <select name="barang_masuk_id" class="form-select" required>
+                            <option value="">-- Pilih Barang --</option>
+                            @if($inventaris->barangMasuk?->jenis_barang == 'bahan')
+                                @foreach ($barangMasukBahan as $b)
+                                    <option value="{{ $b->id }}" {{ $inventaris->barang_masuk_id == $b->id ? 'selected' : '' }}>
+                                        {{ $b->nama_barang }} ({{ $b->jumlah }} {{ $b->satuan }})
+                                    </option>
+                                @endforeach
+                            @else
+                                @foreach ($barangMasukAlat as $a)
+                                    <option value="{{ $a->id }}" {{ $inventaris->barang_masuk_id == $a->id ? 'selected' : '' }}>
+                                        {{ $a->nama_barang }} (Seri: {{ $a->nomor_dokumen }})
+                                    </option>
+                                @endforeach
+                            @endif
                         </select>
                     </div>
 

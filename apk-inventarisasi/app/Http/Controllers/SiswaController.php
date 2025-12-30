@@ -7,7 +7,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
 
-
 class SiswaController extends Controller
 {
     /**

@@ -22,6 +22,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'role',
+        'status',
         'password',
     ];
 
@@ -46,5 +48,57 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getInitialsAttribute()
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+        
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+            }
+        }
+        
+        return substr($initials, 0, 2);
+    }
+
+    /**
+     * Accessor untuk mendapatkan warna avatar berdasarkan role.
+     */
+    public function getAvatarColorAttribute()
+    {
+        $colors = [
+            'admin' => '#f97316', // Orange
+            'guru' => '#3b82f6',  // Blue
+            'siswa' => '#10b981', // Green
+        ];
+
+        return $colors[$this->role] ?? '#f97316';
+    }
+
+    /**
+     * Scope untuk filter user berdasarkan role.
+     */
+    public function scopeRole($query, $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    /**
+     * Scope untuk filter user aktif.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope untuk filter user inactive.
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
     }
 }

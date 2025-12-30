@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 
 class RuanganController extends Controller
@@ -11,7 +12,8 @@ class RuanganController extends Controller
      */
     public function index()
     {
-        //
+        $ruangans = Ruangan::all();
+        return view('ruangan.index', compact('ruangans'));
     }
 
     /**
@@ -19,7 +21,7 @@ class RuanganController extends Controller
      */
     public function create()
     {
-        //
+        return view('ruangan.create');
     }
 
     /**
@@ -27,7 +29,14 @@ class RuanganController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'kode_ruangan' => 'required|string|unique:ruangans,kode_ruangan',
+            'nama_ruangan' => 'required|string',
+        ]);
+
+        Ruangan::create($request->only(['kode_ruangan', 'nama_ruangan']));
+
+        return redirect()->route('ruangan.index')->with('success', 'Ruangan berhasil ditambahkan.');
     }
 
     /**
@@ -43,7 +52,8 @@ class RuanganController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $ruangan = Ruangan::findOrFail($id);
+        return view('ruangan.edit', compact('ruangan'));
     }
 
     /**
@@ -51,7 +61,16 @@ class RuanganController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $ruangan = Ruangan::findOrFail($id);
+
+        $request->validate([
+            'kode_ruangan' => 'required|string|unique:ruangans,kode_ruangan,' . $id,
+            'nama_ruangan' => 'required|string',
+        ]);
+
+        $ruangan->update($request->only(['kode_ruangan', 'nama_ruangan']));
+
+        return redirect()->route('ruangan.index')->with('success', 'Ruangan berhasil diperbarui.');
     }
 
     /**
@@ -59,6 +78,9 @@ class RuanganController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $ruangan = Ruangan::findOrFail($id);
+        $ruangan->delete();
+
+        return redirect()->route('ruangan.index')->with('success', 'Ruangan berhasil dihapus.');
     }
 }

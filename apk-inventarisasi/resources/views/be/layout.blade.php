@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="{{asset('be/img/apple-icon.png')}}">
-  <link rel="icon" type="image/png" href="{{asset('be/img/favicon.png')}}">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{asset('be/img/logos/logo-autra-nonBG.png')}}">
+  <link rel="icon" type="image/png" href="{{asset('be/img/logos/logo-autra-nonBG.png')}}">
   <title>Inventaris</title>
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
@@ -50,7 +50,50 @@
   body.dark-mode .footer {
     color: white !important;
   }
+
+  /* Styling untuk dropdown profile */
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 15px;
+  }
+  .dropdown-item {
+    border-radius: 10px;
+    margin: 5px;
+    transition: all 0.2s;
+  }
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+  }
+  .nav-link {
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+  }
+
+  /* Avatar styling */
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .avatar-lg {
+    width: 60px;
+    height: 60px;
+  }
+  .dropdown-header {
+    border-radius: 15px 15px 0 0;
+  }
 </style>
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="g-sidenav-show bg-gray-100">
   {{-- sidebar --}}
@@ -66,7 +109,6 @@
 
   <!-- Core JS -->
   <script src="{{asset('be/js/core/popper.min.js')}}"></script>
-  <script src="{{asset('be/js/core/bootstrap.min.js')}}"></script>
   <script src="{{asset('be/js/plugins/perfect-scrollbar.min.js')}}"></script>
   <script src="{{asset('be/js/plugins/smooth-scrollbar.min.js')}}"></script>
   <script src="{{asset('be/js/plugins/chartjs.min.js')}}"></script>

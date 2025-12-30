@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController, SiswaController};
+Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController, SiswaController, RuanganController, ItemsController,
+ScanController, PemakaianBahanController, PeminjamanController};
 
 // Arahkan root ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -11,38 +12,41 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Semua halaman lain
 Route::middleware('auth')->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class);
-    Route::resource('inventaris', InventoriesController::class);
+    Route::resource('inventaris', InventoriesController::class)->parameters(['inventaris' => 'inventaris']);
     Route::get('inventaris/{inventaris}/generate-qr', [InventoriesController::class, 'generateQr'])->name('inventaris.generateQr');
     Route::resource('items', App\Http\Controllers\ItemsController::class);
     Route::get("/dashboard", [DashboardController::class, "index"])->name('dashboard');
-    Route::resource('peminjaman', App\Http\Controllers\PeminjamanController::class);
-    Route::resource('pemakaian-bahan', App\Http\Controllers\PemakaianBahanController::class);
     Route::resource('riwayat-aktivitas', App\Http\Controllers\LogController::class);
     Route::resource('pengembalian', App\Http\Controllers\PengembalianController::class);
-
-    //siswa
-    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+    Route::resource('ruangan', RuanganController::class);
+    Route::resource('siswa', SiswaController::class);
     Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
-    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
-    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
-    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+    //Route::resource('scan-qr', App\Http\Controllers\ScanController::class);
+    Route::resource('items', ItemsController::class);
+    
+    Route::get('/scan-qr', [ScanController::class, 'index'])->name('scan.index');
+    Route::post('/scan-qr', [ScanController::class, 'process'])->name('scan.process');
 
-    Route::resource('scan-qr', App\Http\Controllers\ScanController::class);
-});
+    Route::get('/pemakaian-bahan/form/{inventory}', 
+        [PemakaianBahanController::class, 'form'])
+        ->name('pemakaian.form');
 
-Route::get('/pemakaian-bahan', function () {
-    return view('pemakaian-bahan.index');
+    Route::get('/peminjaman/form/{inventory}', 
+        [PeminjamanController::class, 'form'])
+        ->name('peminjaman.form');
+
+    Route::get('/pemakaian-bahan', 
+        [PemakaianBahanController::class, 'index'])
+        ->name('pemakaian-bahan.index');
+
+    Route::get('/peminjaman', 
+        [PeminjamanController::class, 'index'])
+        ->name('peminjaman.index');
+
+
 });
 
 Route::get('/riwayat-aktivitas', function () {
     return view('riwayat-aktivitas.index');
-});
-
-Route::get('/peminjaman', function () {
-    return view('peminjaman.index');
-});
-
-Route::get('/scan-qr', function () {
-    return view('scan-qr.index');
 });
 
