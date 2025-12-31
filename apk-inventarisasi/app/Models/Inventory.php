@@ -37,7 +37,7 @@ class Inventory extends Model
 
     public function pemakaians()
     {
-        return $this->hasMany(Pemakaian::class, 'inventory_id');
+        return $this->hasMany(PemakaianBahan::class, 'inventory_id');
     }
 
     // public function barangMasuk()

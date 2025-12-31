@@ -25,15 +25,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('items', ItemsController::class);
     
     Route::get('/scan-qr', [ScanController::class, 'index'])->name('scan.index');
-    Route::post('/scan-qr', [ScanController::class, 'process'])->name('scan.process');
+    Route::post('/scan-qr/process', [ScanController::class, 'process'])->name('scan.process');
 
     Route::get('/pemakaian-bahan/form/{inventory}', 
         [PemakaianBahanController::class, 'form'])
-        ->name('pemakaian.form');
+        ->name('pemakaian-bahan-form');
 
     Route::get('/peminjaman/form/{inventory}', 
         [PeminjamanController::class, 'form'])
-        ->name('peminjaman.form');
+        ->name('peminjaman-form');
 
     Route::get('/pemakaian-bahan', 
         [PemakaianBahanController::class, 'index'])

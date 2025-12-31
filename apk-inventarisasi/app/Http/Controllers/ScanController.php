@@ -15,15 +15,32 @@ class ScanController extends Controller
     public function process(Request $request)
     {
         $request->validate([
-            'kode' => 'required'
+            'qr_code' => 'required'
         ]);
 
-        $inventory = Inventory::where('kode_qr', $request->kode)->firstOrFail();
+        $qr = $request->qr_code;
 
-        if ($inventory->jenis === 'BAHAN') {
-            return redirect()->route('pemakaian.form', $inventory);
+        $inventory = Inventory::with('barangMasuk')
+            ->where('kode_qr_jurusan', $qr)
+            ->first();
+
+        if (!$inventory || !$inventory->barangMasuk) {
+            return redirect()
+                ->route('scan.index')
+                ->withErrors('QR tidak valid');
         }
 
-        return redirect()->route('peminjaman.form', $inventory);
+        // gunakan properti jenis pada inventory agar konsisten dengan controller tujuan
+        if ($inventory->jenis === 'ALAT') {
+            return redirect()->route('peminjaman-form', ['inventory' => $inventory->id]);
+        }
+
+        if ($inventory->jenis === 'BAHAN') {
+            return redirect()->route('pemakaian-bahan-form', ['inventory' => $inventory->id]);
+        }
+
+        return redirect()->route('scan.index');
     }
+
+
 }

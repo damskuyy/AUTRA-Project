@@ -31,7 +31,7 @@ class PemakaianBahanController extends Controller
             abort(404);
         }
 
-        return view('pemakaian-bahan.form', compact('inventory'));
+        return view('pemakaian-bahan-form', compact('inventory'));
     }
 
     /**

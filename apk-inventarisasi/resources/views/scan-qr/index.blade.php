@@ -37,6 +37,12 @@
                      style="width:100%; height:300px; border-radius:20px; overflow:hidden;">
                 </div>
 
+                <form id="scan-form" method="POST" action="{{ route('scan.process') }}">
+                    @csrf
+                    <input type="hidden" name="qr_code" id="qr_code">
+                </form>
+
+
                 <div class="mt-3 text-center">
                     <small class="text-muted" id="scanStatus">
                         Kamera belum aktif
@@ -79,16 +85,11 @@ document.getElementById('openCamera').addEventListener('click', () => {
 
             html5Qr.stop();
 
-            fetch("{{ route('scan.process') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ kode: decodedText })
-            }).then(res => {
-                if (res.redirected) window.location.href = res.url;
-            });
+            // MASUKKAN KE FORM
+            document.getElementById('qr_code').value = decodedText;
+
+            // SUBMIT KE ScanController@process
+            document.getElementById('scan-form').submit();
         }
     ).catch(err => {
         alert("Kamera tidak bisa diakses");

@@ -34,7 +34,7 @@ class PeminjamanController extends Controller
             ->whereNull('tanggal_kembali')
             ->first();
 
-        return view('peminjaman.form', compact('inventory', 'peminjamanAktif'));
+        return view('peminjaman-form', compact('inventory', 'peminjamanAktif'));
     }
 
     /**
