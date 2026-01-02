@@ -1,19 +1,23 @@
 import { MapPin, Phone, Mail } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-background py-12 relative overflow-hidden">
+    <footer style={{ background: 'hsl(var(--cream))' }} className="py-12 relative overflow-hidden">
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-bright rounded-full blur-3xl opacity-20"></div>
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-2 gap-12">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-orange-bright rounded-full flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-brown-dark font-black text-xs">OTOMASI</div>
-                  <div className="text-brown-dark font-black text-xs">INDUSTRI</div>
-                </div>
+              <div className="bg-white rounded-full p-3">
+                <Image
+                  src="/logo-toi.png"
+                  alt="SMK Logo"
+                  width={88}
+                  height={88}
+                  className="object-contain"
+                />
               </div>
               <div>
                 <h3 className="text-2xl font-black text-brown-dark">SMK N 1 CIBINONG</h3>

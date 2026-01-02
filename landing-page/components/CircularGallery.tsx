@@ -35,7 +35,8 @@ function createTextTexture(
   gl: GL,
   text: string,
   font: string = 'bold 30px monospace',
-  color: string = 'black'
+  color: string = 'black',
+  backgroundColor: string = 'rgba(255, 193, 7, 0.7)' // Warm yellow with transparency
 ): { texture: Texture; width: number; height: number } {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
@@ -72,6 +73,13 @@ function createTextTexture(
   context.textAlign = 'center';
   context.fillStyle = color;
 
+  // Draw background rectangle
+  context.fillStyle = backgroundColor;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Reset fillStyle for text
+  context.fillStyle = color;
+
   // Draw each line with its own font style
   const startY = padding / 2 + lineHeight / 2;
   for (let i = 0; i < lines.length; i++) {
@@ -106,7 +114,7 @@ class Title {
   font: string;
   mesh!: Mesh;
 
-  constructor({ gl, plane, renderer, text, textColor = '#545050', font = '30px sans-serif' }: TitleProps) {
+  constructor({ gl, plane, renderer, text, textColor = '#ffffff', font = '30px sans-serif' }: TitleProps) {
     autoBind(this);
     this.gl = gl;
     this.plane = plane;
@@ -118,7 +126,7 @@ class Title {
   }
 
   createMesh() {
-    const { texture, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor);
+    const { texture, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor, 'rgba(255, 193, 7, 0.9)'); // Increased opacity from 0.7 to 0.9
     const geometry = new Plane(this.gl);
     const program = new Program(this.gl, {
       vertex: `
@@ -150,7 +158,7 @@ class Title {
     const textHeightScaled = this.plane.scale.y * 0.15;
     const textWidthScaled = textHeightScaled * aspect;
     this.mesh.scale.set(textWidthScaled, textHeightScaled, 1);
-    this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeightScaled * 0.5 - 0.05;
+    this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeightScaled * 0.5 - 0.1; // Moved text further below the image
     this.mesh.setParent(this.plane);
   }
 }
@@ -390,10 +398,10 @@ class Media {
         this.plane.program.uniforms.uViewportSizes.value = [this.viewport.width, this.viewport.height];
       }
     }
-    // Increase base scale factors so cards render larger
-    this.scale = this.screen.height / 1200;
-    this.plane.scale.y = (this.viewport.height * (1200 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (1000 * this.scale)) / this.screen.width;
+    // Reduce base scale factors so cards render smaller
+    this.scale = this.screen.height / 1000; // Increased denominator to make smaller
+    this.plane.scale.y = (this.viewport.height * (1000 * this.scale)) / this.screen.height; // Reduced from 1200 to 800
+    this.plane.scale.x = (this.viewport.width * (800 * this.scale)) / this.screen.width; // Reduced from 1000 to 600
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
     // Slightly larger padding between cards
     this.padding = 6;
@@ -550,6 +558,10 @@ class App {
       {
         image: `https://picsum.photos/seed/21/800/600?grayscale`,
         text: 'Coastline'
+      },
+      {
+        image: `https://picsum.photos/seed/12/800/600?grayscale`,
+        text: 'Palm Trees'
       },
       {
         image: `https://picsum.photos/seed/12/800/600?grayscale`,
