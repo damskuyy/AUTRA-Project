@@ -2,63 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 
 class PeminjamanController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * RIWAYAT PEMINJAMAN
      */
     public function index()
     {
-        //
+        $peminjamans = Peminjaman::with('inventory')
+            ->latest()
+            ->get();
+
+        return view('peminjaman.index', compact('peminjamans'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * FORM PEMINJAMAN (HASIL REDIRECT DARI SCAN QR)
      */
-    public function create()
+    public function form(Inventory $inventory)
     {
-        //
+        // proteksi: pastikan ini ALAT
+        if ($inventory->jenis !== 'ALAT') {
+            abort(404);
+        }
+
+        $peminjamanAktif = Peminjaman::where('inventory_id', $inventory->id)
+            ->whereNull('tanggal_kembali')
+            ->first();
+
+        return view('peminjaman-form', compact('inventory', 'peminjamanAktif'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * SIMPAN PEMINJAMAN
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'inventory_id' => 'required|exists:inventories,id',
+            'nama_siswa'   => 'required|string',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $inventory = Inventory::findOrFail($request->inventory_id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if ($inventory->status !== 'TERSEDIA') {
+            return back()->withErrors('Alat sedang dipinjam');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        Peminjaman::create([
+            'inventory_id'  => $inventory->id,
+            'nama_siswa'    => $request->nama_siswa,
+            'tanggal_pinjam'=> now(),
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $inventory->update(['status' => 'DIPINJAM']);
+
+        return redirect()
+            ->route('peminjaman.index')
+            ->with('success', 'Peminjaman berhasil dicatat');
     }
 }

@@ -27,12 +27,12 @@
                     </div>
 
                     <table class="table table-borderless">
-                        <tr><th width="30%">Nama Barang</th><td>: {{ $inventaris->item->nama_barang }}</td></tr>
-                        <tr><th>Kategori</th><td>: <span class="badge bg-secondary text-uppercase">{{ $inventaris->item->jenis }}</span></td></tr>
+                        <tr><th width="30%">Nama Barang</th><td>: {{ $inventaris->barangMasuk?->nama_barang ?? 'Data tidak ditemukan' }}</td></tr>
+                        <tr><th>Kategori</th><td>: <span class="badge bg-secondary text-uppercase">{{ $inventaris->barangMasuk?->jenis_barang ?? 'Tidak diketahui' }}</span></td></tr>
                         <tr><th>Serial Number</th><td>: {{ $inventaris->serial_number ?? '-' }}</td></tr>
                         <tr><th>No. Inventaris</th><td>: {{ $inventaris->nomor_inventaris ?? '-' }}</td></tr>
-                        <tr><th>Ruangan</th><td>: {{ $inventaris->ruangan->nama_ruangan ?? '-' }}</td></tr>
-                        <tr><th>Stok / Unit</th><td>: {{ $inventaris->stok ?? '1' }} {{ $inventaris->item->satuan ?? 'Unit' }}</td></tr>
+                        <tr><th>Ruangan</th><td>: {{ $inventaris->barangMasuk?->ruangan?->nama_ruangan ?? '-' }}</td></tr>
+                        <tr><th>Stok / Unit</th><td>: {{ $inventaris->stok ?? '1' }} {{ $inventaris->barangMasuk?->satuan ?? 'Unit' }}</td></tr>
                         <tr><th>Kondisi</th><td>: <span class="text-primary fw-bold">{{ $inventaris->kondisi }}</span></td></tr>
                     </table>
 
@@ -54,18 +54,18 @@
                     <h6 class="fw-bold mb-3">Label QR Code</h6>
 
                     @if($inventaris->kode_qr_jurusan)
-                        @php
-                            $qrValue = $inventaris->kode_qr_jurusan;
-                            $qrUrl = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . urlencode($qrValue);
-                        @endphp
-
                         <div id="printArea" class="p-3 border rounded bg-white mb-3">
-                            <img src="{{ $qrUrl }}" style="width: 150px;" alt="QR Code">
+                            {!! QrCode::size(150)->generate($inventaris->kode_qr_jurusan) !!}
                             <div class="mt-2">
-                                <strong style="font-size: 12px; display: block;">{{ $inventaris->item->nama_barang }}</strong>
-                                <span style="font-size: 10px; color: #666;">{{ $qrValue }}</span>
+                                <strong style="font-size: 12px; display: block;">
+                                    {{ $inventaris->barangMasuk->nama_barang }}
+                                </strong>
+                                <span style="font-size: 10px; color: #666;">
+                                    {{ $inventaris->kode_qr_jurusan }}
+                                </span>
                             </div>
                         </div>
+
 
                         <button onclick="printLabel()" class="btn btn-primary w-100 mb-2">
                             <i class="fas fa-print me-2"></i>Cetak Label

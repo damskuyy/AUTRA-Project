@@ -11,13 +11,13 @@ return new class extends Migration
     {
         Schema::create('barang_masuks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('inventory_id')->nullable()->constrained('inventories')->nullOnDelete(); //ini gua ganti jadi nullable
             $table->string('nama_barang');
             $table->enum('jenis_barang', ['alat', 'bahan']);
             $table->integer('jumlah');
             $table->string('satuan')->nullable();
             $table->string('sumber');
-            $table->string('nomor_dokumen')->nullable();
+            $table->string('nomor_dokumen')->nullable(); // untuk seri alat
+            $table->foreignId('ruangan_id')->constrained('ruangans');
             $table->timestamp('tanggal_masuk');
             $table->text('catatan')->nullable();
             $table->unsignedBigInteger('admin_id');

@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - Automation Monitoring</title>
+    <link rel="apple-touch-icon" sizes="76x76" href="{{asset('assets/img/logo/logo-autra-nonBG.png')}}">
+    <link rel="icon" type="image/png" href="{{asset('assets/img/logo/logo-autra-nonBG.png')}}">
+    <title>Login - AUTRA Monitoring</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -25,7 +27,7 @@
 
             <!-- Title -->
             <h1 class="main-title">AUTRA</h1>
-            <p class="subtitle">Automation Control System</p>
+            <p class="subtitle">Monitoring Control System</p>
 
             <!-- Login Form -->
             <form id="loginForm" class="login-form">
@@ -57,7 +59,7 @@
 
             <!-- Footer -->
             <div class="footer">
-                <p>© 2025 Automation Monitoring System. All rights reserved.</p>
+                <p>© 2025 AUTRA Monitoring System. All rights reserved.</p>
             </div>
         </div>
     </div>

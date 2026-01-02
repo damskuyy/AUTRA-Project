@@ -5,17 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
+use App\Models\Siswa;
 
 class SiswaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index( Request $request)
     {
-        $siswas = Siswa::orderBy('kelas')->orderBy('nama')->get();
+        $query = Siswa::query();
 
-        return view('siswa.index', compact('siswas'));
+        if ($request->search) {
+            $query->where('nama', 'like', '%' . $request->search . '%')
+                ->orWhere('kelas', 'like', '%' . $request->search . '%');
+        }
+
+        $siswas = $query
+            ->orderBy('kelas')
+            ->orderBy('nama')
+            ->paginate(35)
+            ->withQueryString();
+
+        $kelasList = Siswa::select('kelas')
+        ->distinct()
+        ->orderBy('kelas')
+        ->pluck('kelas');
+
+        return view('siswa.index', compact('siswas', 'kelasList'));
     }
 
     public function import(Request $request)
@@ -43,9 +60,32 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama'  => 'required|string|max:255',
+            'kelas' => 'required|string|max:100',
+        ]);
+
+        Siswa::create([
+            'nama'        => $request->nama,
+            'kelas'       => $request->kelas,
+            'total_poin'  => 0,
+            'is_active'   => true,
+            'is_banned'   => false,
+            'banned_until'=> null,
+            'alasan_ban'  => null,
+        ]);
+
+        return redirect()->back()->with('success', 'Siswa berhasil ditambahkan');
     }
 
+    
+    public function destroy(string $id)
+    {
+        Siswa::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'Siswa berhasil dihapus');
+    }
+
+        
     /**
      * Display the specified resource.
      */
@@ -67,14 +107,25 @@ class SiswaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nama'  => 'required|string|max:255',
+            'kelas' => 'required|string|max:100',
+        ]);
+
+        $siswa = Siswa::findOrFail($id);
+
+        $siswa->update([
+            'nama'  => $request->nama,
+            'kelas' => $request->kelas,
+        ]);
+
+        return redirect()->route('siswa.index')
+            ->with('success', 'Data siswa berhasil diperbarui');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+    
 }

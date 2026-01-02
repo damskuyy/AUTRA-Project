@@ -396,7 +396,7 @@
     </div>
 @endsection
 
-@push('scripts')
+{{-- @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -576,4 +576,4 @@ if (exportPdfBtn) {
     });
 }
 </script>
-@endpush
+@endpush --}}

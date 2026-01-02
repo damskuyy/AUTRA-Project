@@ -40,17 +40,24 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header pb-0">
+                <div class="card-header pb-2">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6>Daftar Siswa</h6>
-                        <div class="d-flex">
-                            <div class="input-group input-group-outline me-2" style="width: 250px;">
-                                <input type="text" class="form-control form-control-sm" placeholder="Cari siswa..." id="searchInput">
+                        <h6 class="mb-0">Daftar Siswa</h6>
+                        
+                        <form method="GET" action="{{ route('siswa.index') }}">
+                            <div class="input-group input-group-outline" style="width: 300px;">
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    value="{{ request('search') }}" 
+                                    class="form-control" 
+                                    placeholder="Cari siswa..."
+                                >
+                                <button class="btn btn-primary mb-0 d-flex align-items-center justify-content-center" type="submit" style="z-index: 3;">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
-                            <button class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-filter"></i> Filter
-                            </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
@@ -67,58 +74,66 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach ($siswas as $siswa)
-                            <tr>
+                            @forelse ($siswas as $siswa)
+                            <tr class="siswa-row"
+                                data-nama="{{ strtolower($siswa->nama) }}"
+                                data-kelas="{{ strtolower($siswa->kelas) }}">
                                 <td>
-                                    <div class="d-flex px-2 py-1">
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-sm">{{ $siswa->nama }}</h6>
-                                        </div>
-                                    </div>
+                                    <h6 class="mb-0 text-sm">{{ $siswa->nama }}</h6>
                                 </td>
+                                <td>-</td>
+                                <td>{{ $siswa->kelas }}</td>
                                 <td>
-                                    <p class="text-xs font-weight-bold mb-0">-</p>
-                                </td>
-                                <td>
-                                    <p class="text-xs font-weight-bold mb-0">{{ $siswa->kelas }}</p>
-                                </td>
-                                <td>
-                                    @if ($siswa->isBanned())
-                                        <span class="badge badge-sm bg-gradient-danger">Banned</span>
+                                    @if ($siswa->is_banned)
+                                        <span class="badge bg-gradient-danger">Banned</span>
                                     @else
-                                        <span class="badge badge-sm bg-gradient-success">Aktif</span>
+                                        <span class="badge bg-gradient-success">Aktif</span>
                                     @endif
                                 </td>
+                                <td>{{ $siswa->created_at->format('d M Y') }}</td>
                                 <td>
-                                    <p class="text-xs font-weight-bold mb-0">{{ $siswa->created_at->format('d M Y') }}</p>
+                                    <div class="d-flex gap-1">
+                                        <!-- Edit -->
+                                        <button 
+                                            class="btn btn-warning btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editSiswaModal"
+                                            data-id="{{ $siswa->id }}"
+                                            data-nama="{{ $siswa->nama }}"
+                                            data-kelas="{{ $siswa->kelas }}"
+                                            data-status="{{ $siswa->is_active ? 1 : 0 }}"
+                                        >
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+
+                                        <!-- Hapus -->
+                                        <button 
+                                            class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#hapusSiswaModal"
+                                            data-id="{{ $siswa->id }}"
+                                            data-nama="{{ $siswa->nama }}"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
-                                <td></td>
+
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Belum ada data siswa
+                                </td>
+                            </tr>
+                            @endforelse
                             </tbody>
+
 
                         </table>
                     </div>
                     <div class="px-4 pt-3">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-end mb-0">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="javascript:;" tabindex="-1">
-                                        <i class="fas fa-angle-left"></i>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="javascript:;">1</a></li>
-                                <li class="page-item"><a class="page-link" href="javascript:;">2</a></li>
-                                <li class="page-item"><a class="page-link" href="javascript:;">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:;">
-                                        <i class="fas fa-angle-right"></i>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                        {{ $siswas->links() }}
                     </div>
                 </div>
             </div>
@@ -134,70 +149,46 @@
                 <h5 class="modal-title">Tambah Data Siswa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">NIS</label>
-                                <input type="text" class="form-control">
-                            </div>
+            <form action="{{ route('siswa.store') }}" method="POST">
+                @csrf
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline my-3">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" name="nama" class="form-control" required>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Kelas</label>
-                                <select class="form-control">
-                                    <option value="">Pilih Kelas</option>
-                                    <option value="XII IPA 1">XII IPA 1</option>
-                                    <option value="XII IPA 2">XII IPA 2</option>
-                                    <option value="XII IPA 3">XII IPA 3</option>
-                                    <option value="XII IPS 1">XII IPS 1</option>
-                                    <option value="XII IPS 2">XII IPS 2</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Status</label>
-                                <select class="form-control">
-                                    <option value="Aktif">Aktif</option>
-                                    <option value="Nonaktif">Nonaktif</option>
-                                </select>
-                            </div>
+
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline my-3">
+                            <label class="form-label">Kelas</label>
+                            <input 
+                                type="text"
+                                name="kelas"
+                                class="form-control"
+                                list="kelasList"
+                                placeholder="Ketik atau pilih kelas..."
+                                required
+                            >
                         </div>
                     </div>
-                    <div class="input-group input-group-outline my-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea class="form-control" rows="3"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary">Simpan</button>
-            </div>
+                </div>
+                <datalist id="kelasList">
+                    @foreach ($kelasList as $kelas)
+                        <option value="{{ $kelas }}">
+                    @endforeach
+                </datalist>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Simpan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -206,96 +197,117 @@
 <div class="modal fade" id="editSiswaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Data Siswa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
+
+            <form id="editForm" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Data Siswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
                     <div class="row">
+
+                        <!-- Nama -->
                         <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3 focused is-focused">
+                            <div class="input-group input-group-outline my-3">
                                 <label class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control" value="Ahmad Rizki">
+                                <input 
+                                    type="text" 
+                                    name="nama" 
+                                    id="editNama"
+                                    class="form-control"
+                                    required
+                                >
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">NIS</label>
-                                <input type="text" class="form-control" value="20230001">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" value="ahmad.rizki@example.com">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Password (Kosongkan jika tidak diubah)</label>
-                                <input type="password" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
+
+                        <!-- Kelas -->
                         <div class="col-md-6">
                             <div class="input-group input-group-outline my-3">
                                 <label class="form-label">Kelas</label>
-                                <select class="form-control">
-                                    <option value="XII IPA 1" selected>XII IPA 1</option>
-                                    <option value="XII IPA 2">XII IPA 2</option>
-                                    <option value="XII IPA 3">XII IPA 3</option>
-                                    <option value="XII IPS 1">XII IPS 1</option>
-                                    <option value="XII IPS 2">XII IPS 2</option>
-                                </select>
+                                <input 
+                                    type="text"
+                                    name="kelas"
+                                    id="editKelas"
+                                    class="form-control"
+                                    list="kelasList"
+                                    required
+                                >
                             </div>
                         </div>
+
+                        <!-- Status -->
                         <div class="col-md-6">
                             <div class="input-group input-group-outline my-3">
                                 <label class="form-label">Status</label>
-                                <select class="form-control">
-                                    <option value="Aktif" selected>Aktif</option>
-                                    <option value="Nonaktif">Nonaktif</option>
+                                <select name="is_active" id="editStatus" class="form-control">
+                                    <option value="1">Aktif</option>
+                                    <option value="0">Nonaktif</option>
                                 </select>
                             </div>
                         </div>
+
                     </div>
-                    <div class="input-group input-group-outline my-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea class="form-control" rows="3">Jl. Merdeka No. 123</textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary">Simpan Perubahan</button>
-            </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Simpan Perubahan
+                    </button>
+                </div>
+
+            </form>
+
         </div>
     </div>
 </div>
+
 
 <!-- Modal Hapus Siswa -->
 <div class="modal fade" id="hapusSiswaModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus data siswa <strong>Ahmad Rizki</strong>?</p>
-                <p class="text-sm text-danger">Data yang dihapus tidak dapat dikembalikan.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger">Hapus</button>
-            </div>
+
+            <form id="hapusForm" method="POST">
+                @csrf
+                @method('DELETE')
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        Apakah Anda yakin ingin menghapus
+                        <strong id="hapusNama"></strong>?
+                    </p>
+                    <p class="text-sm text-danger">
+                        Data yang dihapus tidak dapat dikembalikan.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        Hapus
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
+
+
 
 <!-- Modal Import Excel -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
@@ -336,6 +348,65 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* ======================
+       MODAL HAPUS
+    ====================== */
+    const hapusModal = document.getElementById('hapusSiswaModal');
+
+    hapusModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const id   = button.getAttribute('data-id');
+        const nama = button.getAttribute('data-nama');
+
+        document.getElementById('hapusNama').innerText = nama;
+        document.getElementById('hapusForm').action = `/siswa/${id}`;
+    });
+
+
+    /* ======================
+       MODAL EDIT
+    ====================== */
+    const editModal = document.getElementById('editSiswaModal');
+
+    editModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        const id     = button.getAttribute('data-id');
+        const nama   = button.getAttribute('data-nama');
+        const kelas  = button.getAttribute('data-kelas');
+        const status = button.getAttribute('data-status');
+
+        // Isi value input
+        document.getElementById('editNama').value   = nama;
+        document.getElementById('editKelas').value  = kelas;
+        document.getElementById('editStatus').value = status;
+
+        // Force floating label Soft UI
+        document.getElementById('editNama')
+            .closest('.input-group')
+            .classList.add('focused', 'is-focused');
+
+        document.getElementById('editKelas')
+            .closest('.input-group')
+            .classList.add('focused', 'is-focused');
+
+        document.getElementById('editStatus')
+            .closest('.input-group')
+            .classList.add('focused', 'is-focused');
+
+        // Set action form
+        document.getElementById('editForm').action = `/siswa/${id}`;
+    });
+
+});
+</script>
+@endpush
 
 @endsection
 

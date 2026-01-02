@@ -737,60 +737,1008 @@ if (document.querySelector('.control-grid')) {
     }
 }
 
-// ================= MODAL MANAGE USER =================
+// ==========================================
+// MANAGE USER PAGE - DEDICATED JAVASCRIPT WITH CRUD
+// ==========================================
 
-// buat fungsi GLOBAL (WAJIB)
-window.openAddUserModal = function () {
-    const userModal = document.getElementById('userModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const userForm = document.getElementById('userForm');
-
-    if (!userModal || !modalTitle || !userForm) {
-        console.error('Modal element tidak ditemukan');
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Check if we're on manage-user page
+    if (!document.querySelector('.user-table-section')) {
         return;
     }
 
-    modalTitle.innerText = 'Tambah User';
-    userForm.reset();
-    userModal.classList.add('active');
-};
-
-window.openEditUserModal = function (name, email, role, status) {
+    // ========== ELEMENTS ==========
+    const btnAddUser = document.getElementById('btnAddUser');
     const userModal = document.getElementById('userModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const btnCancel = document.getElementById('btnCancel');
+    const userForm = document.getElementById('userForm');
     const modalTitle = document.getElementById('modalTitle');
+    const searchInput = document.getElementById('searchInput');
+    const togglePassword = document.getElementById('togglePassword');
+    const userPassword = document.getElementById('userPassword');
+    const passwordGroup = document.getElementById('passwordGroup');
+    
+    let isEditMode = false;
+    let currentUserId = null;
 
-    if (!userModal || !modalTitle) return;
+    // Get CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    modalTitle.innerText = 'Edit User';
-    document.getElementById('name').value = name;
-    document.getElementById('email').value = email;
-    document.getElementById('role').value = role;
-    document.getElementById('status').value = status;
-
-    userModal.classList.add('active');
-};
-
-window.closeUserModal = function () {
-    const userModal = document.getElementById('userModal');
-    if (userModal) userModal.classList.remove('active');
-};
-
-// klik backdrop
-document.addEventListener('click', function (e) {
-    if (e.target && e.target.id === 'userModal') {
-        closeUserModal();
+    // ========== MODAL FUNCTIONS ==========
+    
+    // Open Modal for Add User
+    function openModalAdd() {
+        isEditMode = false;
+        currentUserId = null;
+        modalTitle.textContent = 'Tambah User Baru';
+        userForm.reset();
+        document.getElementById('userId').value = '';
+        document.getElementById('formMethod').value = 'POST';
+        
+        // Show password field for new user
+        passwordGroup.style.display = 'block';
+        userPassword.required = true;
+        
+        userModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
+
+    // Open Modal for Edit User
+    function openModalEdit(userId) {
+        isEditMode = true;
+        currentUserId = userId;
+        modalTitle.textContent = 'Edit User';
+        document.getElementById('formMethod').value = 'PUT';
+        
+        // Hide password field for edit (optional)
+        passwordGroup.style.display = 'block';
+        userPassword.required = false;
+        userPassword.placeholder = 'Kosongkan jika tidak ingin mengubah password';
+        
+        // Get user data from server
+        fetch(`/manage-user/${userId}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const user = data.data;
+                
+                // Extract email prefix (before @autra.com)
+                const emailPrefix = user.email.replace('@autra.com', '');
+                
+                // Fill form
+                document.getElementById('userId').value = user.id;
+                document.getElementById('userName').value = user.name;
+                document.getElementById('userEmail').value = emailPrefix;
+                document.getElementById('userRole').value = user.role;
+                document.getElementById('userStatus').value = user.status;
+                
+                userModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Gagal mengambil data user', 'error');
+        });
+    }
+
+    // Close Modal
+    function closeModal() {
+        userModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        userForm.reset();
+        isEditMode = false;
+        currentUserId = null;
+        userPassword.placeholder = 'Masukkan password';
+    }
+
+    // ========== EVENT LISTENERS ==========
+    
+    // Open Add User Modal
+    if (btnAddUser) {
+        btnAddUser.addEventListener('click', openModalAdd);
+    }
+
+    // Close Modal Events
+    if (btnCloseModal) {
+        btnCloseModal.addEventListener('click', closeModal);
+    }
+
+    if (btnCancel) {
+        btnCancel.addEventListener('click', closeModal);
+    }
+
+    // Close modal when clicking outside
+    userModal.addEventListener('click', function(e) {
+        if (e.target === userModal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && userModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Toggle Password Visibility
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const type = userPassword.type === 'password' ? 'text' : 'password';
+            userPassword.type = type;
+            
+            const icon = this.querySelector('i');
+            if (type === 'password') {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        });
+    }
+
+    // ========== FORM SUBMIT (CREATE & UPDATE) ==========
+    
+    if (userForm) {
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                name: document.getElementById('userName').value,
+                email_prefix: document.getElementById('userEmail').value,
+                role: document.getElementById('userRole').value,
+                status: document.getElementById('userStatus').value,
+                password: document.getElementById('userPassword').value
+            };
+
+            // Validation
+            if (!formData.name || !formData.email_prefix || !formData.role || !formData.status) {
+                showNotification('Mohon lengkapi semua field yang wajib diisi!', 'error');
+                return;
+            }
+
+            // Password validation for new user
+            if (!isEditMode && (!formData.password || formData.password.length < 8)) {
+                showNotification('Password minimal 8 karakter!', 'error');
+                return;
+            }
+
+            // Password validation for edit (if filled)
+            if (isEditMode && formData.password && formData.password.length < 8) {
+                showNotification('Password minimal 8 karakter!', 'error');
+                return;
+            }
+
+            // Show loading on submit button
+            const btnSubmit = document.getElementById('btnSubmit');
+            const originalText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>';
+            btnSubmit.disabled = true;
+
+            // Determine URL and method
+            const url = isEditMode ? `/manage-user/${currentUserId}` : '/manage-user';
+            const method = isEditMode ? 'PUT' : 'POST';
+
+            // Send request
+            fetch(url, {
+                method: 'POST', // Always POST, Laravel will handle _method
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-HTTP-Method-Override': method // Laravel method override
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnSubmit.innerHTML = originalText;
+                btnSubmit.disabled = false;
+
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    closeModal();
+                    
+                    // Reload page to show updated data
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification(data.message || 'Terjadi kesalahan', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btnSubmit.innerHTML = originalText;
+                btnSubmit.disabled = false;
+                showNotification('Terjadi kesalahan pada server', 'error');
+            });
+        });
+    }
+
+    // ========== DELETE USER ==========
+    
+    function deleteUser(userId) {
+        const confirmed = confirm('Apakah Anda yakin ingin menghapus user ini?');
+        
+        if (confirmed) {
+            const row = document.querySelector(`button[data-id="${userId}"]`).closest('tr');
+            
+            // Add fade out animation
+            row.style.animation = 'fadeOut 0.3s ease-out';
+            
+            // Send delete request
+            fetch(`/manage-user/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        row.remove();
+                        updateUserCount();
+                        showNotification(data.message, 'success');
+                    }, 300);
+                } else {
+                    row.style.animation = '';
+                    showNotification(data.message || 'Gagal menghapus user', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                row.style.animation = '';
+                showNotification('Terjadi kesalahan pada server', 'error');
+            });
+        }
+    }
+
+    // ========== TABLE FUNCTIONS ==========
+    
+    // Update User Count
+    function updateUserCount() {
+        const tbody = document.getElementById('userTableBody');
+        const count = tbody.querySelectorAll('tr').length;
+        const counterElement = document.getElementById('userCount');
+        if (counterElement) {
+            counterElement.textContent = count;
+        }
+    }
+
+    // Attach Event Listeners to Action Buttons
+    function attachActionListeners() {
+        // Edit buttons
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                openModalEdit(userId);
+            });
+        });
+
+        // Delete buttons
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                deleteUser(userId);
+            });
+        });
+    }
+
+    // Initial attachment of action listeners
+    attachActionListeners();
+
+    // ========== SEARCH FUNCTION ==========
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#userTableBody tr');
+            
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                // Skip empty state row
+                if (row.querySelector('.empty-state')) {
+                    return;
+                }
+                
+                const name = row.querySelector('.user-name-table')?.textContent.toLowerCase() || '';
+                const email = row.cells[2]?.textContent.toLowerCase() || '';
+                const role = row.querySelector('.role-badge')?.textContent.toLowerCase() || '';
+                
+                if (name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Show "tidak ditemukan" message if no results
+            if (visibleCount === 0 && searchTerm !== '') {
+                showNoResults();
+            } else {
+                removeNoResults();
+            }
+        });
+    }
+
+    // Show no results message
+    function showNoResults() {
+        const tbody = document.getElementById('userTableBody');
+        const existingMessage = tbody.querySelector('.no-results-row');
+        
+        if (!existingMessage) {
+            const noResultsRow = document.createElement('tr');
+            noResultsRow.className = 'no-results-row';
+            noResultsRow.innerHTML = `
+                <td colspan="6" class="empty-state">
+                    <i class="fa-solid fa-search"></i>
+                    <p>User tidak ditemukan</p>
+                </td>
+            `;
+            tbody.appendChild(noResultsRow);
+        }
+    }
+
+    // Remove no results message
+    function removeNoResults() {
+        const noResultsRow = document.querySelector('.no-results-row');
+        if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    }
+
+    // ========== UTILITY FUNCTIONS ==========
+    
+    // Show notification
+    function showNotification(message, type = 'success') {
+        // Check if global notification function exists
+        if (typeof window.showNotification === 'function') {
+            window.showNotification(message, type);
+            return;
+        }
+
+        // Local notification implementation
+        const existing = document.querySelector('.notification-toast');
+        if (existing) {
+            existing.remove();
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `notification-toast notification-toast-${type}`;
+        toast.textContent = message;
+        
+        toast.style.cssText = `
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 400px;
+        `;
+        
+        if (type === 'error') {
+            toast.style.background = '#dc2626';
+        } else if (type === 'success') {
+            toast.style.background = '#16a34a';
+        } else {
+            toast.style.background = '#3b82f6';
+        }
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Add CSS animations if not already added
+    if (!document.getElementById('manage-user-animations')) {
+        const style = document.createElement('style');
+        style.id = 'manage-user-animations';
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    console.log('Manage User page with CRUD initialized');
 });
 
-window.openAddUserModal = function () {
-    console.log('BUTTON CLICKED');
+// ==========================================
+// NOTIFIKASI PAGE - DEDICATED JAVASCRIPT
+// ==========================================
 
-    const userModal = document.getElementById('userModal');
-
-    if (!userModal) {
-        console.error('userModal tidak ditemukan di DOM');
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Check if we're on notification page
+    if (!document.querySelector('.notifications-list')) {
         return;
     }
 
-    userModal.classList.add('active');
-};
+    // Show notification function (local version)
+    function showNotificationMessage(message, type = 'success') {
+        // Remove existing notification
+        const existing = document.querySelector('.notification-toast');
+        if (existing) {
+            existing.remove();
+        }
+        
+        // Create notification element
+        const toast = document.createElement('div');
+        toast.className = `notification-toast notification-toast-${type}`;
+        toast.textContent = message;
+        
+        // Styling
+        toast.style.cssText = `
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 400px;
+        `;
+        
+        // Set background color based on type
+        if (type === 'error') {
+            toast.style.background = '#dc2626';
+        } else if (type === 'success') {
+            toast.style.background = '#16a34a';
+        } else if (type === 'info') {
+            toast.style.background = '#3b82f6';
+        } else {
+            toast.style.background = '#2563eb';
+        }
+        
+        // Add to page
+        document.body.appendChild(toast);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // Mark single notification as read
+    document.querySelectorAll('.btn-mark-read').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const notifId = this.dataset.id;
+            const card = this.closest('.notification-card');
+            
+            markAsRead(notifId, card);
+        });
+    });
+
+    // Mark all notifications as read
+    const markAllBtn = document.getElementById('markAllRead');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function() {
+            const unreadCards = document.querySelectorAll('.notification-card.unread');
+            
+            if (unreadCards.length === 0) {
+                showNotificationMessage('Semua notifikasi sudah dibaca', 'info');
+                return;
+            }
+            
+            const confirmed = confirm(`Tandai ${unreadCards.length} notifikasi sebagai sudah dibaca?`);
+            
+            if (confirmed) {
+                unreadCards.forEach(card => {
+                    const notifId = card.dataset.id;
+                    markAsRead(notifId, card, true); // true = skip individual notification
+                });
+                
+                showNotificationMessage('Semua notifikasi ditandai sebagai dibaca', 'success');
+            }
+        });
+    }
+
+    // Delete notification
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const notifId = this.dataset.id;
+            const card = this.closest('.notification-card');
+            
+            const confirmed = confirm('Apakah Anda yakin ingin menghapus notifikasi ini?');
+            
+            if (confirmed) {
+                deleteNotification(notifId, card);
+            }
+        });
+    });
+
+    // Function to mark as read
+    function markAsRead(notifId, card, skipNotification = false) {
+        // In production, you would make an AJAX call here:
+        // fetch(`/notifikasi/${notifId}/read`, { method: 'POST' })
+        
+        // For now, we'll just update the UI
+        
+        // Remove unread class
+        card.classList.remove('unread');
+        card.classList.add('read');
+        
+        // Remove "Baru" badge
+        const badge = card.querySelector('.badge-new');
+        if (badge) {
+            badge.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => badge.remove(), 300);
+        }
+        
+        // Remove check button
+        const checkBtn = card.querySelector('.btn-mark-read');
+        if (checkBtn) {
+            checkBtn.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => checkBtn.remove(), 300);
+        }
+        
+        // Update counter
+        updateUnreadCount();
+        
+        // Add animation
+        card.style.animation = 'markRead 0.5s ease-out';
+        setTimeout(() => {
+            card.style.animation = '';
+        }, 500);
+        
+        // Show notification (skip if marking all)
+        if (!skipNotification) {
+            showNotificationMessage('Notifikasi ditandai sebagai dibaca', 'success');
+        }
+    }
+
+    // Function to delete notification
+    function deleteNotification(notifId, card) {
+        // In production, you would make an AJAX call here:
+        // fetch(`/notifikasi/${notifId}`, { method: 'DELETE' })
+        
+        // Add fade out animation
+        card.style.animation = 'fadeOut 0.3s ease-out';
+        
+        setTimeout(() => {
+            const wasUnread = card.classList.contains('unread');
+            card.remove();
+            
+            if (wasUnread) {
+                updateUnreadCount();
+            }
+            
+            // Check if list is empty
+            const remainingCards = document.querySelectorAll('.notification-card');
+            if (remainingCards.length === 0) {
+                showEmptyState();
+            }
+            
+            showNotificationMessage('Notifikasi berhasil dihapus', 'success');
+        }, 300);
+    }
+
+    // Update unread counter
+    function updateUnreadCount() {
+        const unreadCount = document.querySelectorAll('.notification-card.unread').length;
+        const counter = document.getElementById('unreadCount');
+        
+        if (counter) {
+            counter.textContent = unreadCount;
+            
+            // Update subtitle text
+            const subtitle = counter.parentElement;
+            if (subtitle) {
+                if (unreadCount === 0) {
+                    subtitle.innerHTML = '<span id="unreadCount">0</span> notifikasi belum dibaca';
+                } else {
+                    subtitle.innerHTML = `<span id="unreadCount">${unreadCount}</span> notifikasi belum dibaca`;
+                }
+            }
+        }
+    }
+
+    // Show empty state
+    function showEmptyState() {
+        const listContainer = document.querySelector('.notifications-list');
+        if (listContainer) {
+            listContainer.innerHTML = `
+                <div class="empty-notifications">
+                    <i class="fa-solid fa-bell-slash"></i>
+                    <h3>Tidak ada notifikasi</h3>
+                    <p>Semua notifikasi akan muncul di sini</p>
+                </div>
+            `;
+        }
+    }
+
+    // Add CSS animations if not already added
+    if (!document.getElementById('notif-animations')) {
+        const style = document.createElement('style');
+        style.id = 'notif-animations';
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+            }
+            
+            @keyframes markRead {
+                0% { transform: scale(1); }
+                50% { transform: scale(0.98); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    console.log('Notifikasi page initialized');
+});
+
+// ==========================================
+// LAPORAN PAGE - CLIENT SIDE EXPORT
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Check if we're on laporan page
+    if (!document.querySelector('.table-section')) {
+        return;
+    }
+
+    // ========== EXPORT FUNCTIONS ==========
+    
+    // Get current filters for export
+    function getCurrentFilters() {
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        
+        const params = new URLSearchParams();
+        
+        if (searchInput && searchInput.value) {
+            params.append('search', searchInput.value);
+        }
+        
+        if (statusFilter && statusFilter.value) {
+            params.append('status', statusFilter.value);
+        }
+        
+        return params.toString();
+    }
+
+    // Export to Excel (Server-side)
+    const exportExcelBtn = document.getElementById('exportExcel');
+    if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', function() {
+            const filters = getCurrentFilters();
+            const url = `/laporan/export-excel${filters ? '?' + filters : ''}`;
+            
+            // Show loading
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Exporting...</span>';
+            this.disabled = true;
+            
+            // Create temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = ''; // Let server determine filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                this.innerHTML = originalHTML;
+                this.disabled = false;
+                showNotification('Data berhasil diexport ke Excel!', 'success');
+            }, 2000);
+        });
+    }
+
+    // Export to PDF (Server-side)
+    const exportPdfBtn = document.getElementById('exportPdf');
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', function() {
+            const filters = getCurrentFilters();
+            const url = `/laporan/export-pdf${filters ? '?' + filters : ''}`;
+            
+            // Show loading
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Exporting...</span>';
+            this.disabled = true;
+            
+            // Create temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = ''; // Let server determine filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                this.innerHTML = originalHTML;
+                this.disabled = false;
+                showNotification('Data berhasil diexport ke PDF!', 'success');
+            }, 2000);
+        });
+    }
+
+    // ========== SEARCH & FILTER ==========
+    
+    let searchTimeout;
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                applyFilters();
+            }, 500);
+        });
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            applyFilters();
+        });
+    }
+
+    function applyFilters() {
+        const search = searchInput.value;
+        const status = statusFilter.value;
+        
+        const url = new URLSearchParams(window.location.search);
+        
+        if (search) {
+            url.set('search', search);
+        } else {
+            url.delete('search');
+        }
+        
+        if (status) {
+            url.set('status', status);
+        } else {
+            url.delete('status');
+        }
+        
+        url.delete('page'); // Reset to first page
+        
+        window.location.href = `${window.location.pathname}?${url.toString()}`;
+    }
+
+    // ========== STATISTICS (Optional) ==========
+    
+    // Load statistics if needed
+    function loadStatistics() {
+        fetch('/laporan/statistics')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Statistics:', data);
+                // You can display these stats in a dashboard or modal
+            })
+            .catch(error => {
+                console.error('Error loading statistics:', error);
+            });
+    }
+
+    // Uncomment to load stats on page load
+    // loadStatistics();
+
+    // ========== AUTO REFRESH (Optional) ==========
+    
+    // Auto refresh every 30 seconds (optional)
+    let autoRefreshEnabled = false;
+    let autoRefreshInterval;
+
+    function toggleAutoRefresh() {
+        autoRefreshEnabled = !autoRefreshEnabled;
+        
+        if (autoRefreshEnabled) {
+            autoRefreshInterval = setInterval(() => {
+                window.location.reload();
+            }, 30000); // 30 seconds
+            
+            showNotification('Auto-refresh diaktifkan (30 detik)', 'success');
+        } else {
+            clearInterval(autoRefreshInterval);
+            showNotification('Auto-refresh dinonaktifkan', 'info');
+        }
+    }
+
+    // Add auto-refresh button if needed
+    // const autoRefreshBtn = document.getElementById('toggleAutoRefresh');
+    // if (autoRefreshBtn) {
+    //     autoRefreshBtn.addEventListener('click', toggleAutoRefresh);
+    // }
+
+    // ========== UTILITY FUNCTIONS ==========
+    
+    // Show notification
+    function showNotification(message, type = 'success') {
+        // Check if global notification function exists
+        if (typeof window.showNotification === 'function') {
+            window.showNotification(message, type);
+            return;
+        }
+
+        // Local notification implementation
+        const existing = document.querySelector('.notification-toast');
+        if (existing) {
+            existing.remove();
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `notification-toast notification-toast-${type}`;
+        toast.textContent = message;
+        
+        toast.style.cssText = `
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 400px;
+        `;
+        
+        if (type === 'error') {
+            toast.style.background = '#dc2626';
+        } else if (type === 'success') {
+            toast.style.background = '#16a34a';
+        } else if (type === 'info') {
+            toast.style.background = '#3b82f6';
+        } else {
+            toast.style.background = '#2563eb';
+        }
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Format number
+    function formatNumber(num, decimals = 2) {
+        return parseFloat(num).toFixed(decimals);
+    }
+
+    // Format date
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${day}-${month}-${year} ${hours}:${minutes}`;
+    }
+
+    // Add CSS animations if not already added
+    if (!document.getElementById('laporan-animations')) {
+        const style = document.createElement('style');
+        style.id = 'laporan-animations';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    console.log('Laporan page with server-side export initialized');
+});

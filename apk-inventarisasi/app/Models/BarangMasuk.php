@@ -12,13 +12,13 @@ class BarangMasuk extends Model
     protected $table = 'barang_masuks';
 
     protected $fillable = [
-        'inventory_id',
         'nama_barang',
         'jenis_barang',
         'jumlah',
         'satuan',
         'sumber',
         'nomor_dokumen',
+        'ruangan_id',
         'tanggal_masuk',
         'catatan',
         'admin_id',
@@ -30,9 +30,14 @@ class BarangMasuk extends Model
     ];
 
     // Relasi
-    public function inventory()
+    public function inventories()
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->hasMany(Inventory::class, 'barang_masuk_id');
+    }
+
+    public function ruangan()
+    {
+        return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
 
     public function admin()

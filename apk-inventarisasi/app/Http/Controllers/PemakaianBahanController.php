@@ -2,63 +2,68 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
+use App\Models\PemakaianBahan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PemakaianBahanController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * RIWAYAT PEMAKAIAN
      */
     public function index()
     {
-        //
+        $pemakaians = PemakaianBahan::with('inventory')
+            ->latest()
+            ->get();
+
+        return view('pemakaian-bahan.index', compact('pemakaians'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * FORM PEMAKAIAN (HASIL REDIRECT DARI SCAN QR)
      */
-    public function create()
+    public function form(Inventory $inventory)
     {
-        //
+        // proteksi: pastikan ini BAHAN
+        if ($inventory->jenis !== 'BAHAN') {
+            abort(404);
+        }
+
+        return view('pemakaian-bahan-form', compact('inventory'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * SIMPAN PEMAKAIAN
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'inventory_id' => 'required|exists:inventories,id',
+            'nama_siswa'   => 'required|string',
+            'jumlah'       => 'required|integer|min:1',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $inventory = Inventory::findOrFail($request->inventory_id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if ($request->jumlah > $inventory->stok) {
+            return back()->withErrors(['jumlah' => 'Stok tidak mencukupi']);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        DB::transaction(function () use ($request, $inventory) {
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            PemakaianBahan::create([
+                'inventory_id' => $inventory->id,
+                'nama_siswa'   => $request->nama_siswa,
+                'jumlah'       => $request->jumlah,
+            ]);
+
+            $inventory->decrement('stok', $request->jumlah);
+        });
+
+        return redirect()
+            ->route('pemakaian-bahan.index')
+            ->with('success', 'Pemakaian bahan berhasil dicatat');
     }
 }

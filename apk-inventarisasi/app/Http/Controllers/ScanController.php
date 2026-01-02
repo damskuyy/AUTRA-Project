@@ -3,62 +3,44 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Inventory;
 
 class ScanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return view('scan-qr.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function process(Request $request)
     {
-        //
+        $request->validate([
+            'qr_code' => 'required'
+        ]);
+
+        $qr = $request->qr_code;
+
+        $inventory = Inventory::with('barangMasuk')
+            ->where('kode_qr_jurusan', $qr)
+            ->first();
+
+        if (!$inventory || !$inventory->barangMasuk) {
+            return redirect()
+                ->route('scan.index')
+                ->withErrors('QR tidak valid');
+        }
+
+        // gunakan properti jenis pada inventory agar konsisten dengan controller tujuan
+        if ($inventory->jenis === 'ALAT') {
+            return redirect()->route('peminjaman-form', ['inventory' => $inventory->id]);
+        }
+
+        if ($inventory->jenis === 'BAHAN') {
+            return redirect()->route('pemakaian-bahan-form', ['inventory' => $inventory->id]);
+        }
+
+        return redirect()->route('scan.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
