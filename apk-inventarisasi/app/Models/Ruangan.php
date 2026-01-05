@@ -26,4 +26,9 @@ class Ruangan extends Model
     {
         return $this->hasMany(Pemakaian::class, 'ruangan_id');
     }
+
+    public function barangMasuks()
+    {
+        return $this->hasMany(BarangMasuk::class, 'ruangan_id');
+    }
 }

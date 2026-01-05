@@ -15,6 +15,7 @@ class Peminjaman extends Model
         'siswa_id',
         'inventory_id',
         'admin_id',
+        'quantity',
         'waktu_pinjam',
         'waktu_kembali_aktual',
         'kondisi_pinjam',

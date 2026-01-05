@@ -81,7 +81,8 @@
                                     <th>Nama Alat</th>
                                     <th>Seri</th>
                                     <th>No. Inventaris</th>
-                                    <th>Status</th>
+                                    <th>Merk</th>
+                                    <th>Stok</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -99,15 +100,16 @@
                                         <td>{{ $a->barangMasuk->nama_barang }}</td>
                                         <td>{{ $a->serial_number ?? '-' }}</td>
                                         <td>{{ $a->nomor_inventaris ?? '-' }}</td>
+                                        <td>{{ $a->barangMasuk->merk ?? '-' }}</td>
+                                        <td><span class="badge bg-info">{{ $a->stok ?? 0 }} {{ $a->barangMasuk?->satuan ?? 'Unit' }}</span></td>
                                         <td>
-                                            <span class="badge {{ $a->status === 'TERSEDIA' ? 'bg-success' : 'bg-warning' }}">
-                                                {{ $a->status }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('inventaris.show', $a->id) }}" class="action-btn action-view">
+                                            <button type="button" class="action-btn action-view btn-view"
+                                                data-id="{{ $a->id }}"
+                                                data-nama="{{ $a->barangMasuk->nama_barang }}"
+                                                data-stok="{{ $a->stok ?? 0 }}"
+                                                data-satuan="{{ $a->barangMasuk?->satuan ?? '' }}">
                                                 <i class="fas fa-eye"></i>
-                                            </a>
+                                            </button>
 
                                             <a href="{{ route('inventaris.generateQr', $a->id) }}" 
                                             class="action-btn action-qr" 
@@ -161,6 +163,7 @@
                                     <th>ID Bahan</th>
                                     <th>Nama Bahan</th>
                                     <th>Jenis</th>
+                                    <th>Merk</th>
                                     <th>Stok</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -178,11 +181,16 @@
                                         </td>
                                         <td>{{ $b->barangMasuk->nama_barang }}</td>
                                         <td>{{ $b->barangMasuk->jenis_barang }}</td>
+                                        <td>{{ $b->barangMasuk->merk ?? '-' }}</td>
                                         <td><span class="badge bg-info">{{ $b->stok }} {{ $b->barangMasuk?->satuan ?? 'Unit' }}</span></td>
                                         <td>
-                                            <a href="{{ route('inventaris.show', $b->id) }}" class="action-btn action-view">
+                                            <button type="button" class="action-btn action-view btn-view"
+                                                data-id="{{ $b->id }}"
+                                                data-nama="{{ $b->barangMasuk->nama_barang }}"
+                                                data-stok="{{ $b->stok }}"
+                                                data-satuan="{{ $b->barangMasuk?->satuan ?? '' }}">
                                                 <i class="fas fa-eye"></i>
-                                            </a>
+                                            </button>
                                             
                                             <a href="{{ route('inventaris.generateQr', $b->id) }}" class="action-btn action-qr">
                                                 <i class="fas fa-qrcode"></i>
@@ -212,6 +220,25 @@
 
     </div><!-- end tab content -->
 
+    <!-- Modal: View Item Name & Stock -->
+    <div class="modal fade" id="modalViewItem" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Barang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nama:</strong> <span id="modalItemName">-</span></p>
+                    <p><strong>Stok:</strong> <span id="modalItemStock">-</span></p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="modalViewLink" class="btn btn-primary">Lihat Detail</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -241,13 +268,28 @@
     }
 </style>
 
-@endsection
-
-@section('footer')
-    @include('be.footer')
-@endsection
-
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-view').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const nama = this.dataset.nama || '-';
+            const stok = (this.dataset.stok !== undefined) ? this.dataset.stok : '-';
+            const satuan = this.dataset.satuan || '';
+            const id = this.dataset.id;
+
+            document.getElementById('modalItemName').textContent = nama;
+            document.getElementById('modalItemStock').textContent = stok + (satuan ? ' ' + satuan : '');
+
+            const viewLink = document.getElementById('modalViewLink');
+            viewLink.href = '/inventaris/' + id; // fallback direct link to show page
+
+            const modalEl = document.getElementById('modalViewItem');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        });
+    });
+});
+
 function confirmDelete(id) {
     Swal.fire({
         title: 'Apakah Anda yakin?',
@@ -267,3 +309,12 @@ function confirmDelete(id) {
     return false;
 }
 </script>
+
+@endsection
+
+@section('footer')
+    @include('be.footer')
+@endsection
+
+
+

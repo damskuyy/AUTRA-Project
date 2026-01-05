@@ -13,10 +13,15 @@ return new class extends Migration
             $table->id();
             $table->string('nama_barang');
             $table->enum('jenis_barang', ['alat', 'bahan']);
+
+            //ALAT
+            $table->string('merk')->nullable();
+            $table->string('nomor_dokumen')->nullable(); // untuk seri alat
+            //BAHAN
             $table->integer('jumlah');
             $table->string('satuan')->nullable();
+
             $table->string('sumber');
-            $table->string('nomor_dokumen')->nullable(); // untuk seri alat
             $table->foreignId('ruangan_id')->constrained('ruangans');
             $table->timestamp('tanggal_masuk');
             $table->text('catatan')->nullable();

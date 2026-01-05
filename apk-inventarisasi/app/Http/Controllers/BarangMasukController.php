@@ -43,6 +43,7 @@ class BarangMasukController extends Controller
         $validated = $request->validate([
             'nama_barang' => 'required|string',
             'jenis_barang' => 'required|in:alat,bahan',
+            'merk' => 'nullable|string',
             'jumlah' => 'required|integer|min:1',
             'satuan' => 'nullable|string',
             'sumber' => 'required|string',

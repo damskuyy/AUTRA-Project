@@ -109,13 +109,18 @@
 
   <!-- Core JS -->
   <script src="{{asset('be/js/core/popper.min.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script src="{{asset('be/js/plugins/perfect-scrollbar.min.js')}}"></script>
   <script src="{{asset('be/js/plugins/smooth-scrollbar.min.js')}}"></script>
   <script src="{{asset('be/js/plugins/chartjs.min.js')}}"></script>
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <script src="{{asset('be/js/soft-ui-dashboard.min.js?v=1.1.0')}}"></script>
   <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+
 
   <script>
   // Dark Mode Toggle

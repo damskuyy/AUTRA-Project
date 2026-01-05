@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
+use Carbon\Carbon;
+
 
 class SiswaController extends Controller
 {
@@ -84,6 +86,41 @@ class SiswaController extends Controller
         Siswa::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Siswa berhasil dihapus');
     }
+
+    public function ban(Request $request, Siswa $siswa)
+    {
+        $request->validate([
+            'banned_until' => 'required|date|after:today',
+            'alasan_ban'   => 'required|string',
+        ]);
+
+        $siswa->update([
+            'is_banned'    => true,
+            'banned_until' => $request->banned_until,
+            'alasan_ban'   => $request->alasan_ban,
+        ]);
+
+        return back()->with('success', 'Siswa berhasil dibanned');
+    }
+
+    public function unban(Siswa $siswa)
+    {
+        // 🔥 reset poin HANYA kalau sudah >= 3
+        if ($siswa->total_poin >= 3) {
+            $siswa->total_poin = 0;
+        }
+
+        $siswa->is_banned = false;
+        $siswa->banned_until = null;
+        $siswa->alasan_ban = null;
+
+        $siswa->save();
+
+        return back()->with('success', 'Siswa berhasil di-unban');
+    }
+
+
+
 
         
     /**

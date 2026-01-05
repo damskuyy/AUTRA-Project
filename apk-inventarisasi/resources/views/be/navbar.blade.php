@@ -1,6 +1,5 @@
 <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl d-flex align-items-center justify-content-between" id="navbarBlur" navbar-scroll="true">
 
-    <!-- TOGGLER -->
     <button class="navbar-toggler d-xl-none" type="button" id="iconNavbarSidenav">
         <i class="fas fa-bars fs-5 text-dark"></i>
     </button>
@@ -20,48 +19,70 @@
           </h6>
         </nav>
     </div>
-    {{-- <div class="py-1 px-3 ms-auto">
-        <ul class="navbar-nav d-flex align-items-center gap-2" style="flex-direction: row !important;">
-            <li class="nav-item d-flex align-items-center">
-                <div class="input-group">
-                    <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-                    <input type="text" class="form-control" placeholder="Type here..." style="width: 200px;">
-                </div>
-            </li>
-        </ul>
-    </div> --}}
+
     <div class="ms-auto d-flex align-items-center">
         <div class="dropdown">
             <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="avatar avatar-sm me-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle">
                     <i class="fas fa-user"></i>
                 </div>
-                <div class="d-none d-md-block">
+                <div class="d-none d-md-block text-start">
                     <span class="fw-bold text-dark">{{ Auth::user()->name ?? 'User' }}</span>
                     <br>
-                    <small class="text-muted">{{ Auth::user()->email ?? 'user@example.com' }}</small>
+                    <small class="text-muted" style="font-size: 11px;">{{ Auth::user()->email ?? 'user@example.com' }}</small>
                 </div>
                 <i class="fas fa-chevron-down ms-2 text-dark"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="profileDropdown" style="min-width: 200px;">
-                <li class="dropdown-header bg-light text-center py-3">
-                    <div class="avatar avatar-lg mx-auto mb-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle">
+            
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="profileDropdown" style="min-width: 230px; border-radius: 15px;">
+                <li class="dropdown-header bg-light text-center py-4" style="border-radius: 15px 15px 0 0;">
+                    <div class="avatar avatar-lg mx-auto mb-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle shadow">
                         <i class="fas fa-user fa-2x"></i>
                     </div>
-                    <h6 class="mb-0">{{ Auth::user()->name ?? 'User' }}</h6>
+                    <h6 class="mb-0 text-dark">{{ Auth::user()->name ?? 'User' }}</h6>
                     <small class="text-muted">{{ Auth::user()->email ?? 'user@example.com' }}</small>
                 </li>
-                <li><hr class="dropdown-divider"></li>
-                <li><hr class="dropdown-divider"></li>
+                
+                <li><hr class="dropdown-divider my-0"></li>
+                
                 <li>
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
+                    <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('profile.index') }}">
+                        <i class="fas fa-user-cog me-3 text-primary"></i>Profile Settings
+                    </a>
+                </li>
+
+                <li>
+                    {{-- Form Logout dengan ID khusus --}}
+                    <form id="logout-form-nav" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
-                        <button type="submit" class="dropdown-item d-flex align-items-center w-100 border-0 bg-transparent">
-                            <i class="fas fa-sign-out-alt me-3"></i>Logout
-                        </button>
                     </form>
+                    {{-- Tombol Logout yang memicu SweetAlert --}}
+                    <button type="button" onclick="confirmLogout()" class="dropdown-item d-flex align-items-center py-2 text-danger">
+                        <i class="fas fa-sign-out-alt me-3"></i>Logout
+                    </button>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+{{-- SCRIPT SWEETALERT UNTUK LOGOUT --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Ingin Keluar?',
+            text: "Sesi Anda akan diakhiri.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#5e72e4', // Warna Primary Laravel
+            cancelButtonColor: '#f5365c', // Warna Danger
+            confirmButtonText: 'Ya, Logout!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout-form-nav').submit();
+            }
+        })
+    }
+</script>

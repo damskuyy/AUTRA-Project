@@ -24,23 +24,40 @@ class ScanController extends Controller
             ->where('kode_qr_jurusan', $qr)
             ->first();
 
-        if (!$inventory || !$inventory->barangMasuk) {
+        // 1️⃣ inventory tidak ditemukan
+        if (!$inventory) {
             return redirect()
                 ->route('scan.index')
-                ->withErrors('QR tidak valid');
+                ->withErrors('Inventory tidak ditemukan');
         }
 
-        // gunakan properti jenis pada inventory agar konsisten dengan controller tujuan
-        if ($inventory->jenis === 'ALAT') {
-            return redirect()->route('peminjaman-form', ['inventory' => $inventory->id]);
+        // 2️⃣ barang masuk tidak ada
+        if (!$inventory->barangMasuk) {
+            return redirect()
+                ->route('scan.index')
+                ->withErrors('Data barang masuk tidak ditemukan');
         }
 
-        if ($inventory->jenis === 'BAHAN') {
-            return redirect()->route('pemakaian-bahan-form', ['inventory' => $inventory->id]);
+        // 3️⃣ ambil jenis dari BARANG MASUK
+        $jenis = $inventory->barangMasuk->jenis_barang;
+
+        if ($jenis === 'alat') {
+            return redirect()->route(
+                'form.peminjaman-form',
+                ['inventory' => $inventory->id]
+            );
+        }
+
+        if ($jenis === 'bahan') {
+            return redirect()->route(
+                'form.pemakaian-bahan-form',
+                ['inventory' => $inventory->id]
+            );
         }
 
         return redirect()->route('scan.index');
     }
+
 
 
 }

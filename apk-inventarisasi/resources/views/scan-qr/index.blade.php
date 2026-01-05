@@ -65,8 +65,11 @@
 
 <script>
 let html5Qr;
+let isScanning = false; // 🔒 KUNCI
 
 document.getElementById('openCamera').addEventListener('click', () => {
+
+    if (isScanning) return;
 
     document.getElementById('scanStatus').innerText = "Mengaktifkan kamera...";
 
@@ -75,24 +78,29 @@ document.getElementById('openCamera').addEventListener('click', () => {
     html5Qr.start(
         { facingMode: "environment" },
         {
-            fps: 15,
+            fps: 10,
             qrbox: { width: 220, height: 220 }
         },
-        (decodedText) => {
+        async (decodedText) => {
+
+            if (isScanning) return; // 🔥 STOP DOUBLE SCAN
+            isScanning = true;
 
             document.getElementById('outputQR').value = decodedText;
-            document.getElementById('scanStatus').innerText = "QR terbaca";
+            document.getElementById('scanStatus').innerText = "QR terbaca, memproses...";
 
-            html5Qr.stop();
+            // stop kamera DULU dan tunggu
+            await html5Qr.stop();
+            html5Qr.clear();
 
-            // MASUKKAN KE FORM
+            // isi form
             document.getElementById('qr_code').value = decodedText;
 
-            // SUBMIT KE ScanController@process
+            // submit
             document.getElementById('scan-form').submit();
         }
     ).catch(err => {
-        alert("Kamera tidak bisa diakses");
+        document.getElementById('scanStatus').innerText = "Kamera tidak bisa diakses";
         console.error(err);
     });
 });

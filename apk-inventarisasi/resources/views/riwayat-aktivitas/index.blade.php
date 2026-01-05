@@ -14,170 +14,268 @@
 @endsection
 
 @section('main')
-
 <div class="container-fluid py-4">
 
-    {{-- FILTER --}}
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-            <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Riwayat</h6>
+    {{-- HEADER + EXPORT --}}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-3">
+        <div>
+            <h3 class="mb-0">Riwayat Aktivitas</h3>
+            <small class="text-muted">Ringkasan aktivitas perangkat dan siswa — kelola, ekspor, dan cari cepat.</small>
         </div>
+
+        <div class="d-flex gap-2">
+            <a href="{{ route('riwayat-aktivitas.export.pdf', request()->query()) }}" class="btn btn-outline-danger d-flex align-items-center gap-1">
+                <i class="fas fa-file-pdf"></i> <span class="d-none d-sm-inline">PDF</span>
+            </a>
+            <a href="{{ route('riwayat-aktivitas.export.excel', request()->query()) }}" class="btn btn-outline-success d-flex align-items-center gap-1">
+                <i class="fas fa-file-excel"></i> <span class="d-none d-sm-inline">Excel</span>
+            </a>
+        </div>
+    </div>
+
+    {{-- STATS & CONTROLS --}}
+    <div class="row mb-3">
+        <div class="col-lg-12">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="text-center">
+                                <div class="h5 mb-0">{{ $barangMasuks->count() }}</div>
+                                <small class="text-muted">Barang Masuk</small>
+                            </div>
+                            <div class="vr"></div>
+                            <div class="text-center">
+                                <div class="h5 mb-0">{{ $peminjamans->count() }}</div>
+                                <small class="text-muted">Peminjaman</small>
+                            </div>
+                            <div class="vr"></div>
+                            <div class="text-center">
+                                <div class="h5 mb-0">{{ $pengembalians->count() }}</div>
+                                <small class="text-muted">Pengembalian</small>
+                            </div>
+                            <div class="vr"></div>
+                            <div class="text-center">
+                                <div class="h5 mb-0">{{ $pelanggarans->count() }}</div>
+                                <small class="text-muted">Pelanggaran</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterRiwayat" aria-expanded="false" aria-controls="filterRiwayat" id="btnFilter">
+                                <i class="fas fa-filter me-1"></i><span id="filterText">Filter</span>
+                            </button>
+
+                            <a href="{{ route('riwayat-aktivitas.index') }}" class="btn btn-outline-secondary" title="Reset filter">
+                                <i class="fas fa-undo"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- COLLAPSE FILTER --}}
+                
+                <div id="filterRiwayat" class="{{ request()->query() ? '' : 'd-none' }}">
+                    <div class="card-body border-top">
+                        <form method="GET" action="{{ route('riwayat-aktivitas.index') }}">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold">Dari</label>
+                                    <input type="date" name="from_date" value="{{ request('from_date') }}" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold">Sampai</label>
+                                    <input type="date" name="to_date" value="{{ request('to_date') }}" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold">Nama Siswa</label>
+                                    <input type="text" name="siswa" value="{{ request('siswa') }}" class="form-control form-control-sm" placeholder="Cari siswa...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold">Kelas</label>
+                                    <select name="kelas" class="form-control form-control-sm">
+                                        <option value="">Semua</option>
+                                        @foreach ($kelasList ?? [] as $kelas)
+                                            <option value="{{ $kelas }}" {{ request('kelas') == $kelas ? 'selected' : '' }}>{{ $kelas }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Jenis Aktivitas</label>
+                                    <select name="jenis" class="form-control form-control-sm">
+                                        <option value="">Semua</option>
+                                        <option value="barang_masuk" {{ request('jenis')=='barang_masuk'?'selected':'' }}>Barang Masuk</option>
+                                        <option value="peminjaman" {{ request('jenis')=='peminjaman'?'selected':'' }}>Peminjaman</option>
+                                        <option value="pengembalian" {{ request('jenis')=='pengembalian'?'selected':'' }}>Pengembalian</option>
+                                        <option value="pemakaian" {{ request('jenis')=='pemakaian'?'selected':'' }}>Pemakaian</option>
+                                        <option value="banned" {{ request('jenis')=='banned'?'selected':'' }}>Pelanggaran</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 d-flex align-items-end gap-2 mt-5">
+                                    <button class="btn btn-primary w-50 btn-sm" type="submit"><i class="fas fa-search me-1"></i> Terapkan Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- LIST --}}
+    <div class="card shadow-sm">
         <div class="card-body">
-
-            <div class="row g-3">
-
-                {{-- Rentang tanggal --}}
-                <div class="col-md-3">
-                    <label class="form-label">Dari Tanggal</label>
-                    <input type="date" class="form-control">
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">Sampai Tanggal</label>
-                    <input type="date" class="form-control">
-                </div>
-
-                {{-- Nama siswa --}}
-                <div class="col-md-3">
-                    <label class="form-label">Nama Siswa</label>
-                    <input type="text" class="form-control" placeholder="Cari nama siswa...">
-                </div>
-
-                {{-- Kelas --}}
-                <div class="col-md-3">
-                    <label class="form-label">Kelas</label>
-                    <select class="form-control">
-                        <option>Semua</option>
-                        <option>X TKJ 1</option>
-                        <option>XI RPL 2</option>
-                        <option>XII RPL 3</option>
-                    </select>
-                </div>
-
-                {{-- Jenis Transaksi --}}
-                <div class="col-md-4">
-                    <label class="form-label">Jenis Transaksi</label>
-                    <select class="form-control">
-                        <option>Semua</option>
-                        <option>Pemasukan Barang/Bahan</option>
-                        <option>Pemakaian Bahan</option>
-                        <option>Peminjaman Alat</option>
-                        <option>Pengembalian Alat</option>
-                        <option>Kerusakan Alat</option>
-                        <option>Banned Siswa</option>
-                    </select>
-                </div>
-
-                {{-- Nama Barang --}}
-                <div class="col-md-4">
-                    <label class="form-label">Nama Barang</label>
-                    <input type="text" class="form-control" placeholder="Cari barang...">
-                </div>
-
-                {{-- Tombol Filter --}}
-                <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-primary w-100">
-                        <i class="fas fa-search me-1"></i> Terapkan Filter
-                    </button>
-                </div>
-
+            <div id="activityEmpty" class="text-center text-muted py-5" style="display:none;">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <h5 class="mb-0">Tidak ada riwayat yang cocok</h5>
+                <div class="small">Coba ubah filter atau hapus kata kunci pencarian</div>
             </div>
 
+            <div id="activityList">
+
+                {{-- BARANG MASUK --}}
+                @foreach ($barangMasuks as $bm)
+                    <div class="activity-item mb-3 p-3 border rounded" data-type="barang_masuk">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="icon-circle bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:42px;height:42px;"><i class="fas fa-box"></i></div>
+                                    <div>
+                                        <div class="fw-semibold">{{ $bm->nama_barang }}</div>
+                                        <div class="small text-muted">Masuk: {{ $bm->jumlah }} {{ $bm->satuan ?? 'unit' }} • {{ $bm->created_at->format('d M Y H:i') }} ({{ $bm->created_at->diffForHumans() }})</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end text-muted small">Admin {{ $bm->admin->name ?? '-' }}</div>
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- PEMINJAMAN --}}
+                @foreach ($peminjamans as $p)
+                    <div class="activity-item mb-3 p-3 border rounded" data-type="peminjaman">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="icon-circle bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:42px;height:42px;"><i class="fas fa-user"></i></div>
+                                    <div>
+                                        <div class="fw-semibold">{{ $p->siswa->nama }} <span class="text-muted">meminjam</span> <strong>{{ $p->inventory->barangMasuk->nama_barang }}</strong></div>
+                                        <div class="small text-muted">{{ $p->created_at->format('d M Y H:i') }} ({{ $p->created_at->diffForHumans() }})</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end text-muted small">Admin {{ $p->admin->name ?? '-' }}</div>
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- PENGEMBALIAN --}}
+                @foreach ($pengembalians as $k)
+                    <div class="activity-item mb-3 p-3 border rounded" data-type="pengembalian">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="icon-circle bg-info text-dark rounded-circle d-inline-flex align-items-center justify-content-center" style="width:42px;height:42px;"><i class="fas fa-undo"></i></div>
+                                    <div>
+                                        <div class="fw-semibold">{{ $k->peminjaman->siswa->nama }} mengembalikan <strong>{{ $k->peminjaman->inventory->barangMasuk->nama_barang }}</strong></div>
+                                        <div class="small text-muted">Kondisi: <strong class="text-danger">{{ $k->kondisi }}</strong> • {{ $k->created_at->format('d M Y H:i') }} ({{ $k->created_at->diffForHumans() }})</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end text-muted small">Admin {{ $k->admin->name ?? '-' }}</div>
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- PEMAKAIAN BAHAN --}}
+                @foreach ($pemakaians as $pb)
+                <div class="activity-item mb-3 p-3 border rounded" data-type="pemakaian">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex gap-3">
+                            <div class="icon-circle bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center"
+                                style="width:42px;height:42px;">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">
+                                    {{ $pb->siswa->nama }} memakai
+                                    <strong>{{ $pb->inventory->barangMasuk->nama_barang }}</strong>
+                                </div>
+                                <div class="small text-muted">
+                                    Jumlah: {{ $pb->jumlah }} •
+                                    {{ $pb->created_at->format('d M Y H:i') }}
+                                    ({{ $pb->created_at->diffForHumans() }})
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-muted small">
+                            Admin {{ $pb->admin->name ?? '-' }}
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+
+
+                {{-- PELANGGARAN --}}
+                @foreach ($pelanggarans as $pl)
+                    <div class="activity-item mb-3 p-3 border rounded" data-type="pelanggaran">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="icon-circle bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width:42px;height:42px;"><i class="fas fa-exclamation-triangle"></i></div>
+                                    <div>
+                                        <div class="fw-semibold">{{ $pl->siswa->nama }} <span class="text-muted">({{ $pl->siswa->kelas }})</span></div>
+                                        <div class="small text-muted">{{ $pl->created_at->format('d M Y H:i') }} ({{ $pl->created_at->diffForHumans() }})</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end text-muted small">Admin {{ $pl->admin->name ?? '-' }}</div>
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
         </div>
     </div>
 
-    {{-- EXPORT --}}
-    <div class="mb-4 d-flex gap-2">
-        <button class="btn btn-danger">
-            <i class="fas fa-file-pdf me-1"></i> Export PDF
-        </button>
-        <button class="btn btn-success">
-            <i class="fas fa-file-excel me-1"></i> Export Excel
-        </button>
-    </div>
+    {{-- SMALL INLINE STYLES & SCRIPTS (kept local to file for faster iteration) --}}
+    <style>
+        .icon-circle { font-size: 16px; }
+        .tab-filter.active { background-color: #f8f9fa; }
+        .activity-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.04); transform: translateY(-1px); transition: all 0.12s ease; }
+        .vr { width:1px; background:#e9ecef; height:36px; }
+    </style>
 
-    {{-- TIMELINE LOG --}}
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
-            <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Log Riwayat Aktivitas</h6>
-        </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('btnFilter');
+        const filter = document.getElementById('filterRiwayat');
+        const text = document.getElementById('filterText');
 
-        <div class="card-body">
+        btn.addEventListener('click', function () {
+            if (filter.classList.contains('d-none')) {
+                filter.classList.remove('d-none');
+                text.innerText = 'Tutup Filter';
+            } else {
+                filter.classList.add('d-none');
+                text.innerText = 'Filter';
+            }
+        });
 
-            <ul class="list-group list-group-flush">
+        // initial state (kalau ada query)
+        if (!filter.classList.contains('d-none')) {
+            text.innerText = 'Tutup Filter';
+        }
+    });
+    </script>
 
-                {{-- 1. Contoh Log: Pemakaian Bahan --}}
-                <li class="list-group-item py-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>[10:15]</strong>
-                            <span class="ms-1 fw-bold text-primary">Andi (XI RPL 2)</span>
-                            <span class="text-muted">memakai bahan</span>
-                            <span class="fw-bold">Timah Solder</span>,
-                            jumlah <span class="fw-bold text-danger">3 pcs</span>
-                        </div>
-                        <div class="text-muted small">Diproses oleh Admin A</div>
-                    </div>
-                </li>
 
-                {{-- 2. Contoh Log: Peminjaman --}}
-                <li class="list-group-item py-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>[11:00]</strong>
-                            <span class="ms-1 fw-bold text-primary">Budi (X TKJ 1)</span>
-                            <span class="text-muted">meminjam alat</span>
-                            <span class="fw-bold">Bor Mini</span> (ALT-002)
-                        </div>
-                        <div class="text-muted small">Diproses oleh Admin B</div>
-                    </div>
-                </li>
-
-                {{-- 3. Contoh Log: Pengembalian Alat --}}
-                <li class="list-group-item py-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>[15:30]</strong>
-                            <span class="ms-1 fw-bold text-primary">Budi</span>
-                            <span class="text-muted">mengembalikan</span>
-                            <span class="fw-bold">Bor Mini</span>,
-                            kondisi <span class="fw-bold text-danger">Rusak</span>
-                        </div>
-                        <div class="text-muted small">Diproses oleh Admin C</div>
-                    </div>
-                </li>
-
-                {{-- 4. Contoh Log: Kerusakan --}}
-                <li class="list-group-item py-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>[16:00]</strong>
-                            <span class="fw-bold text-danger">Kerusakan alat</span>:
-                            Multimeter Digital (ALT-011)
-                        </div>
-                        <div class="text-muted small">Dilaporkan oleh Admin A</div>
-                    </div>
-                </li>
-
-                {{-- 5. Contoh Log: Banned Siswa --}}
-                <li class="list-group-item py-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>[16:30]</strong>
-                            <span class="fw-bold text-danger">Siswa DIBANNED:</span>
-                            Budi (X TKJ 1)
-                        </div>
-                        <div class="text-muted small">Diproses oleh Admin A</div>
-                    </div>
-                </li>
-
-            </ul>
-
-        </div>
-    </div>
 
 </div>
 @endsection
+
 
 @section('footer')
     @include('be.footer')

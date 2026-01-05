@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreign('admin_id')
                 ->references('id')
                 ->on(DB::raw('`users`'));
+            $table->integer('quantity')->default(1);
             $table->timestamp('waktu_kembali');
             $table->enum('kondisi', ['BAIK', 'RUSAK_RINGAN', 'RUSAK_BERAT']);
             $table->text('catatan')->nullable();

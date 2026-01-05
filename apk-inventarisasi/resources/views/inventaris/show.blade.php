@@ -28,6 +28,7 @@
 
                     <table class="table table-borderless">
                         <tr><th width="30%">Nama Barang</th><td>: {{ $inventaris->barangMasuk?->nama_barang ?? 'Data tidak ditemukan' }}</td></tr>
+                        <tr><th>Merk</th><td>: {{ $inventaris->barangMasuk->merk ?? '-' }}</td></tr>
                         <tr><th>Kategori</th><td>: <span class="badge bg-secondary text-uppercase">{{ $inventaris->barangMasuk?->jenis_barang ?? 'Tidak diketahui' }}</span></td></tr>
                         <tr><th>Serial Number</th><td>: {{ $inventaris->serial_number ?? '-' }}</td></tr>
                         <tr><th>No. Inventaris</th><td>: {{ $inventaris->nomor_inventaris ?? '-' }}</td></tr>

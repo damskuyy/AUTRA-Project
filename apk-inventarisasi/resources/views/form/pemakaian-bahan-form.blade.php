@@ -38,11 +38,19 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <small class="text-muted">Nama Bahan</small>
-                    <div class="fw-bold">{{ $inventory->nama }}</div>
+                    <div class="fw-bold">{{ $inventory->barangMasuk->nama_barang }}</div>
                 </div>
+
+                <div class="col-md-3">
+                    <small class="text-muted">Merk</small>
+                    <div class="fw-bold">
+                        {{ $inventory->barangMasuk->merk ?? '-' }}
+                    </div>
+                </div>
+
                 <div class="col-md-4">
                     <small class="text-muted">Jenis</small>
-                    <div class="fw-bold">{{ $inventory->jenis }}</div>
+                    <div class="fw-bold">{{ strtoupper($inventory->barangMasuk->jenis_barang) }}</div>
                 </div>
                 <div class="col-md-4">
                     <small class="text-muted">Stok Tersedia</small>
@@ -64,8 +72,17 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Nama Siswa</label>
-                        <input type="text" name="nama_siswa" class="form-control"
-                               placeholder="Masukkan nama siswa" required>
+                        <select
+                            name="siswa_id"
+                            class="form-select select-siswa"
+                            required>
+                            <option value="">-- Ketik atau pilih siswa --</option>
+                            @foreach ($siswas as $siswa)
+                                <option value="{{ $siswa->id }}">
+                                    {{ $siswa->nama }} ({{ $siswa->kelas }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="col-md-3">
@@ -94,6 +111,23 @@
     </div>
 
 </div>
+
+
+@push('scripts')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('.select-siswa').select2({
+        placeholder: "Ketik atau pilih nama siswa",
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>
+@endpush
+
 @endsection
 
 @section('footer')

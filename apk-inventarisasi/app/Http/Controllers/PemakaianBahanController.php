@@ -4,44 +4,51 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventory;
 use App\Models\PemakaianBahan;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PemakaianBahanController extends Controller
 {
-    /**
-     * RIWAYAT PEMAKAIAN
-     */
     public function index()
     {
-        $pemakaians = PemakaianBahan::with('inventory')
-            ->latest()
-            ->get();
+    $pemakaians = PemakaianBahan::with('inventory.barangMasuk')
+        ->whereDate('created_at', Carbon::today())
+        ->latest()
+        ->get();
 
         return view('pemakaian-bahan.index', compact('pemakaians'));
     }
 
-    /**
-     * FORM PEMAKAIAN (HASIL REDIRECT DARI SCAN QR)
-     */
     public function form(Inventory $inventory)
     {
-        // proteksi: pastikan ini BAHAN
-        if ($inventory->jenis !== 'BAHAN') {
+        // 🔥 AMBIL JENIS DARI BARANG MASUK
+        if (
+            !$inventory->barangMasuk ||
+            $inventory->barangMasuk->jenis_barang !== 'bahan'
+        ) {
             abort(404);
         }
 
-        return view('pemakaian-bahan-form', compact('inventory'));
+        // 🔥 AMBIL DATA SISWA
+        $siswas = Siswa::where('is_active', true)
+            ->where('is_banned', false)
+            ->orderBy('nama')
+            ->get();
+
+        // ⚠️ SESUAI STRUKTUR FOLDER KAMU
+        return view(
+            'form.pemakaian-bahan-form',
+            compact('inventory', 'siswas')
+        );
     }
 
-    /**
-     * SIMPAN PEMAKAIAN
-     */
     public function store(Request $request)
     {
         $request->validate([
             'inventory_id' => 'required|exists:inventories,id',
-            'nama_siswa'   => 'required|string',
+            'siswa_id'   => 'required|exists:siswas,id',
             'jumlah'       => 'required|integer|min:1',
         ]);
 
@@ -52,10 +59,11 @@ class PemakaianBahanController extends Controller
         }
 
         DB::transaction(function () use ($request, $inventory) {
-
             PemakaianBahan::create([
                 'inventory_id' => $inventory->id,
-                'nama_siswa'   => $request->nama_siswa,
+                'ruangan_id'   => $inventory->barangMasuk->ruangan_id,
+                'siswa_id'      => $request->siswa_id,
+                'admin_id'     => auth()->id(),
                 'jumlah'       => $request->jumlah,
             ]);
 

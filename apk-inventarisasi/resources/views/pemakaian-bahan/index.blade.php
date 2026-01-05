@@ -31,7 +31,7 @@
                             <th>Nama Bahan</th>
                             <th>Jumlah</th>
                             <th>Nama Siswa</th>
-                            <th>Tanggal</th>
+                            <th>Waktu Pemakaian</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +39,7 @@
                         <tr>
                             <td>{{ $p->inventory->barangMasuk->nama_barang }}</td>
                             <td>{{ $p->jumlah }}</td>
-                            <td>{{ $p->nama_siswa }}</td>
+                            <td>{{ $p->siswa->nama }}</td>
                             <td>{{ $p->created_at->format('d-m-Y H:i') }}</td>
                         </tr>
                         @empty

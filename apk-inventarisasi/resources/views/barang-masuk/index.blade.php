@@ -74,6 +74,16 @@
                             @endif
                         </div>
 
+                        <!-- Merk -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Merk</label>
+                            <input
+                                type="text"
+                                name="merk"
+                                class="form-control"
+                                placeholder="Contoh: Bosch, Makita, Kenmaster">
+                        </div>
+
                         <!-- Seri Alat -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Seri Alat</label>
@@ -180,6 +190,17 @@
                                        placeholder="ketik nama bahan...">
                             @endif
                         </div>
+
+                        <!-- Merk -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Merk</label>
+                            <input
+                                type="text"
+                                name="merk"
+                                class="form-control"
+                                placeholder="Contoh: AIRTAC, Ebara, dll">
+                        </div>
+
 
                         <!-- Satuan -->
                         <div class="mb-3">

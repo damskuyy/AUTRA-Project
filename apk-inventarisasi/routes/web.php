@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController, SiswaController, RuanganController, ItemsController,
-ScanController, PemakaianBahanController, PeminjamanController};
+ScanController, PemakaianBahanController, PeminjamanController, PengembalianController, LogController, ExportController, ProfileController};
 
 // Arahkan root ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -26,27 +26,40 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/scan-qr', [ScanController::class, 'index'])->name('scan.index');
     Route::post('/scan-qr/process', [ScanController::class, 'process'])->name('scan.process');
+    //FORM
+    Route::get('/pemakaian-bahan/form/{inventory}', [PemakaianBahanController::class, 'form'])->name('form.pemakaian-bahan-form');
+    Route::get('/peminjaman/form/{inventory}', [PeminjamanController::class, 'form'])->name('form.peminjaman-form');
+    //STORY
+    Route::get('/pemakaian-bahan', [PemakaianBahanController::class, 'index'])->name('pemakaian-bahan.index');
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+    Route::post('/pemakaian-bahan',[PemakaianBahanController::class, 'store'])->name('pemakaian-bahan.store');
+    Route::post('/peminjaman',[PeminjamanController::class, 'store'])->name('peminjaman.store');
 
-    Route::get('/pemakaian-bahan/form/{inventory}', 
-        [PemakaianBahanController::class, 'form'])
-        ->name('pemakaian-bahan-form');
+    Route::get('/pengembalian', [PengembalianController::class, 'index'])
+    ->name('pengembalian.index');
 
-    Route::get('/peminjaman/form/{inventory}', 
-        [PeminjamanController::class, 'form'])
-        ->name('peminjaman-form');
+    Route::get('/pengembalian/{peminjaman}/create', [PengembalianController::class, 'create'])->name('pengembalian.create');
 
-    Route::get('/pemakaian-bahan', 
-        [PemakaianBahanController::class, 'index'])
-        ->name('pemakaian-bahan.index');
+    Route::post('/pengembalian', [PengembalianController::class, 'store'])->name('pengembalian.store');
 
-    Route::get('/peminjaman', 
-        [PeminjamanController::class, 'index'])
-        ->name('peminjaman.index');
+    Route::post('/siswa/{siswa}/ban', [SiswaController::class, 'ban'])->name('siswa.ban');
+    Route::post('/siswa/{siswa}/unban', [SiswaController::class, 'unban'])->name('siswa.unban');
 
+    Route::get('riwayat-aktivitas', [LogController::class, 'index'])->name('riwayat-aktivitas.index');
 
+    Route::get('/riwayat-aktivitas/export/excel', [ExportController::class, 'excel'])
+        ->name('riwayat-aktivitas.export.excel');
+
+    Route::get('/riwayat-aktivitas/export/pdf', [ExportController::class, 'pdf'])
+        ->name('riwayat-aktivitas.export.pdf');
+
+    // Profile
+    // Halaman Utama Profile
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    // Proses Update Data (Nama/Email)
+    Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    // Proses Update Password
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
-Route::get('/riwayat-aktivitas', function () {
-    return view('riwayat-aktivitas.index');
-});
 
