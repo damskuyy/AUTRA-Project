@@ -27,12 +27,12 @@
                     </div>
 
                     <table class="table table-borderless">
+                        <tr><th>Kategori</th><td>: <span class="badge bg-secondary text-uppercase">{{ $inventaris->barangMasuk?->jenis_barang ?? 'Tidak diketahui' }}</span></td></tr>
                         <tr><th width="30%">Nama Barang</th><td>: {{ $inventaris->barangMasuk?->nama_barang ?? 'Data tidak ditemukan' }}</td></tr>
                         <tr><th>Merk</th><td>: {{ $inventaris->barangMasuk->merk ?? '-' }}</td></tr>
-                        <tr><th>Kategori</th><td>: <span class="badge bg-secondary text-uppercase">{{ $inventaris->barangMasuk?->jenis_barang ?? 'Tidak diketahui' }}</span></td></tr>
-                        <tr><th>Serial Number</th><td>: {{ $inventaris->serial_number ?? '-' }}</td></tr>
-                        <tr><th>No. Inventaris</th><td>: {{ $inventaris->nomor_inventaris ?? '-' }}</td></tr>
-                        <tr><th>Ruangan</th><td>: {{ $inventaris->barangMasuk?->ruangan?->nama_ruangan ?? '-' }}</td></tr>
+                        <tr><th>Seri Alat</th><td>: {{ $inventaris->barangMasuk?->nomor_dokumen ?? '-' }}</td></tr>
+                        <tr><th>Lokasi Penempatan Barang</th><td>: {{ $inventaris->barangMasuk?->ruangan?->nama_ruangan ?? '-' }}</td></tr>
+                        <tr><th>Sumber Dana Barang</th><td>: {{ $inventaris->barangMasuk?->sumber ?? '-' }}</td></tr>
                         <tr><th>Stok / Unit</th><td>: {{ $inventaris->stok ?? '1' }} {{ $inventaris->barangMasuk?->satuan ?? 'Unit' }}</td></tr>
                         <tr><th>Kondisi</th><td>: <span class="text-primary fw-bold">{{ $inventaris->kondisi }}</span></td></tr>
                     </table>
@@ -71,14 +71,14 @@
                         <button onclick="printLabel()" class="btn btn-primary w-100 mb-2">
                             <i class="fas fa-print me-2"></i>Cetak Label
                         </button>
-                        <a href="{{ route('inventaris.generateQr', $inventaris->id) }}" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Generate ulang akan membatalkan QR lama. Lanjutkan?')">
+                        <a href="{{ route('inventaris.generateQrBulk', $inventaris->barangMasuk->id) }}" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Generate ulang akan membatalkan QR lama. Lanjutkan?')">
                             <i class="fas fa-sync me-2"></i>Regenerate QR
                         </a>
                     @else
                         <div class="py-4">
                             <i class="fas fa-qrcode fa-4x text-light mb-3"></i>
                             <p class="text-muted">QR Code belum dibuat</p>
-                            <a href="{{ route('inventaris.generateQr', $inventaris->id) }}" class="btn btn-primary">
+                            <a href="{{ route('inventaris.generateQrBulk', $inventaris->barangMasuk->id) }}" class="btn btn-primary">
                                 Buat QR Sekarang
                             </a>
                         </div>

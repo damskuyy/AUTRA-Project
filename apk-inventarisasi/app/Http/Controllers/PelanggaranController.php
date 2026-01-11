@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pelanggaran;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PelanggaranController extends Controller
 {
@@ -27,7 +30,37 @@ class PelanggaranController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'siswa_id' => 'required|exists:siswas,id',
+            'tipe' => 'required|in:TELAT_KEMBALI,KERUSAKAN,HILANG',
+            'poin' => 'required|integer|min:1',
+            'keterangan' => 'nullable|string'
+        ]);
+
+        $siswa = Siswa::findOrFail($request->siswa_id);
+
+        // simpan pelanggaran
+        Pelanggaran::create([
+            'siswa_id' => $siswa->id,
+            'tipe' => $request->tipe,
+            'poin' => $request->poin,
+            'keterangan' => $request->keterangan,
+            'tanggal_kejadian' => now(),
+            'admin_id' => auth()->id()
+        ]);
+
+        // tambah total pelanggaran
+        $siswa->increment('total_pelanggaran');
+
+        // AUTO BAN JIKA >= 3
+        if ($siswa->total_pelanggaran >= 3 && !$siswa->is_banned) {
+            $siswa->update([
+                'is_banned' => true,
+                'banned_until' => now()->addDays(3)
+            ]);
+        }
+
+        return back()->with('success', 'Pelanggaran berhasil dicatat');
     }
 
     /**

@@ -26,7 +26,7 @@
         <p><strong>Alat:</strong> {{ $peminjaman->inventory->barangMasuk->nama_barang }}</p>
         <p><strong>Jumlah:</strong> {{ $peminjaman->quantity }}</p>
         <p><strong>Peminjam:</strong> {{ $peminjaman->siswa->nama }}</p>
-        <p><strong>Kelas:</strong>{{ $peminjaman->siswa->kelas }}</p>
+        <p><strong>Kelas:</strong> {{ $peminjaman->siswa->kelas }}</p>
 
 
         <form action="{{ route('pengembalian.store') }}" method="POST">

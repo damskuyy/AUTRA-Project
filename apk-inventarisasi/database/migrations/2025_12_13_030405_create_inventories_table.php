@@ -11,10 +11,8 @@ return new class extends Migration
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('barang_masuk_id')->constrained('barang_masuks');
-            $table->enum('status', ['TERSEDIA', 'DIPINJAM', 'RUSAK', 'HILANG', 'DIPERBAIKI'])->default('TERSEDIA');
+            $table->enum('status', ['TERSEDIA', 'DIPINJAM', 'HILANG', 'DIPERBAIKI'])->default('TERSEDIA');
             $table->enum('kondisi', ['BAIK', 'RUSAK_RINGAN', 'RUSAK_BERAT'])->default('BAIK');
-            $table->string('nomor_inventaris')->nullable()->unique();
-            $table->string('serial_number')->nullable();
             $table->integer('stok')->nullable()->default(0);
             $table->string('kode_qr_jurusan')->nullable()->unique();
             $table->timestamps();

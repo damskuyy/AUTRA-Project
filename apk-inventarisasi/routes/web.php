@@ -13,7 +13,11 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class);
     Route::resource('inventaris', InventoriesController::class)->parameters(['inventaris' => 'inventaris']);
-    Route::get('inventaris/{inventaris}/generate-qr', [InventoriesController::class, 'generateQr'])->name('inventaris.generateQr');
+    Route::get(
+        'inventaris/generate-qr-bulk/{barangMasuk}',
+        [InventoriesController::class, 'generateQrBulk']
+    )->name('inventaris.generateQrBulk');
+
     Route::resource('items', App\Http\Controllers\ItemsController::class);
     Route::get("/dashboard", [DashboardController::class, "index"])->name('dashboard');
     Route::resource('riwayat-aktivitas', App\Http\Controllers\LogController::class);
@@ -27,10 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/scan-qr', [ScanController::class, 'index'])->name('scan.index');
     Route::post('/scan-qr/process', [ScanController::class, 'process'])->name('scan.process');
     //FORM
-    Route::get('/pemakaian-bahan/form/{inventory}', [PemakaianBahanController::class, 'form'])->name('form.pemakaian-bahan-form');
-    Route::get('/peminjaman/form/{inventory}', [PeminjamanController::class, 'form'])->name('form.peminjaman-form');
+    Route::get('/scan-qr/pemakaian-bahan/{inventory}', [PemakaianBahanController::class, 'form'])->name('form.pemakaian-bahan-form');
+    Route::get('/scan-qr/peminjaman/{inventory}', [PeminjamanController::class, 'form'])->name('form.peminjaman-form');
     //STORY
-    Route::get('/pemakaian-bahan', [PemakaianBahanController::class, 'index'])->name('pemakaian-bahan.index');
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::post('/pemakaian-bahan',[PemakaianBahanController::class, 'store'])->name('pemakaian-bahan.store');
     Route::post('/peminjaman',[PeminjamanController::class, 'store'])->name('peminjaman.store');

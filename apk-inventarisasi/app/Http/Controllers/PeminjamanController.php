@@ -110,7 +110,6 @@ class PeminjamanController extends Controller
             // ➖ KURANGI STOK
             $inventory->decrement('stok', $request->quantity);
         });
-
         return redirect()
             ->route('peminjaman.index')
             ->with('success', 'Peminjaman berhasil dicatat');

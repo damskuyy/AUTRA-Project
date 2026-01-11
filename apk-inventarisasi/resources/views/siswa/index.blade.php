@@ -81,7 +81,7 @@
                                 <td>
                                     <h6 class="mb-0 text-sm">{{ $siswa->nama }}</h6>
                                 </td>
-                                <td>-</td>
+                                <td>{{ $siswa->nis }}</td>
                                 <td>{{ $siswa->kelas }}</td>
                                 <td>
                                     @if ($siswa->is_banned)
@@ -99,6 +99,7 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#editSiswaModal"
                                             data-id="{{ $siswa->id }}"
+                                            data-nis="{{ $siswa->nis }}"
                                             data-nama="{{ $siswa->nama }}"
                                             data-kelas="{{ $siswa->kelas }}"
                                             data-status="{{ $siswa->is_active ? 1 : 0 }}"
@@ -153,6 +154,18 @@
                 @csrf
 
                 <div class="row">
+                     <!-- NIS -->
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline my-3">
+                            <label class="form-label">NIS</label>
+                            <input
+                                type="text"
+                                name="nis"
+                                class="form-control"
+                                required
+                            >
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="input-group input-group-outline my-3">
                             <label class="form-label">Nama Lengkap</label>
@@ -209,6 +222,20 @@
 
                 <div class="modal-body">
                     <div class="row">
+
+                        <!-- NIS -->
+                        <div class="col-md-6">
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">NIS</label>
+                                <input
+                                    type="text"
+                                    name="nis"
+                                    id="editNis"
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                        </div>
 
                         <!-- Nama -->
                         <div class="col-md-6">
@@ -378,17 +405,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const button = event.relatedTarget;
 
         const id     = button.getAttribute('data-id');
+        const nis    = button.getAttribute('data-nis');
         const nama   = button.getAttribute('data-nama');
         const kelas  = button.getAttribute('data-kelas');
         const status = button.getAttribute('data-status');
 
         // Isi value input
         document.getElementById('editNama').value   = nama;
+        document.getElementById('editNis').value    = nis;
         document.getElementById('editKelas').value  = kelas;
         document.getElementById('editStatus').value = status;
 
         // Force floating label Soft UI
         document.getElementById('editNama')
+            .closest('.input-group')
+            .classList.add('focused', 'is-focused');
+
+        document.getElementById('editNis')
             .closest('.input-group')
             .classList.add('focused', 'is-focused');
 

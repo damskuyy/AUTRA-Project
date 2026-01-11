@@ -12,9 +12,9 @@ class Siswa extends Model
     protected $table = 'siswas';
 
     protected $fillable = [
+        'nis',
         'nama',
         'kelas',
-        'total_poin',
         'is_active',
         'is_banned',
         'banned_until',
@@ -25,31 +25,24 @@ class Siswa extends Model
         'is_active' => 'boolean',
         'is_banned' => 'boolean',
         'banned_until' => 'datetime',
-        'total_poin' => 'integer',
     ];
 
-    // Relasi
+    /* =====================
+       RELATIONS
+    ===================== */
     public function peminjamans()
     {
-        return $this->hasMany(Peminjaman::class, 'siswa_id');
-    }
-
-    public function pemakaians()
-    {
-        return $this->hasMany(Pemakaian::class, 'siswa_id');
+        return $this->hasMany(Peminjaman::class);
     }
 
     public function pelanggarans()
     {
-        return $this->hasMany(Pelanggaran::class, 'siswa_id');
+        return $this->hasMany(Pelanggaran::class);
     }
 
-    public function activityLogs()
-    {
-        return $this->hasMany(ActivityLog::class, 'siswa_id');
-    }
-
-    // Helper methods
+    /* =====================
+       HELPER
+    ===================== */
     public function isBanned()
     {
         if (!$this->is_banned) {
@@ -62,6 +55,7 @@ class Siswa extends Model
                 'banned_until' => null,
                 'alasan_ban' => null,
             ]);
+
             return false;
         }
 
