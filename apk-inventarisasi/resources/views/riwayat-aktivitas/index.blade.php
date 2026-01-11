@@ -75,7 +75,7 @@
 
                 {{-- COLLAPSE FILTER --}}
                 
-                <div id="filterRiwayat" class="{{ request()->query() ? '' : 'd-none' }}">
+                <div id="filterRiwayat" class="collapse {{ request()->query() ? 'show' : '' }}">
                     <div class="card-body border-top">
                         <form method="GET" action="{{ route('riwayat-aktivitas.index') }}">
                             <div class="row g-3">
@@ -249,25 +249,17 @@
     </style>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const btn = document.getElementById('btnFilter');
+        document.addEventListener('DOMContentLoaded', function () {
         const filter = document.getElementById('filterRiwayat');
         const text = document.getElementById('filterText');
 
-        btn.addEventListener('click', function () {
-            if (filter.classList.contains('d-none')) {
-                filter.classList.remove('d-none');
-                text.innerText = 'Tutup Filter';
-            } else {
-                filter.classList.add('d-none');
-                text.innerText = 'Filter';
-            }
+        filter.addEventListener('shown.bs.collapse', function () {
+            text.innerText = 'Tutup Filter';
         });
 
-        // initial state (kalau ada query)
-        if (!filter.classList.contains('d-none')) {
-            text.innerText = 'Tutup Filter';
-        }
+        filter.addEventListener('hidden.bs.collapse', function () {
+            text.innerText = 'Filter';
+        });
     });
     </script>
 
