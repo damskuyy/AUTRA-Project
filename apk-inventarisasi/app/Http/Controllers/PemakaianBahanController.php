@@ -7,23 +7,24 @@ use App\Models\PemakaianBahan;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class PemakaianBahanController extends Controller
 {
+    /**
+     * ❌ INDEX TIDAK DIPAKAI UNTUK RIWAYAT
+     * (biarin kosong atau hapus routenya)
+     */
     public function index()
     {
-    $pemakaians = PemakaianBahan::with('inventory.barangMasuk')
-        ->whereDate('created_at', Carbon::today())
-        ->latest()
-        ->get();
-
-        return view('pemakaian-bahan.index', compact('pemakaians'));
+        abort(404);
     }
 
+    /**
+     * FORM PEMAKAIAN BAHAN
+     */
     public function form(Inventory $inventory)
     {
-        // 🔥 AMBIL JENIS DARI BARANG MASUK
+        // pastikan ini BAHAN
         if (
             !$inventory->barangMasuk ||
             $inventory->barangMasuk->jenis_barang !== 'bahan'
@@ -31,38 +32,41 @@ class PemakaianBahanController extends Controller
             abort(404);
         }
 
-        // 🔥 AMBIL DATA SISWA
         $siswas = Siswa::where('is_active', true)
             ->where('is_banned', false)
             ->orderBy('nama')
             ->get();
 
-        // ⚠️ SESUAI STRUKTUR FOLDER KAMU
         return view(
             'form.pemakaian-bahan-form',
             compact('inventory', 'siswas')
         );
     }
 
+    /**
+     * SIMPAN PEMAKAIAN
+     */
     public function store(Request $request)
     {
         $request->validate([
             'inventory_id' => 'required|exists:inventories,id',
-            'siswa_id'   => 'required|exists:siswas,id',
+            'siswa_id'     => 'required|exists:siswas,id',
             'jumlah'       => 'required|integer|min:1',
         ]);
 
         $inventory = Inventory::findOrFail($request->inventory_id);
 
         if ($request->jumlah > $inventory->stok) {
-            return back()->withErrors(['jumlah' => 'Stok tidak mencukupi']);
+            return back()->withErrors([
+                'jumlah' => 'Stok tidak mencukupi'
+            ]);
         }
 
         DB::transaction(function () use ($request, $inventory) {
             PemakaianBahan::create([
                 'inventory_id' => $inventory->id,
                 'ruangan_id'   => $inventory->barangMasuk->ruangan_id,
-                'siswa_id'      => $request->siswa_id,
+                'siswa_id'     => $request->siswa_id,
                 'admin_id'     => auth()->id(),
                 'jumlah'       => $request->jumlah,
             ]);
@@ -70,8 +74,9 @@ class PemakaianBahanController extends Controller
             $inventory->decrement('stok', $request->jumlah);
         });
 
+        // 🔥 BALIK KE RIWAYAT (LOG CONTROLLER)
         return redirect()
-            ->route('pemakaian-bahan.index')
+            ->route('riwayat-aktivitas.index')
             ->with('success', 'Pemakaian bahan berhasil dicatat');
     }
 }

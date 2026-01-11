@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use Illuminate\Support\Str;
 
 class ScanController extends Controller
 {
@@ -15,32 +16,37 @@ class ScanController extends Controller
     public function process(Request $request)
     {
         $request->validate([
-            'qr_code' => 'required'
+            'qr_code' => 'required|string'
         ]);
 
-        $qr = $request->qr_code;
+        $qr = strtoupper(trim($request->qr_code));
+
+        // Validasi format QR
+        if (!Str::startsWith($qr, ['QR-ALT-', 'QR-BHN-'])) {
+            return redirect()
+                ->route('scan.index')
+                ->withErrors('Format QR tidak valid');
+        }
 
         $inventory = Inventory::with('barangMasuk')
             ->where('kode_qr_jurusan', $qr)
             ->first();
 
-        // 1️⃣ inventory tidak ditemukan
         if (!$inventory) {
             return redirect()
                 ->route('scan.index')
                 ->withErrors('Inventory tidak ditemukan');
         }
 
-        // 2️⃣ barang masuk tidak ada
         if (!$inventory->barangMasuk) {
             return redirect()
                 ->route('scan.index')
-                ->withErrors('Data barang masuk tidak ditemukan');
+                ->withErrors('Data barang masuk tidak valid');
         }
 
-        // 3️⃣ ambil jenis dari BARANG MASUK
         $jenis = $inventory->barangMasuk->jenis_barang;
 
+        // 🔁 ARAH SESUAI JENIS
         if ($jenis === 'alat') {
             return redirect()->route(
                 'form.peminjaman-form',
@@ -57,7 +63,4 @@ class ScanController extends Controller
 
         return redirect()->route('scan.index');
     }
-
-
-
 }

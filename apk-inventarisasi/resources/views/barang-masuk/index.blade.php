@@ -20,12 +20,12 @@
     <ul class="nav nav-tabs mb-4">
         <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabAlat">
-                <i class="fas fa-tools me-2"></i>Alat (Non-Habis Pakai)
+                <i class="fas fa-tools me-2"></i>Pendataan Alat
             </button>
         </li>
         <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBahan">
-                <i class="fas fa-flask me-2"></i>Bahan (Habis Pakai)
+                <i class="fas fa-flask me-2"></i>Pendataan Bahan Habis Pakai
             </button>
         </li>
     </ul>
@@ -37,7 +37,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body">
 
-                    <h5 class="fw-bold mb-3 text-primary">Pemasukan Alat</h5>
+                    <h5 class="fw-bold mb-3 text-primary">Form Pendataan Alat</h5>
 
                     <form action="{{ route('barang-masuk.store') }}" method="POST">
                         @csrf
@@ -111,7 +111,7 @@
 
                         <!-- Ruangan -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Ruangan</label>
+                            <label class="form-label fw-semibold">Lokasi Penempatan Barang</label>
                             <select name="ruangan_id" class="form-select">
                                 <option value="">-- pilih ruangan --</option>
                                 @foreach($ruangans as $r)
@@ -124,8 +124,23 @@
                         <!-- Sumber Manual -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Sumber Barang</label>
-                            <input type="text" name="sumber" class="form-control">
+
+                            <select name="sumber" id="sumberSelectAlat" class="form-select">
+                                <option value="">-- pilih sumber --</option>
+                                <option value="BOPD">BOPD</option>
+                                <option value="BOS">BOS</option>
+                                <option value="Bantuan Pemerintah">Bantuan Pemerintah</option>
+                                <option value="__manual">Lainnya</option>
+                            </select>
+
+                            <input
+                                type="text"
+                                name="sumber_manual"
+                                id="sumberManualAlat"
+                                class="form-control mt-2 d-none"
+                                placeholder="Ketik sumber barang manual">
                         </div>
+
 
                         <!-- Tanggal -->
                         <div class="mb-3">
@@ -153,7 +168,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body">
 
-                    <h5 class="fw-bold mb-3 text-primary">Pemasukan Bahan</h5>
+                    <h5 class="fw-bold mb-3 text-primary">Form Pendataan Bahan Habis Pakai</h5>
 
                     <form action="{{ route('barang-masuk.store') }}" method="POST">
                         @csrf
@@ -210,7 +225,7 @@
 
                         <!-- Ruangan -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Ruangan</label>
+                            <label class="form-label fw-semibold">Lokasi Penempatan Barang</label>
                             <select name="ruangan_id" class="form-select">
                                 <option value="">-- pilih ruangan --</option>
                                 @foreach($ruangans as $r)
@@ -225,12 +240,26 @@
                             <input type="number" name="jumlah" class="form-control">
                         </div>
 
-                        <!-- Sumber Manual -->
+                        <!-- Sumber -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Sumber Barang</label>
-                            <input type="text" name="sumber" class="form-control"
-                                   placeholder="Ketik sumber barang...">
+
+                            <select name="sumber" id="sumberSelectBahan" class="form-select">
+                                <option value="">-- pilih sumber --</option>
+                                <option value="BOPD">BOPD</option>
+                                <option value="BOS">BOS</option>
+                                <option value="Bantuan Pemerintah">Bantuan Pemerintah</option>
+                                <option value="__manual">Lainnya</option>
+                            </select>
+
+                            <input
+                                type="text"
+                                name="sumber_manual"
+                                id="sumberManualBahan"
+                                class="form-control mt-2 d-none"
+                                placeholder="Ketik sumber barang manual">
                         </div>
+
 
                         <!-- Tanggal -->
                         <div class="mb-3">
@@ -256,6 +285,19 @@
 </div>
 
 <script>
+function handleSumber(selectId, inputId) {
+    const select = document.getElementById(selectId);
+    const input  = document.getElementById(inputId);
+
+    if (!select || !input) return;
+
+    select.addEventListener('change', function () {
+        input.classList.toggle('d-none', this.value !== '__manual');
+    });
+}
+
+handleSumber('sumberSelectAlat', 'sumberManualAlat');
+handleSumber('sumberSelectBahan', 'sumberManualBahan');
 document.getElementById('namaBahanSelect')?.addEventListener('change', function () {
     document.getElementById('namaBahanNew').classList.toggle('d-none', this.value !== '__new');
 });

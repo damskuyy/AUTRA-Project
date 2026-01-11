@@ -16,44 +16,88 @@
 @section('main')
 <div class="container-fluid py-4">
 
-    <div class="row mb-3">
-        <div class="col-12 text-center">
-            <button class="btn btn-dark px-4" id="openCamera">
-                <i class="fas fa-camera me-2"></i>Aktifkan Kamera
-            </button>
+    {{-- ERROR --}}
+    @if ($errors->any())
+        <div class="alert alert-danger shadow-sm">
+            {{ $errors->first() }}
         </div>
-    </div>
+    @endif
 
-    <div class="row">
-        <div class="col-lg-6 col-md-8 mx-auto">
-            <div class="card border-0 shadow-sm p-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
 
-                <h6 class="text-center text-muted mb-3">
-                    Arahkan QR Code ke kamera
-                </h6>
+            <div class="card border-0 shadow">
 
-                <!-- WAJIB ADA -->
-                <div id="reader"
-                     style="width:100%; height:300px; border-radius:20px; overflow:hidden;">
-                </div>
-
-                <form id="scan-form" method="POST" action="{{ route('scan.process') }}">
-                    @csrf
-                    <input type="hidden" name="qr_code" id="qr_code">
-                </form>
-
-
-                <div class="mt-3 text-center">
-                    <small class="text-muted" id="scanStatus">
-                        Kamera belum aktif
+                {{-- HEADER --}}
+                <div class="card-header bg-gradient-primary text-white text-center py-3">
+                    <h6 class="mb-0">Scan QR Inventaris</h6>
+                    <small class="opacity-8">
+                        Arahkan kamera ke QR Code
                     </small>
                 </div>
 
-                <div class="mt-3">
-                    <input type="text" class="form-control" id="outputQR" readonly>
+                {{-- BODY --}}
+                <div class="card-body p-4">
+
+                    {{-- BUTTON CAMERA --}}
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-dark" id="openCamera">
+                            <i class="fas fa-camera me-2"></i>Aktifkan Kamera
+                        </button>
+                    </div>
+
+                    {{-- SCAN AREA --}}
+                    <div class="scan-wrapper mb-3">
+                        <div id="reader"
+                             class="rounded-4 overflow-hidden"
+                             style="width:100%; height:280px; background:#f4f6f8;">
+                        </div>
+                    </div>
+
+                    {{-- FORM SCAN --}}
+                    <form id="scan-form" method="POST" action="{{ route('scan.process') }}">
+                        @csrf
+                        <input type="hidden" name="qr_code" id="qr_code">
+                    </form>
+
+                    {{-- STATUS --}}
+                    <div class="text-center mb-3">
+                        <span class="badge bg-secondary px-3 py-2" id="scanStatus">
+                            Kamera belum aktif
+                        </span>
+                    </div>
+
+                    {{-- OUTPUT --}}
+                    <input type="text"
+                           class="form-control text-center"
+                           id="outputQR"
+                           placeholder="Hasil QR akan muncul di sini"
+                           readonly>
+
+                    {{-- MANUAL INPUT --}}
+                    <hr class="my-4">
+
+                    <form method="POST" action="{{ route('scan.process') }}">
+                        @csrf
+                        <label class="form-label fw-semibold">
+                            Input Manual Kode QR
+                        </label>
+                        <div class="input-group">
+                            <input type="text"
+                                   name="qr_code"
+                                   class="form-control"
+                                   placeholder="QR-ALT-XXXX / QR-BHN-XXXX"
+                                   required>
+                            <button class="btn btn-primary">
+                                Proses
+                            </button>
+                        </div>
+                    </form>
+
                 </div>
 
             </div>
+
         </div>
     </div>
 
@@ -65,7 +109,7 @@
 
 <script>
 let html5Qr;
-let isScanning = false; // 🔒 KUNCI
+let isScanning = false;
 
 document.getElementById('openCamera').addEventListener('click', () => {
 
@@ -83,20 +127,16 @@ document.getElementById('openCamera').addEventListener('click', () => {
         },
         async (decodedText) => {
 
-            if (isScanning) return; // 🔥 STOP DOUBLE SCAN
+            if (isScanning) return;
             isScanning = true;
 
             document.getElementById('outputQR').value = decodedText;
             document.getElementById('scanStatus').innerText = "QR terbaca, memproses...";
 
-            // stop kamera DULU dan tunggu
             await html5Qr.stop();
             html5Qr.clear();
 
-            // isi form
             document.getElementById('qr_code').value = decodedText;
-
-            // submit
             document.getElementById('scan-form').submit();
         }
     ).catch(err => {

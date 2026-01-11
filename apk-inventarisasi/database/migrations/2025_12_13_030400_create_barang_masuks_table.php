@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('merk')->nullable();
             $table->string('nomor_dokumen')->nullable(); // untuk seri alat
             //BAHAN
-            $table->integer('jumlah');
+            $table->integer('jumlah')->nullable();
             $table->string('satuan')->nullable();
 
             $table->string('sumber');

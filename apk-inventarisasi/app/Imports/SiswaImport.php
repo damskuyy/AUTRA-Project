@@ -18,6 +18,7 @@ class SiswaImport implements ToCollection, WithHeadingRow
 
             Siswa::updateOrCreate(
                 [
+                    'nis'  => $row['nis'],
                     'nama' => trim($row['nama']),
                     'kelas' => trim($row['kelas']),
                 ],

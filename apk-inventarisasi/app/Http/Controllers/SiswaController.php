@@ -8,19 +8,20 @@ use App\Imports\SiswaImport;
 use App\Models\Siswa;
 use Carbon\Carbon;
 
-
 class SiswaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * LIST SISWA
      */
-    public function index( Request $request)
+    public function index(Request $request)
     {
         $query = Siswa::query();
 
         if ($request->search) {
-            $query->where('nama', 'like', '%' . $request->search . '%')
-                ->orWhere('kelas', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->search . '%')
+                  ->orWhere('kelas', 'like', '%' . $request->search . '%');
+            });
         }
 
         $siswas = $query
@@ -30,13 +31,16 @@ class SiswaController extends Controller
             ->withQueryString();
 
         $kelasList = Siswa::select('kelas')
-        ->distinct()
-        ->orderBy('kelas')
-        ->pluck('kelas');
+            ->distinct()
+            ->orderBy('kelas')
+            ->pluck('kelas');
 
         return view('siswa.index', compact('siswas', 'kelasList'));
     }
 
+    /**
+     * IMPORT EXCEL
+     */
     public function import(Request $request)
     {
         $request->validate([
@@ -45,20 +49,13 @@ class SiswaController extends Controller
 
         Excel::import(new SiswaImport, $request->file('file'));
 
-        return redirect()->route('siswa.index')
+        return redirect()
+            ->route('siswa.index')
             ->with('success', 'Data siswa berhasil diimport');
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * TAMBAH SISWA
      */
     public function store(Request $request)
     {
@@ -68,83 +65,25 @@ class SiswaController extends Controller
         ]);
 
         Siswa::create([
-            'nama'        => $request->nama,
-            'kelas'       => $request->kelas,
-            'total_poin'  => 0,
-            'is_active'   => true,
-            'is_banned'   => false,
-            'banned_until'=> null,
-            'alasan_ban'  => null,
+            'nis'          => $request->nis,
+            'nama'         => $request->nama,
+            'kelas'        => $request->kelas,
+            'is_active'    => true,
+            'is_banned'    => false,
+            'banned_until' => null,
+            'alasan_ban'   => null,
         ]);
 
-        return redirect()->back()->with('success', 'Siswa berhasil ditambahkan');
-    }
-
-    
-    public function destroy(string $id)
-    {
-        Siswa::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Siswa berhasil dihapus');
-    }
-
-    public function ban(Request $request, Siswa $siswa)
-    {
-        $request->validate([
-            'banned_until' => 'required|date|after:today',
-            'alasan_ban'   => 'required|string',
-        ]);
-
-        $siswa->update([
-            'is_banned'    => true,
-            'banned_until' => $request->banned_until,
-            'alasan_ban'   => $request->alasan_ban,
-        ]);
-
-        return back()->with('success', 'Siswa berhasil dibanned');
-    }
-
-    public function unban(Siswa $siswa)
-    {
-        // 🔥 reset poin HANYA kalau sudah >= 3
-        if ($siswa->total_poin >= 3) {
-            $siswa->total_poin = 0;
-        }
-
-        $siswa->is_banned = false;
-        $siswa->banned_until = null;
-        $siswa->alasan_ban = null;
-
-        $siswa->save();
-
-        return back()->with('success', 'Siswa berhasil di-unban');
-    }
-
-
-
-
-        
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return back()->with('success', 'Siswa berhasil ditambahkan');
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * UPDATE SISWA
      */
     public function update(Request $request, string $id)
     {
         $request->validate([
+            'nis'   => 'required|string|max:30|unique:siswas,nis',
             'nama'  => 'required|string|max:255',
             'kelas' => 'required|string|max:100',
         ]);
@@ -152,17 +91,51 @@ class SiswaController extends Controller
         $siswa = Siswa::findOrFail($id);
 
         $siswa->update([
+            'nis'   => $request->nis,
             'nama'  => $request->nama,
             'kelas' => $request->kelas,
         ]);
 
-        return redirect()->route('siswa.index')
+        return redirect()
+            ->route('siswa.index')
             ->with('success', 'Data siswa berhasil diperbarui');
     }
 
+    /**
+     * HAPUS SISWA
+     */
+    public function destroy(string $id)
+    {
+        Siswa::findOrFail($id)->delete();
+
+        return back()->with('success', 'Siswa berhasil dihapus');
+    }
 
     /**
-     * Remove the specified resource from storage.
+     * BAN MANUAL (DEFAULT 3 HARI)
      */
-    
+    public function ban(Siswa $siswa)
+    {
+        $siswa->update([
+            'is_banned'    => true,
+            'banned_until' => now()->addDays(3),
+            'alasan_ban'   => 'Dibanned manual oleh admin',
+        ]);
+
+        return back()->with('success', 'Siswa berhasil dibanned selama 3 hari');
+    }
+
+    /**
+     * UNBAN MANUAL
+     */
+    public function unban(Siswa $siswa)
+    {
+        $siswa->update([
+            'is_banned'    => false,
+            'banned_until' => null,
+            'alasan_ban'   => null,
+        ]);
+
+        return back()->with('success', 'Siswa berhasil di-unban');
+    }
 }

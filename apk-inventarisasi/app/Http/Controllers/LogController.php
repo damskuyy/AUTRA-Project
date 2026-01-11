@@ -18,104 +18,102 @@ class LogController extends Controller
      */
     public function index(Request $request)
     {
-        $from = $request->from_date;
-        $to   = $request->to_date;
-        $siswa = $request->siswa;
-        $kelas = $request->kelas;
-        $barang = $request->barang;
-        $jenis = $request->jenis;
+        $from   = $request->from_date;
+        $to     = $request->to_date;
+        $siswa  = $request->siswa;
+        $kelas  = $request->kelas;
+        $jenis  = $request->jenis;
+
+        // default kosong
+        $barangMasuks  = collect();
+        $peminjamans   = collect();
+        $pengembalians = collect();
+        $pemakaians    = collect();
+        $pelanggarans  = collect();
 
         // ================= BARANG MASUK =================
-        $barangMasuks = BarangMasuk::with(['admin', 'ruangan'])
-            ->when($from && $to, fn($q) =>
-                $q->whereBetween('tanggal_masuk', [$from, $to])
-            )
-            ->when($barang, fn($q) =>
-                $q->where('nama_barang', 'like', "%$barang%")
-            )
-            ->latest()
-            ->get();
+        if (!$jenis || $jenis === 'barang_masuk') {
+            $barangMasuks = BarangMasuk::with(['admin', 'ruangan'])
+                ->when($from && $to, fn ($q) =>
+                    $q->whereBetween('tanggal_masuk', [$from, $to])
+                )
+                ->latest()
+                ->get();
+        }
 
         // ================= PEMINJAMAN =================
-        $peminjamans = Peminjaman::with(['inventory.barangMasuk', 'siswa', 'admin'])
-            ->whereHas('pengembalian') // hanya selesai
-            ->when($from && $to, fn($q) =>
-                $q->whereBetween('created_at', [$from, $to])
-            )
-            ->when($siswa, fn($q) =>
-                $q->whereHas('siswa', fn($s) =>
-                    $s->where('nama', 'like', "%$siswa%")
+        if (!$jenis || $jenis === 'peminjaman') {
+            $peminjamans = Peminjaman::with(['inventory.barangMasuk', 'siswa', 'admin'])
+                ->whereHas('pengembalian')
+                ->when($from && $to, fn ($q) =>
+                    $q->whereBetween('created_at', [$from, $to])
                 )
-            )
-            ->when($kelas, fn($q) =>
-                $q->whereHas('siswa', fn($s) =>
-                    $s->where('kelas', $kelas)
+                ->when($siswa, fn ($q) =>
+                    $q->whereHas('siswa', fn ($s) =>
+                        $s->where('nama', 'like', "%$siswa%")
+                    )
                 )
-            )
-            ->when($barang, fn($q) =>
-                $q->whereHas('inventory.barangMasuk', fn($b) =>
-                    $b->where('nama_barang', 'like', "%$barang%")
+                ->when($kelas, fn ($q) =>
+                    $q->whereHas('siswa', fn ($s) =>
+                        $s->where('kelas', $kelas)
+                    )
                 )
-            )
-            ->latest()
-            ->get();
+                ->latest()
+                ->get();
+        }
 
         // ================= PENGEMBALIAN =================
-        $pengembalians = Pengembalian::with(['peminjaman.inventory.barangMasuk','peminjaman.siswa','admin'])
-            ->when($from && $to, fn($q) =>
-                $q->whereBetween('created_at', [$from, $to])
-            )
-            ->latest()
-            ->get();
+        if (!$jenis || $jenis === 'pengembalian') {
+            $pengembalians = Pengembalian::with([
+                    'peminjaman.inventory.barangMasuk',
+                    'peminjaman.siswa',
+                    'admin'
+                ])
+                ->when($from && $to, fn ($q) =>
+                    $q->whereBetween('created_at', [$from, $to])
+                )
+                ->latest()
+                ->get();
+        }
 
-        // ================= PEMAKAIAN BAHAN (LEBIH DARI 1 HARI) =================
-        $pemakaians = PemakaianBahan::with(['inventory.barangMasuk', 'siswa', 'admin'])
-        ->when($from && $to, fn($q) =>
-            $q->whereBetween('created_at', [$from, $to])
-        )
-        ->when($siswa, fn($q) =>
-            $q->whereHas('siswa', fn($s) =>
-                $s->where('nama', 'like', "%$siswa%")
-            )
-        )
-        ->when($kelas, fn($q) =>
-            $q->whereHas('siswa', fn($s) =>
-                $s->where('kelas', $kelas)
-            )
-        )
-        ->when($barang, fn($q) =>
-            $q->whereHas('inventory.barangMasuk', fn($b) =>
-                $b->where('nama_barang', 'like', "%$barang%")
-            )
-        )
-        ->latest()
-        ->get();
+        // ================= PEMAKAIAN BAHAN =================
+        if (!$jenis || $jenis === 'pemakaian') {
+            $pemakaians = PemakaianBahan::with(['inventory.barangMasuk', 'siswa', 'admin'])
+                ->when($from && $to, fn ($q) =>
+                    $q->whereBetween('created_at', [$from, $to])
+                )
+                ->when($siswa, fn ($q) =>
+                    $q->whereHas('siswa', fn ($s) =>
+                        $s->where('nama', 'like', "%$siswa%")
+                    )
+                )
+                ->when($kelas, fn ($q) =>
+                    $q->whereHas('siswa', fn ($s) =>
+                        $s->where('kelas', $kelas)
+                    )
+                )
+                ->latest()
+                ->get();
+        }
 
         // ================= PELANGGARAN =================
-        $pelanggarans = Pelanggaran::with(['siswa','admin'])
-            ->when($from && $to, fn($q) =>
-                $q->whereBetween('created_at', [$from, $to])
-            )
-            ->when($siswa, fn($q) =>
-                $q->whereHas('siswa', fn($s) =>
-                    $s->where('nama', 'like', "%$siswa%")
+        if (!$jenis || $jenis === 'banned') {
+            $pelanggarans = Pelanggaran::with(['siswa', 'admin'])
+                ->when($from && $to, fn ($q) =>
+                    $q->whereBetween('created_at', [$from, $to])
                 )
-            )
-            ->when($kelas, fn($q) =>
-                $q->whereHas('siswa', fn($s) =>
-                    $s->where('kelas', $kelas)
+                ->when($siswa, fn ($q) =>
+                    $q->whereHas('siswa', fn ($s) =>
+                        $s->where('nama', 'like', "%$siswa%")
+                    )
                 )
-            )
-            ->latest()
-            ->get();
-
-        // ================= FILTER JENIS =================
-        if ($jenis) {
-            $barangMasuks = $jenis === 'barang_masuk' ? $barangMasuks : collect();
-            $peminjamans  = $jenis === 'peminjaman' ? $peminjamans : collect();
-            $pengembalians= $jenis === 'pengembalian' ? $pengembalians : collect();
-            $pemakaians    = $jenis === 'pemakaian' ? $pemakaians : collect();
-            $pelanggarans = $jenis === 'banned' ? $pelanggarans : collect();
+                ->when($kelas, fn ($q) =>
+                    $q->whereHas('siswa', fn ($s) =>
+                        $s->where('kelas', $kelas)
+                    )
+                )
+                ->latest()
+                ->get();
         }
 
         $kelasList = \App\Models\Siswa::select('kelas')->distinct()->pluck('kelas');
@@ -124,13 +122,11 @@ class LogController extends Controller
             'barangMasuks',
             'peminjamans',
             'pengembalians',
-            'pelanggarans',
             'pemakaians',
+            'pelanggarans',
             'kelasList'
         ));
     }
-
-
 
     /**
      * Show the form for creating a new resource.

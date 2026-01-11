@@ -70,14 +70,14 @@ export default function HeroSection() {
                 style={{
                   background: 'hsl(var(--yellow-warm))',
                   borderRadius: '18px',
-                  boxShadow: '0 18px 40px rgba(0,0,0,0.22)',
+                  boxShadow: '0 18px 40px rgba(49, 48, 48, 0.22)',
                   width: 'min(520px, 100%)',
-                  border: '6px solid rgba(0,0,0,0.04)'
+                  border: '6px solid rgba(229, 121, 32, 0.85)'
                 }}
               >
                 <h1
-                  className="text-4xl md:text-5xl font-extrabold text-center md:text-left"
-                  style={{ color: 'hsl(var(--brown-dark))', fontFamily: 'Impact, sans-serif', letterSpacing: '0.04em', textShadow: '2px 2px 0 rgba(0,0,0,0.06)' }}
+                  className="text-6xl md:text-7xl font-extrabold text-center md:text-left"
+                  style={{ color: 'hsl(var(--brown-dark))', fontFamily: 'Impact, sans-serif', letterSpacing: '0.05em', textShadow: '2px 2px 0 rgba(0,0,0,0.06)' }}
                 >
                   WELCOME
                 </h1>

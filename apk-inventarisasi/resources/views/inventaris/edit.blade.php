@@ -60,7 +60,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Status</label>
                         <select name="status" class="form-select" required>
-                            @foreach (['TERSEDIA','DIPINJAM','RUSAK','HILANG','DIPERBAIKI'] as $st)
+                            @foreach (['TERSEDIA','DIPINJAM','HILANG','DIPERBAIKI'] as $st)
                                 <option value="{{ $st }}" 
                                     {{ $inventaris->status === $st ? 'selected' : '' }}>
                                     {{ $st }}

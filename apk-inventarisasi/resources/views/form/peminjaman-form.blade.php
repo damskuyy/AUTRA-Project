@@ -15,54 +15,53 @@
 
 @section('main')
 <div class="container-fluid py-4">
+    <div class="card shadow border-0">
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <p class="text-muted small">
-                Form peminjaman alat berdasarkan hasil scan QR
-            </p>
-        </div>
-    </div>
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
+        {{-- HEADER --}}
+        <div class="card-header bg-primary text-white py-3">
             <h6 class="mb-0">
-                <i class="fas fa-tools me-2"></i>Peminjaman Alat
+                <i class="fas fa-tools me-2"></i>Data Peminjaman Alat
             </h6>
         </div>
 
-        <div class="card-body">
+        <div class="card-body p-4">
 
             {{-- INFO ALAT --}}
-            <h6 class="fw-bold mb-3">Informasi Alat</h6>
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <small class="text-muted">Nama Alat</small>
-                    <div class="fw-bold">{{ $inventory->barangMasuk->nama_barang }}</div>
-                </div>
+            <div class="bg-light rounded p-3 mb-4">
+                <h6 class="fw-bold mb-3">Informasi Alat</h6>
 
-                <div class="col-md-4">
-                    <small class="text-muted">Merk</small>
-                    <div class="fw-bold">
-                        {{ $inventory->barangMasuk->merk ?? '-' }}
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <small class="text-muted">Nama Alat</small>
+                        <div class="fw-semibold">
+                            {{ $inventory->barangMasuk->nama_barang }}
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-4">
-                    <small class="text-muted">Kode Inventaris</small>
-                    <div class="fw-bold">{{ $inventory->nomor_inventaris ?? '-' }}</div>
-                </div>
-                <div class="col-md-4">
-                    <small class="text-muted">Status</small>
-                    <div class="fw-bold text-success">
-                        {{ $inventory->status }}
+                    <div class="col-md-3">
+                        <small class="text-muted">Merk</small>
+                        <div class="fw-semibold">
+                            {{ $inventory->barangMasuk->merk ?? '-' }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <small class="text-muted">Kode Inventaris</small>
+                        <div class="fw-semibold">
+                            {{ $inventory->nomor_inventaris ?? '-' }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <small class="text-muted">Status</small>
+                        <div class="fw-bold text-success">
+                            {{ $inventory->status }}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <hr>
-
-            {{-- JIKA SEDANG DIPINJAM --}}
+            {{-- JIKA DIPINJAM --}}
             @if($peminjamanAktif)
                 <div class="alert alert-danger">
                     <strong>Alat sedang dipinjam</strong><br>
@@ -73,14 +72,15 @@
             {{-- FORM --}}
             <form action="{{ route('peminjaman.store') }}" method="POST">
                 @csrf
-
                 <input type="hidden" name="inventory_id" value="{{ $inventory->id }}">
 
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label">Nama Siswa</label>
-                        <select name="siswa_id" class="form-select select-siswa" required>
+                        <label class="form-label fw-semibold">Nama Siswa</label>
+                        <select name="siswa_id"
+                                class="form-select select-siswa"
+                                required>
                             <option value="">-- Pilih siswa --</option>
                             @foreach ($siswas as $siswa)
                                 <option value="{{ $siswa->id }}">
@@ -88,39 +88,40 @@
                                 </option>
                             @endforeach
                         </select>
-
                     </div>
 
                     <div class="col-md-3">
-                        <label class="form-label">Jam Peminjaman</label>
-                        <input type="text" class="form-control"
+                        <label class="form-label fw-semibold">Jam Peminjaman</label>
+                        <input type="text" class="form-control bg-light"
                                value="{{ now('Asia/Jakarta')->format('H:i') }}" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label class="form-label">Jumlah Dipinjam</label>
-                        <input
-                            type="number"
-                            name="quantity"
-                            class="form-control"
-                            min="1"
-                            max="{{ $inventory->stok }}"
-                            placeholder="Jumlah"
-                            required>
+                        <label class="form-label fw-semibold">Jumlah Dipinjam</label>
+                        <input type="number"
+                               name="quantity"
+                               class="form-control"
+                               min="1"
+                               max="{{ $inventory->stok }}"
+                               required>
                         <small class="text-muted">
                             Stok tersedia: {{ $inventory->stok }}
                         </small>
                     </div>
 
-
                     <div class="col-md-3">
-                        <label class="form-label">Estimasi Kembali</label>
-                        <input type="time" name="waktu_kembali_aktual" class="form-control" required>
+                        <label class="form-label fw-semibold">Estimasi Kembali</label>
+                        <input type="time"
+                               name="waktu_kembali_aktual"
+                               class="form-control"
+                               required>
                     </div>
 
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">Kondisi Saat Dipinjam</label>
-                        <select name="kondisi_pinjam" class="form-select" required>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Kondisi Saat Dipinjam</label>
+                        <select name="kondisi_pinjam"
+                                class="form-select"
+                                required>
                             <option value="">-- Pilih kondisi --</option>
                             <option value="BAIK">Baik</option>
                             <option value="RUSAK_RINGAN">Rusak Ringan</option>
@@ -128,17 +129,13 @@
                         </select>
                     </div>
 
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label">Catatan Peminjaman</label>
-                        <textarea
-                            name="catatan_pinjam"
-                            class="form-control"
-                            rows="2"
-                            placeholder="Catatan kondisi / keperluan"
-                        ></textarea>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Catatan Peminjaman</label>
+                        <textarea name="catatan_pinjam"
+                                  class="form-control"
+                                  rows="2"
+                                  placeholder="Catatan kondisi / keperluan"></textarea>
                     </div>
-
-
 
                 </div>
 
@@ -153,7 +150,6 @@
 
         </div>
     </div>
-
 </div>
 
 @push('scripts')

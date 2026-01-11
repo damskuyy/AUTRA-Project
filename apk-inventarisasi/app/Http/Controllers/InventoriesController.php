@@ -15,9 +15,10 @@ class InventoriesController extends Controller
 {
     public function index()
     {
-        $alat = Inventory::with('barangMasuk')->whereHas('barangMasuk', function($q) {
-            $q->where('jenis_barang', 'alat');
-        })->get();
+        $alat = Inventory::with('barangMasuk')
+            ->whereHas('barangMasuk', fn($q) => $q->where('jenis_barang', 'alat'))
+            ->get()
+            ->groupBy(fn($item) => $item->barangMasuk->nama_barang);
         $bahan = Inventory::with('barangMasuk')->whereHas('barangMasuk', function($q) {
             $q->where('jenis_barang', 'bahan');
         })->get();
@@ -90,32 +91,42 @@ class InventoriesController extends Controller
 
     public function destroy(Inventory $inventaris)
     {
-        // Cek apakah inventory masih dipinjam
-        $activePeminjaman = $inventaris->peminjamans()->whereNull('waktu_kembali_aktual')->exists();
-        
+        $activePeminjaman = $inventaris->peminjamans()
+            ->whereNull('waktu_kembali_aktual')
+            ->exists();
+
         if ($activePeminjaman) {
-            return redirect()->route('inventaris.index')->with('error', 'Tidak dapat menghapus inventaris yang masih dalam peminjaman aktif.');
+            return redirect()->route('inventaris.index')
+                ->with('error', 'Tidak dapat menghapus inventaris yang masih dalam peminjaman aktif.');
         }
 
-        try {
-            $inventaris->delete();
-            return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('inventaris.index')->with('error', 'Gagal menghapus inventaris: ' . $e->getMessage());
-        }
+        $inventaris->delete();
+
+        return redirect()->route('inventaris.index')
+            ->with('success', 'Inventaris berhasil dihapus.');
     }
 
-    public function generateQr(Inventory $inventaris)
+
+    public function generateQrBulk(BarangMasuk $barangMasuk)
     {
-        // Cek jenis barang melalui relasi barangMasuk
-        $prefix = ($inventaris->barangMasuk->jenis_barang == 'alat') ? 'QR-ALT' : 'QR-BHN';
-        
-        // Generate kode unik: Prefix - Tahun - RandomString - ID
-        $inventaris->kode_qr_jurusan = $prefix . '-' . date('Y') . '-' . strtoupper(Str::random(5)) . '-' . $inventaris->id;
-        $inventaris->save();
+        $prefix = $barangMasuk->jenis_barang === 'alat'
+            ? 'QR-ALT-'
+            : 'QR-BHN-';
 
-        return redirect()->route('inventaris.show', $inventaris->id)->with('success', 'QR code berhasil diperbarui.');
+        $inventaris = Inventory::where('barang_masuk_id', $barangMasuk->id)->get();
+
+        foreach ($inventaris as $item) {
+            if (!$item->kode_qr_jurusan) {
+                $item->update([
+                    'kode_qr_jurusan' => $prefix . strtoupper(Str::random(10))
+                ]);
+            }
+        }
+
+        return back()->with('success', 'QR berhasil digenerate');
     }
+
+
 
     // public function show(Inventory $inventaris)
     // {

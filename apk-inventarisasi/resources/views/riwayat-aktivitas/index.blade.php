@@ -75,7 +75,7 @@
 
                 {{-- COLLAPSE FILTER --}}
                 
-                <div id="filterRiwayat" class="collapse {{ request()->query() ? 'show' : '' }}">
+                <div id="filterRiwayat" class="collapse {{ request()->query() ? 'show' : ""}}">
                     <div class="card-body border-top">
                         <form method="GET" action="{{ route('riwayat-aktivitas.index') }}">
                             <div class="row g-3">
