@@ -56,21 +56,15 @@ All colors MUST be HSL.
     --orange-bright: 35 100% 50%;
     --yellow-warm: 40 100% 60%;
     --cream: 40 60% 95%;
+    --white: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -114,8 +108,14 @@ All colors MUST be HSL.
 }
 
 @layer base {
+  /* REMOVED: Universal border that was causing issues */
   * {
-    border: 1px solid hsl(var(--border));
+    /* border: 1px solid hsl(var(--border)); */
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
@@ -166,3 +166,380 @@ All colors MUST be HSL.
   color: #888;
 }
 
+/* ============================================
+   SKILLS SECTION ANIMATIONS
+   ============================================ */
+
+.skill-card {
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.skill-card-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.skill-card-visible .skill-bar {
+  animation: expandBar 1s ease-out 0.3s forwards;
+}
+
+@keyframes expandBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.skill-header {
+  animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.pulse-dot {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+/* Line Clamp Utilities */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================
+   CHROMA GRID STYLES
+   ============================================ */
+
+/* ChromaGrid specific fixes for backdrop-filter support */
+@supports (backdrop-filter: grayscale(1)) or (-webkit-backdrop-filter: grayscale(1)) {
+  .chroma-grid-backdrop {
+    backdrop-filter: grayscale(1) brightness(0.78);
+    -webkit-backdrop-filter: grayscale(1) brightness(0.78);
+  }
+}
+
+/* Fallback for browsers that don't support backdrop-filter */
+@supports not ((backdrop-filter: grayscale(1)) or (-webkit-backdrop-filter: grayscale(1))) {
+  .chroma-grid-backdrop {
+    filter: grayscale(1) brightness(0.78);
+    -webkit-filter: grayscale(1) brightness(0.78);
+  }
+}
+
+/* Optimize image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Smooth transitions for all interactive elements */
+article {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Performance optimizations */
+.chroma-grid-container {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Ensure cards don't break layout on smaller screens */
+@media (max-width: 768px) {
+  article {
+    width: 280px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  article {
+    width: 250px !important;
+  }
+}
+
+/* ============================================
+   STAFF SECTION HORIZONTAL SCROLL
+   ============================================ */
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prevent image dragging */
+.staff-image {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Staff Card Animations */
+.staff-card {
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.staff-card-visible .staff-card-bar {
+  animation: expandBarStaff 1s ease-out 0.3s forwards;
+}
+
+@keyframes expandBarStaff {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Hover Lift Effect for Staff Cards */
+.hover-lift-staff {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift-staff:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effect for image - Remove grayscale and scale */
+.hover-lift-staff:hover .staff-image {
+  filter: grayscale(0%) !important;
+  transform: scale(1.05);
+}
+
+/* Header Animation */
+.staff-header {
+  animation: fadeInScale 0.6s ease-out;
+}
+
+/* Smooth scrolling for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .scrollbar-hide {
+    scroll-snap-type: x mandatory;
+  }
+  
+  .staff-card {
+    scroll-snap-align: center;
+  }
+}
+
+/* Mobile adjustments for Staff Section */
+@media (max-width: 768px) {
+  .staff-card {
+    width: 280px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .staff-card {
+    width: 250px !important;
+  }
+}
+
+/* ============================================
+   VIDEO SECTION STYLES
+   ============================================ */
+
+/* Video container animation */
+.video-container {
+  animation: videoFadeIn 0.8s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4) !important;
+}
+
+@keyframes videoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive iframe */
+.video-container iframe {
+  transition: opacity 0.3s ease;
+}
+
+/* Loading state */
+.video-container iframe:not([src]) {
+  opacity: 0;
+}
+
+/* Mobile video adjustments */
+@media (max-width: 768px) {
+  .video-container {
+    padding: 4px;
+  }
+}
+
+/* ============================================
+   PRESTASI SECTION STYLES
+   ============================================ */
+
+/* Header Animation */
+.prestasi-header {
+  animation: fadeInScale 0.6s ease-out;
+}
+
+/* Prestasi Card Animations */
+@keyframes prestasiCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card spacing for year badge */
+.prestasi-card {
+  margin-top: 8rem;
+}
+
+/* Hover Lift Effect for Prestasi Cards */
+.hover-lift-prestasi {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift-prestasi:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* Year Badge Animation on Hover */
+.prestasi-card:hover .year-badge {
+  animation: yearBadgePulse 0.6s ease-in-out;
+}
+
+@keyframes yearBadgePulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+}
+
+/* Smooth transitions for card content */
+.prestasi-card h3 {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.prestasi-card:hover h3 {
+  transform: scale(1.03);
+}
+
+/* Location icon animation */
+.prestasi-card svg {
+  transition: transform 0.3s ease;
+}
+
+.prestasi-card:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Mobile adjustments for Prestasi */
+@media (max-width: 1024px) {
+  .prestasi-card {
+    margin-top: 6.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .prestasi-card {
+    margin-top: 7rem;
+  }
+  
+  .prestasi-header h2 {
+    font-size: 1.875rem;
+  }
+  
+  .hover-lift-prestasi {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  .prestasi-card {
+    margin-top: 7rem;
+  }
+  
+  /* Smaller year badge on mobile */
+  .prestasi-card .year-badge {
+    width: 80px !important;
+    height: 80px !important;
+    border-width: 6px !important;
+  }
+  
+  .prestasi-card .year-badge span {
+    font-size: 1.75rem !important;
+  }
+  
+  .hover-lift-prestasi {
+    min-height: 240px;
+  }
+}

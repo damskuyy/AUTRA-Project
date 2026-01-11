@@ -2,6 +2,7 @@ import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import InformationSection from "@/components/InformationSection";
 import SkillsSection from "@/components/SkillsSection";
+import PrestasiSection from "@/components/PrestasiSection";
 import StaffSection from "@/components/StaffSection";
 import CareerSection from "@/components/CareerSection";
 import Footer from "@/components/Footer";
@@ -17,6 +18,7 @@ export default function Page() {
       <HeroSection />
       <InformationSection />
       <SkillsSection />
+      {/* <PrestasiSection /> */}
       <StaffSection />
       <CareerSection />
       <Footer />

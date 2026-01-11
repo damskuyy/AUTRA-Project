@@ -6,17 +6,37 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function CareerSection() {
   const careers = [
-    { title: "Control Engineer", salary: "Rp7.000.000 – Rp22.000.000 / bulan" },
-    { title: "PLC Programmer", salary: "Rp6.500.000 – Rp25.000.000 / bulan" },
-    { title: "SCADA Engineer", salary: "Rp7.000.000 – Rp23.000.000 / bulan" },
+    { title: "Control Engineer", salary: "Rp7.000.000 – Rp22.000.000 / bulan", image: "/karir/controller.png" },
+    { title: "PLC Programmer", salary: "Rp6.500.000 – Rp25.000.000 / bulan", image: "/karir/plc.png" },
+    { title: "SCADA Engineer", salary: "Rp7.000.000 – Rp23.000.000 / bulan", image: "/karir/scada.png" },
 
-    { title: "Electrical Engineer (Industri)", salary: "Rp6.000.000 – Rp17.000.000 / bulan" },
-    { title: "Power Plant Technician", salary: "Rp6.500.000 – Rp19.000.000 / bulan" },
-    { title: "Energy Engineer", salary: "Rp7.000.000 – Rp20.000.000 / bulan" },
+    {
+      title: "Electrical Engineer (Industri)",
+      salary: "Rp6.000.000 – Rp17.000.000 / bulan",
+      image: "/karir/electrical.png",
+    },
+    {
+      title: "Power Plant Technician",
+      salary: "Rp6.500.000 – Rp19.000.000 / bulan",
+      image: "/karir/powerplan.png",
+    },
+    { title: "Energy Engineer", salary: "Rp7.000.000 – Rp20.000.000 / bulan", image: "/karir/energy.png" },
 
-    { title: "Robotics Engineer / Technician", salary: "Rp6.000.000 – Rp20.000.000 / bulan" },
-    { title: "Mechatronics Engineer", salary: "Rp6.500.000 – Rp18.000.000 / bulan" },
-    { title: "Industrial IoT Engineer", salary: "Rp8.000.000 – Rp25.000.000 / bulan" },
+    {
+      title: "Robotics Engineer / Technician",
+      salary: "Rp6.000.000 – Rp20.000.000 / bulan",
+      image: "/karir/roboticts.png",
+    },
+    {
+      title: "Mechatronics Engineer",
+      salary: "Rp6.500.000 – Rp18.000.000 / bulan",
+      image: "/karir/mechatronics.png",
+    },
+    {
+      title: "Industrial IoT Engineer",
+      salary: "Rp8.000.000 – Rp25.000.000 / bulan",
+      image: "/karir/IoT.png",
+    },
   ];
 
   const itemsPerPage = 3;
@@ -29,16 +49,35 @@ export default function CareerSection() {
       className="py-16 relative overflow-hidden"
       style={{ background: "hsl(var(--brown-dark))" }}
     >
+      <div 
+        className="absolute top-10 right-10 w-72 h-72 rounded-full opacity-5"
+        style={{ background: 'hsl(var(--yellow-warm))' }}
+      />
+      <div 
+        className="absolute bottom-10 left-10 w-96 h-96 rounded-full opacity-5"
+        style={{ background: 'hsl(var(--orange-bright))' }}
+      />
       <div className="container mx-auto px-6">
-
         {/* HEADER */}
-        <div className="text-center mb-6"> {/* dikurangi mb dari 12 -> 6 agar lebih dekat */}
-          <div className="inline-block bg-orange-bright rounded-3xl px-12 py-6 mb-2"> {/* mb 4 -> 2 */}
-            <h2 className="text-4xl font-black text-white">Career Path</h2>
-            <p className="text-xl font-bold text-white">About Majors</p>
+        <div className="text-center mb-12">
+          <div
+            className="inline-block rounded-full px-12 py-4 shadow-2xl staff-header"
+            style={{
+              background: "hsl(var(--yellow-warm))",
+              boxShadow: "0 12px 32px rgba(0,0,0,0.25)",
+            }}
+          >
+            <h2
+              className="text-3xl md:text-4xl font-black tracking-tight"
+              style={{ color: "hsl(var(--brown-dark))" }}
+            >
+              Career Path
+            </h2>
           </div>
-
-          <p className="text-white max-w-3xl mx-auto text-lg mt-2"> {/* mt 4 -> 2 */}
+          <p
+            className="mt-6 text-lg max-w-2xl mx-auto"
+            style={{ color: "hsl(var(--cream))" }}
+          >
             Peluang kariermu luas banget! Nih, ada beberapa pilihan karier keren
             buat kamu yang siap ahli otomasi masa depan.
           </p>
@@ -46,14 +85,11 @@ export default function CareerSection() {
 
         {/* SLIDER */}
         <div className="relative max-w-6xl mx-auto">
-
           {/* BUTTON LEFT */}
           <button
             onClick={() => setPage(page - 1)}
             disabled={page === 0}
-            className="absolute left-[-60px] top-1/2 -translate-y-1/2
-                       bg-orange-bright text-white p-3 rounded-full shadow-lg
-                       disabled:opacity-40"
+            className="absolute left-[-60px] top-1/2 -translate-y-1/2 bg-orange-bright text-white p-3 rounded-full shadow-lg border-2 border-white disabled:opacity-40"
           >
             <ChevronLeft size={28} />
           </button>
@@ -63,7 +99,7 @@ export default function CareerSection() {
             onClick={() => setPage(page + 1)}
             disabled={page === totalPages - 1}
             className="absolute right-[-60px] top-1/2 -translate-y-1/2
-                       bg-orange-bright text-white p-3 rounded-full shadow-lg
+                       bg-orange-bright text-white p-3 rounded-full shadow-lg border-2 border-white
                        disabled:opacity-40"
           >
             <ChevronRight size={28} />
@@ -88,12 +124,14 @@ export default function CareerSection() {
                     .map((career, index) => (
                       <Card
                         key={index}
-                        className="bg-muted border border-orange-bright
-                                   rounded-3xl shadow-md"
+                        className="bg-muted border border-orange-bright rounded-3xl shadow-md"
                       >
                         <div className="p-4">
-                          <div className="bg-background rounded-2xl h-56 mb-4 shadow-sm" />
-
+                          <img
+                            src={career.image}
+                            alt={career.title}
+                            className="bg-background rounded-2xl h-56 mb-4 shadow-sm object-cover w-full"
+                          />
                           <div className="text-center">
                             <p className="text-sm font-medium text-foreground">
                               ({career.title})
@@ -112,7 +150,9 @@ export default function CareerSection() {
         </div>
 
         {/* DOT INDICATOR */}
-        <div className="flex justify-center gap-3 mt-6"> {/* mt-8 -> mt-6 supaya lebih rapat */}
+        <div className="flex justify-center gap-3 mt-6">
+          {" "}
+          {/* mt-8 -> mt-6 supaya lebih rapat */}
           {Array.from({ length: totalPages }).map((_, i) => (
             <button
               key={i}

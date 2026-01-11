@@ -35,7 +35,12 @@ export default function Navigation() {
     const sections = ["home", "about", "skills", "tendik", "career"];
 
     const handleScroll = () => {
-      const scrollY = window.scrollY + window.innerHeight / 2;
+      if (atFooter) {
+        setActiveSection('');
+        return;
+      }
+
+      const scrollY = window.scrollY + 200; // Offset to handle overlap
       let current = "home";
 
       sections.forEach((id) => {
@@ -55,7 +60,7 @@ export default function Navigation() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [atFooter]);
 
   useEffect(() => {
     const footer = document.querySelector("footer");
@@ -82,8 +87,8 @@ export default function Navigation() {
         logoRef.current,
         {
           opacity: atFooter ? 0 : 1,
-          scale: atFooter ? 0.7 : scrolled ? 0.9 : 1,
-          y: atFooter ? -30 : scrolled ? -6 : 0,
+          scale: scrolled ? 0.9 : 1,
+          y: scrolled ? -6 : 0,
           pointerEvents: atFooter ? "none" : "auto",
         },
         0
@@ -160,7 +165,7 @@ export default function Navigation() {
                 key={item.label}
                 href={item.href}
                 activeSection={activeSection}
-                className="px-12 py-3 text-base font-semibold rounded-full transition-all hover:text-[hsl(var(--orange-bright))] hover:scale-105 text-[hsl(var(--yellow-warm))]"
+                className="px-12 py-3 text-base font-semibold rounded-full transition-all hover:text-[hsl(var(--orange-bright))] hover:scale-109 text-[hsl(var(--yellow-warm))]"
                 activeClassName="bg-[hsl(var(--yellow-warm))] text-[hsl(var(--brown-dark))] font-bold scale-105"
               >
                 {item.label}
