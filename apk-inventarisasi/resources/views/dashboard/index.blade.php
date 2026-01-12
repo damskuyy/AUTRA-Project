@@ -67,17 +67,6 @@
 
 {{-- ================= MODAL LIST BARANG ================= --}}
 @foreach ($ruangans as $ruangan)
-
-@php
-    $barangs = \App\Models\BarangMasuk::select(
-            'nama_barang',
-            DB::raw('SUM(jumlah) as total_stok')
-        )
-        ->where('ruangan_id', $ruangan->id)
-        ->groupBy('nama_barang')
-        ->get();
-@endphp
-
 <div class="modal fade" id="modalBarang{{ $ruangan->id }}" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -99,7 +88,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($barangs as $barang)
+                        @forelse ($ruangan->barangMasuks as $barang)
                         <tr>
                             <td>{{ $barang->nama_barang }}</td>
                             <td class="text-center">

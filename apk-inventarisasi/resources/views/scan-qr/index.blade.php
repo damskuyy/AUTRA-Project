@@ -82,13 +82,13 @@
                         <label class="form-label fw-semibold">
                             Input Manual Kode QR
                         </label>
-                        <div class="input-group">
+                        <div class="input-group input-group-outline">
                             <input type="text"
                                    name="qr_code"
                                    class="form-control"
                                    placeholder="QR-ALT-XXXX / QR-BHN-XXXX"
                                    required>
-                            <button class="btn btn-primary">
+                            <button type="submit" class="btn bg-gradient-primary mb-0 d-flex align-items-center justify-content-center">
                                 Proses
                             </button>
                         </div>
