@@ -78,13 +78,18 @@ class InventoriesController extends Controller
             'barang_masuk_id' => 'required|exists:barang_masuks,id',
             'status' => 'required|in:TERSEDIA,DIPINJAM,RUSAK,HILANG,DIPERBAIKI',
             'kondisi' => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT',
-            'nomor_inventaris' => 'nullable|unique:inventories,nomor_inventaris,' . $inventaris->id,
-            'serial_number' => 'nullable',
             'stok' => 'nullable|integer|min:0',
+            'penempatan_rak' => 'required|string|max:10',
             'kode_qr_jurusan' => 'nullable|unique:inventories,kode_qr_jurusan,' . $inventaris->id,
         ]);
 
-        $inventaris->update($request->all());
+        $inventaris->update([
+            'barang_masuk_id' => $request->barang_masuk_id,
+            'status' => $request->status,
+            'kondisi' => $request->kondisi,
+            'stok' => $request->stok,
+            'penempatan_rak' => strtoupper($request->penempatan_rak),
+        ]);
 
         return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui.');
     }
@@ -109,22 +114,41 @@ class InventoriesController extends Controller
 
     public function generateQrBulk(BarangMasuk $barangMasuk)
     {
-        $prefix = $barangMasuk->jenis_barang === 'alat'
-            ? 'QR-ALT-'
-            : 'QR-BHN-';
-
         $inventaris = Inventory::where('barang_masuk_id', $barangMasuk->id)->get();
 
         foreach ($inventaris as $item) {
             if (!$item->kode_qr_jurusan) {
                 $item->update([
-                    'kode_qr_jurusan' => $prefix . strtoupper(Str::random(10))
+                    'kode_qr_jurusan' => $this->generateKodeQr(
+                        $barangMasuk->jenis_barang,
+                        $item->penempatan_rak
+                    )
                 ]);
             }
         }
 
         return back()->with('success', 'QR berhasil digenerate');
     }
+
+
+    private function generateKodeQr($jenis, $rak)
+    {
+        $prefix = $jenis === 'alat' ? 'ALT' : 'BHN';
+
+        $last = Inventory::where('kode_qr_jurusan', 'LIKE', "$prefix-$rak-%")
+            ->orderBy('kode_qr_jurusan', 'desc')
+            ->first();
+
+        $number = 1;
+
+        if ($last) {
+            $parts = explode('-', $last->kode_qr_jurusan);
+            $number = intval(end($parts)) + 1;
+        }
+
+        return sprintf('%s-%s-%03d', $prefix, $rak, $number);
+    }
+
 
 
 

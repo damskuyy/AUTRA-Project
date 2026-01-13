@@ -14,6 +14,7 @@ return new class extends Migration
             $table->enum('status', ['TERSEDIA', 'DIPINJAM', 'HILANG', 'DIPERBAIKI'])->default('TERSEDIA');
             $table->enum('kondisi', ['BAIK', 'RUSAK_RINGAN', 'RUSAK_BERAT'])->default('BAIK');
             $table->integer('stok')->nullable()->default(0);
+            $table->string('penempatan_rak', 10);
             $table->string('kode_qr_jurusan')->nullable()->unique();
             $table->timestamps();
         });

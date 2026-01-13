@@ -24,13 +24,19 @@
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('riwayat-aktivitas.export.pdf', request()->query()) }}" class="btn btn-outline-danger d-flex align-items-center gap-1">
-                <i class="fas fa-file-pdf"></i> <span class="d-none d-sm-inline">PDF</span>
+            <a href="{{ route('riwayat-aktivitas.export.pdf', request()->query()) }}"
+            class="btn btn-outline-danger btn-export d-flex align-items-center gap-1">
+                <i class="fas fa-file-pdf"></i>
+                <span class="d-none d-sm-inline">PDF</span>
             </a>
-            <a href="{{ route('riwayat-aktivitas.export.excel', request()->query()) }}" class="btn btn-outline-success d-flex align-items-center gap-1">
-                <i class="fas fa-file-excel"></i> <span class="d-none d-sm-inline">Excel</span>
+
+            <a href="{{ route('riwayat-aktivitas.export.excel', request()->query()) }}"
+            class="btn btn-outline-success btn-export d-flex align-items-center gap-1">
+                <i class="fas fa-file-excel"></i>
+                <span class="d-none d-sm-inline">Excel</span>
             </a>
         </div>
+
     </div>
 
     {{-- STATS & CONTROLS --}}
@@ -263,6 +269,15 @@
     });
     </script>
 
+    <style>
+        .btn-export:focus,
+        .btn-export:active,
+        .btn-export:focus-visible {
+            box-shadow: none !important;
+            outline: none !important;
+            transform: none !important;
+        }
+    </style>
 
 
 </div>

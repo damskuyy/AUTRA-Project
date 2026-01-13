@@ -63,7 +63,6 @@
                                 <tr class="table-light alat-row" data-search="{{ strtolower($nama.' '.$first->barangMasuk->merk) }}">
                                     <td>
                                         <strong>{{ $nama }}</strong><br>
-                                        <small class="text-muted">{{ $first->barangMasuk->merk ?? '-' }}</small>
                                     </td>
                                     <td width="150">
                                         <span class="badge bg-info">
@@ -86,7 +85,9 @@
                                             <thead class="table-secondary">
                                                 <tr>
                                                     <th>ID Kode QR</th>
-                                                    <th>Seri Alat</th>
+                                                    <th>Jenis</th>
+                                                    <th>Merk</th>
+                                                    <th>Penempatan Rak</th>
                                                     <th width="120">Aksi</th>
                                                 </tr>
                                             </thead>
@@ -94,7 +95,9 @@
                                             @foreach ($items as $a)
                                                 <tr>
                                                     <td>{{ $a->kode_qr_jurusan ?? '-' }}</td>
-                                                    <td>{{ $a->barangMasuk->nomor_dokumen ?? '-' }}</td>
+                                                    <td>{{ $a->barangMasuk->jenis_barang }}</td>
+                                                    <td>{{ $a->barangMasuk->merk ?? '-' }}</td>
+                                                    <td>{{ $a->penempatan_rak_label }}</td>
                                                     <td>
                                                     <a href="{{ route('inventaris.show', $a->id) }}" class="btn btn-xs btn-info">
                                                         <i class="fas fa-eye"></i>
@@ -152,6 +155,7 @@
                                     <th>Jenis</th>
                                     <th>Merk</th>
                                     <th>Stok</th>
+                                    <th>Penempatan Rak</th>
                                     <th width="160">Aksi</th>
                                 </tr>
                             </thead>
@@ -174,6 +178,7 @@
                                             {{ $b->stok }} {{ $b->barangMasuk?->satuan ?? 'Unit' }}
                                         </span>
                                     </td>
+                                    <td>{{ $b->penempatan_rak_label }}</td>
                                     <td>
                                         <a href="{{ route('inventaris.show', $b->id) }}" class="btn btn-xs btn-info"><i class="fas fa-eye"></i></a>
                                         <button type="button"

@@ -91,6 +91,36 @@
   .dropdown-header {
     border-radius: 15px 15px 0 0;
   }
+
+  /* Disable ALL button animations completely */
+  .btn,
+  .btn-dark,
+  .btn-primary,
+  .btn-secondary,
+  .btn-success,
+  .btn-danger,
+  .btn-warning,
+  .btn-info,
+  .bg-gradient-primary {
+    transition: none !important;
+    transform: scale(1) !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .btn:active,
+  .btn:focus,
+  .btn:focus-visible,
+  .btn:hover,
+  .btn-dark:active,
+  .btn-dark:focus,
+  .bg-gradient-primary:active,
+  .bg-gradient-primary:focus {
+    transform: scale(1) !important;
+    box-shadow: none !important;
+    transition: none !important;
+    outline: none !important;
+  }
 </style>
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

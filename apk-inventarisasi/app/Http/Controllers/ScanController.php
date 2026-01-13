@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
-use Illuminate\Support\Str;
 
 class ScanController extends Controller
 {
@@ -21,8 +20,12 @@ class ScanController extends Controller
 
         $qr = strtoupper(trim($request->qr_code));
 
-        // Validasi format QR
-        if (!Str::startsWith($qr, ['QR-ALT-', 'QR-BHN-'])) {
+        /**
+         * FORMAT QR:
+         * ALT-PT-001
+         * BHN-RBK-015
+         */
+        if (!preg_match('/^(ALT|BHN)-[A-Z]{2,4}-\d{3}$/', $qr)) {
             return redirect()
                 ->route('scan.index')
                 ->withErrors('Format QR tidak valid');
@@ -46,7 +49,7 @@ class ScanController extends Controller
 
         $jenis = $inventory->barangMasuk->jenis_barang;
 
-        // 🔁 ARAH SESUAI JENIS
+        // 🔁 ARAH SESUAI JENIS BARANG
         if ($jenis === 'alat') {
             return redirect()->route(
                 'form.peminjaman-form',
