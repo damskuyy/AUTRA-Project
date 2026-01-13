@@ -29,6 +29,14 @@
                             <button class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">
                                 <i class="fas fa-plus me-1"></i> Tambah Siswa
                             </button>
+                            <form action="{{ route('siswa.naik-kelas') }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin memproses kenaikan kelas semua siswa?')">
+                                @csrf
+                                <button class="btn bg-gradient-warning btn-sm mb-0 me-2 ms-2">
+                                    <i class="fas fa-level-up-alt me-1"></i> Proses Kenaikan Kelas
+                                </button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
@@ -69,6 +77,7 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">NIS</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Kelas</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Poin</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Terdaftar</th>
                                     <th class="text-secondary opacity-7" width="120px">Aksi</th>
                                 </tr>
@@ -90,6 +99,12 @@
                                         <span class="badge bg-gradient-success">Aktif</span>
                                     @endif
                                 </td>
+                                <td>
+                                    <span class="badge 
+                                        {{ $siswa->total_poin >= 3 ? 'bg-danger' : 'bg-warning' }}">
+                                        {{ $siswa->total_poin }} Poin
+                                    </span>
+                                </td>
                                 <td>{{ $siswa->created_at->format('d M Y') }}</td>
                                 <td>
                                     <div class="d-flex gap-1">
@@ -102,19 +117,34 @@
                                             data-nis="{{ $siswa->nis }}"
                                             data-nama="{{ $siswa->nama }}"
                                             data-kelas="{{ $siswa->kelas }}"
-                                            data-status="{{ $siswa->is_active ? 1 : 0 }}"
-                                        >
+                                            data-status="{{ $siswa->is_active ? 1 : 0 }}">
                                             <i class="fas fa-edit"></i>
                                         </button>
 
+                                        {{-- Ban / Unban --}}
+                                        @if(!$siswa->is_banned)
+                                            <form action="{{ route('siswa.ban', $siswa->id) }}" method="POST">
+                                                @csrf
+                                                <button class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('siswa.unban', $siswa->id) }}" method="POST">
+                                                @csrf
+                                                <button class="btn btn-secondary btn-sm">
+                                                    <i class="fas fa-unlock"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+
                                         <!-- Hapus -->
                                         <button 
-                                            class="btn btn-danger btn-sm"
+                                            class="btn btn-danger btn-sm "
                                             data-bs-toggle="modal"
                                             data-bs-target="#hapusSiswaModal"
                                             data-id="{{ $siswa->id }}"
-                                            data-nama="{{ $siswa->nama }}"
-                                        >
+                                            data-nama="{{ $siswa->nama }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -144,67 +174,93 @@
 
 <!-- Modal Tambah Siswa -->
 <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Data Siswa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+
+            <!-- HEADER -->
+            <div class="modal-header bg-gradient-primary text-white">
+                <div>
+                    <h5 class="mb-0 text-white">Tambah Siswa</h5>
+                    <small class="opacity-8">
+                        Lengkapi data siswa baru
+                    </small>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
+
             <form action="{{ route('siswa.store') }}" method="POST">
                 @csrf
 
-                <div class="row">
-                     <!-- NIS -->
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline my-3">
-                            <label class="form-label">NIS</label>
-                            <input
-                                type="text"
-                                name="nis"
-                                class="form-control"
-                                required
-                            >
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline my-3">
-                            <label class="form-label">Nama Lengkap</label>
-                            <input type="text" name="nama" class="form-control" required>
-                        </div>
+                <!-- BODY -->
+                <div class="modal-body px-4 py-4">
+
+                    <!-- NIS -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-1">
+                            NIS
+                        </label>
+                        <input
+                            type="text"
+                            name="nis"
+                            class="form-control form-control-lg"
+                            placeholder="Masukkan NIS siswa"
+                            required
+                        >
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline my-3">
-                            <label class="form-label">Kelas</label>
-                            <input 
-                                type="text"
-                                name="kelas"
-                                class="form-control"
-                                list="kelasList"
-                                placeholder="Ketik atau pilih kelas..."
-                                required
-                            >
-                        </div>
+                    <!-- Nama -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-1">
+                            Nama Lengkap
+                        </label>
+                        <input
+                            type="text"
+                            name="nama"
+                            class="form-control form-control-lg"
+                            placeholder="Nama lengkap siswa"
+                            required
+                        >
                     </div>
+
+                    <!-- Kelas -->
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold mb-1">
+                            Kelas
+                        </label>
+                        <input
+                            type="text"
+                            name="kelas"
+                            class="form-control form-control-lg"
+                            list="kelasList"
+                            placeholder="Contoh: X RPL 1"
+                            required
+                        >
+                    </div>
+
                 </div>
-                <datalist id="kelasList">
-                    @foreach ($kelasList as $kelas)
-                        <option value="{{ $kelas }}">
-                    @endforeach
-                </datalist>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <!-- FOOTER -->
+                <div class="modal-footer px-4 py-3 border-top">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">
                         Batal
                     </button>
-                    <button type="submit" class="btn btn-primary">
-                        Simpan
+
+                    <button
+                        type="submit"
+                        class="btn bg-gradient-primary px-4">
+                        Simpan Siswa
                     </button>
                 </div>
+
             </form>
+
         </div>
     </div>
 </div>
+
 
 <!-- Modal Edit Siswa -->
 <div class="modal fade" id="editSiswaModal" tabindex="-1" aria-hidden="true">
