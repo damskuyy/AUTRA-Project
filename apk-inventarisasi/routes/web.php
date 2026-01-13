@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController, SiswaController, RuanganController, ItemsController,
-ScanController, PemakaianBahanController, PeminjamanController, PengembalianController, LogController, ExportController, ProfileController};
+ScanController, PemakaianBahanController, PeminjamanController, PengembalianController, LogController, ExportController, ProfileController, TransaksiMassalController};
 
 // Arahkan root ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -37,6 +37,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::post('/pemakaian-bahan',[PemakaianBahanController::class, 'store'])->name('pemakaian-bahan.store');
     Route::post('/peminjaman',[PeminjamanController::class, 'store'])->name('peminjaman.store');
+
+    Route::prefix('transaksi-massal')->group(function () {
+        Route::get('/', [TransaksiMassalController::class, 'index'])->name('transaksi.massal.index');
+        Route::get('/create', [TransaksiMassalController::class, 'create'])->name('transaksi.massal.create');
+        Route::post('/store', [TransaksiMassalController::class, 'store'])->name('transaksi.massal.store');
+        Route::post('/kembalikan/{transaksi}', [TransaksiMassalController::class, 'kembalikan'])->name('transaksi.massal.kembalikan');
+    });
+
 
     Route::get('/pengembalian', [PengembalianController::class, 'index'])
     ->name('pengembalian.index');
