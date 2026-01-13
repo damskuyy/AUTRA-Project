@@ -44,6 +44,7 @@ class PeminjamanController extends Controller
         // 🔥 AMBIL DATA SISWA
         $siswas = Siswa::where('is_active', true)
             ->where('is_banned', false)
+            ->orderBy('kelas')
             ->orderBy('nama')
             ->get();
 

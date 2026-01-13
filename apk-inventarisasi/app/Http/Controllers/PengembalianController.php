@@ -100,7 +100,7 @@ class PengembalianController extends Controller
                 if ($siswa->total_poin >= 3) {
                     $siswa->update([
                         'is_banned' => true,
-                        'banned_until' => now()->addDays(7),
+                        'banned_until' => null,
                         'alasan_ban' => 'Terlambat mengembalikan alat 3 kali',
                     ]);
                 }

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Models\Siswa;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
+
 
 class SiswaController extends Controller
 {
@@ -15,12 +18,13 @@ class SiswaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Siswa::query();
+        $query = Siswa::where('is_active', true);
 
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->search . '%')
-                  ->orWhere('kelas', 'like', '%' . $request->search . '%');
+                  ->orWhere('kelas', 'like', '%' . $request->search . '%')
+                  ->orWhere('nis', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -30,13 +34,70 @@ class SiswaController extends Controller
             ->paginate(35)
             ->withQueryString();
 
-        $kelasList = Siswa::select('kelas')
+        $kelasList = Siswa::where('is_active', true)
+            ->select('kelas')
             ->distinct()
             ->orderBy('kelas')
             ->pluck('kelas');
 
         return view('siswa.index', compact('siswas', 'kelasList'));
     }
+
+    /**
+     * ==============================
+     * KENAIKAN KELAS MASSAL
+     * ==============================
+     */
+    public function naikKelasMassal()
+    {   
+        DB::transaction(function () {
+
+            $siswas = Siswa::where('is_active', true)->get();
+
+            foreach ($siswas as $siswa) {
+
+                $kelas = trim(strtoupper($siswa->kelas));
+
+                // =====================
+                // XII → LULUS
+                // =====================
+                if (preg_match('/^XII\b/', $kelas)) {
+                    $siswa->update([
+                        'is_active' => false,
+                        'kelas' => 'LULUS',
+                    ]);
+                    continue;
+                }
+
+                // =====================
+                // XI → XII
+                // =====================
+                if (preg_match('/^XI\b/', $kelas)) {
+                    $siswa->update([
+                        'kelas' => preg_replace('/^XI\b/', 'XII', $kelas),
+                    ]);
+                    continue;
+                }
+
+                // =====================
+                // X → XI
+                // =====================
+                if (preg_match('/^X\b/', $kelas)) {
+                    $siswa->update([
+                        'kelas' => preg_replace('/^X\b/', 'XI', $kelas),
+                    ]);
+                }
+            }
+        });
+
+        return back()->with(
+            'success',
+            'Kenaikan kelas berhasil. Siswa kelas XII telah diluluskan.'
+        );
+    }
+
+
+
 
     /**
      * IMPORT EXCEL
@@ -83,22 +144,27 @@ class SiswaController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nis'   => 'required|string|max:30|unique:siswas,nis',
-            'nama'  => 'required|string|max:255',
-            'kelas' => 'required|string|max:100',
-        ]);
+        'nis' => [
+            'required',
+            'string',
+            'max:30',
+            Rule::unique('siswas', 'nis')->ignore($id),
+        ],
+        'nama'  => 'required|string|max:255',
+        'kelas' => 'required|string|max:100',
+    ]);
 
-        $siswa = Siswa::findOrFail($id);
+    $siswa = Siswa::findOrFail($id);
 
-        $siswa->update([
-            'nis'   => $request->nis,
-            'nama'  => $request->nama,
-            'kelas' => $request->kelas,
-        ]);
+    $siswa->update([
+        'nis'   => $request->nis,
+        'nama'  => $request->nama,
+        'kelas' => $request->kelas,
+    ]);
 
-        return redirect()
-            ->route('siswa.index')
-            ->with('success', 'Data siswa berhasil diperbarui');
+    return redirect()
+        ->route('siswa.index')
+        ->with('success', 'Data siswa berhasil diperbarui');
     }
 
     /**
@@ -130,11 +196,14 @@ class SiswaController extends Controller
      */
     public function unban(Siswa $siswa)
     {
-        $siswa->update([
-            'is_banned'    => false,
-            'banned_until' => null,
-            'alasan_ban'   => null,
-        ]);
+        DB::transaction(function () use ($siswa) {
+            $siswa->update([
+                'is_banned'    => false,
+                'banned_until' => null,
+                'alasan_ban'   => null,
+                'total_poin'   => 0,
+            ]);
+        });
 
         return back()->with('success', 'Siswa berhasil di-unban');
     }

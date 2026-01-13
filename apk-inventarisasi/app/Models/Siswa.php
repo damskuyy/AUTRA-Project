@@ -19,6 +19,7 @@ class Siswa extends Model
         'is_banned',
         'banned_until',
         'alasan_ban',
+        'total_poin',
     ];
 
     protected $casts = [

@@ -45,7 +45,6 @@
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Siswa</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Kelas</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Waktu</th>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Poin</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Kondisi</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Status</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Aksi</th>
@@ -85,13 +84,6 @@
                                 </span>
                             </td>
 
-                            <!-- POIN -->
-                            <td class="text-center">
-                                <span class="badge bg-danger">
-                                    {{ $p->siswa->total_poin }}
-                                </span>
-                            </td>
-
                             <!-- KONDISI -->
                             <td class="text-center">
                                 <span class="badge bg-info px-3">
@@ -120,22 +112,7 @@
                                         </a>
                                     @endif
 
-                                    {{-- BAN / UNBAN --}}
-                                    @if(!$p->siswa->is_banned)
-                                        <button class="btn btn-sm btn-danger"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#banModal{{ $p->siswa->id }}">
-                                            Banned
-                                        </button>
-                                    @else
-                                        <form action="{{ route('siswa.unban', $p->siswa->id) }}"
-                                              method="POST">
-                                            @csrf
-                                            <button class="btn btn-sm btn-secondary">
-                                                Unban
-                                            </button>
-                                        </form>
-                                    @endif
+                                    
 
                                 </div>
                             </td>

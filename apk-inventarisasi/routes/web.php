@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/siswa/{siswa}/ban', [SiswaController::class, 'ban'])->name('siswa.ban');
     Route::post('/siswa/{siswa}/unban', [SiswaController::class, 'unban'])->name('siswa.unban');
+    Route::post('/siswa/naik-kelas', [SiswaController::class, 'naikKelasMassal'])->name('siswa.naik-kelas');
 
     Route::get('riwayat-aktivitas', [LogController::class, 'index'])->name('riwayat-aktivitas.index');
 
