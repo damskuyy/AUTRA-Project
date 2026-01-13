@@ -77,13 +77,12 @@ class PengembalianController extends Controller
             /**
              * ===== CEK TELAT =====
              */
+            $now = Carbon::now();
             $deadline = Carbon::parse($peminjaman->waktu_kembali_aktual);
+
             $siswa = $peminjaman->siswa;
 
-            if (now()->greaterThan($deadline)) {
-
-                // ➕ tambah poin siswa
-                $siswa->increment('total_poin');
+            if ($now->greaterThan($deadline)) {
 
                 // ➕ simpan ke pelanggarans
                 Pelanggaran::create([
@@ -96,11 +95,15 @@ class PengembalianController extends Controller
                     'admin_id' => auth()->id(),
                 ]);
 
-                // 🚫 auto banned
-                if ($siswa->total_poin >= 3) {
+                // naikkan total pelanggaran
+                $siswa->increment('total_poin');
+                $siswa->refresh();
+
+                // 3️⃣ auto banned
+                if ($siswa->total_pelanggaran >= 3 && !$siswa->is_banned) {
                     $siswa->update([
                         'is_banned' => true,
-                        'banned_until' => null,
+                        'banned_until' => now()->addDays(3),
                         'alasan_ban' => 'Terlambat mengembalikan alat 3 kali',
                     ]);
                 }

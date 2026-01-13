@@ -45,6 +45,7 @@
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Siswa</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Kelas</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Waktu</th>
+                            <th class="text-uppercase text-secondary text-xxs fw-bold">Keperluan</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Kondisi</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Status</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Aksi</th>
@@ -61,6 +62,7 @@
                                     {{ $p->inventory->barangMasuk->nama_barang }}
                                 </h6>
                             </td>
+
 
                             <!-- QTY -->
                             <td class="text-center fw-bold">
@@ -81,6 +83,13 @@
                             <td>
                                 <span class="badge bg-light text-dark">
                                     {{ $p->waktu_pinjam->format('H:i, d-m-Y') }}
+                                </span>
+                            </td>
+
+                            <!-- KEPERLUAN -->
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    {{ $p->keperluan ?? '-' }}
                                 </span>
                             </td>
 

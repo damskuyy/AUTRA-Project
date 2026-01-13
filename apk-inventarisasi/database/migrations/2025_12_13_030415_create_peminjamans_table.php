@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswas');
             $table->foreignId('inventory_id')->constrained('inventories');
+            $table->string('keperluan')->nullable();
             $table->unsignedBigInteger('admin_id');
             $table->foreign('admin_id')
                 ->references('id')

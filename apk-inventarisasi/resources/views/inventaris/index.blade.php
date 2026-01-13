@@ -279,18 +279,6 @@
         });
     });
 </script>
-{{-- SWAL SUCCESS KHUSUS --}}
-@if(session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: '{{ session('success') }}',
-        showConfirmButton: false,
-        timer: 1800,
-        timerProgressBar: true
-    });
-</script>
-@endif
+
 @endpush
 

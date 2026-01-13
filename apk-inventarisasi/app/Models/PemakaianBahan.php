@@ -19,6 +19,7 @@ class PemakaianBahan extends Model
         'waktu_pakai',
         'ruangan_id',
         'catatan',
+        'keperluan',
     ];
 
     protected $casts = [

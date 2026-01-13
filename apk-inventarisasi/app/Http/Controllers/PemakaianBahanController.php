@@ -52,6 +52,8 @@ class PemakaianBahanController extends Controller
             'inventory_id' => 'required|exists:inventories,id',
             'siswa_id'     => 'required|exists:siswas,id',
             'jumlah'       => 'required|integer|min:1',
+            'keperluan' => 'nullable|string',
+            'keperluan_manual' => 'nullable|string',
         ]);
 
         $inventory = Inventory::findOrFail($request->inventory_id);
@@ -62,13 +64,19 @@ class PemakaianBahanController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($request, $inventory) {
+        $keperluan = $request->keperluan === '__manual'
+            ? $request->keperluan_manual
+            : $request->keperluan;
+
+
+        DB::transaction(function () use ($request, $inventory, $keperluan) {
             PemakaianBahan::create([
                 'inventory_id' => $inventory->id,
                 'ruangan_id'   => $inventory->barangMasuk->ruangan_id,
                 'siswa_id'     => $request->siswa_id,
                 'admin_id'     => auth()->id(),
                 'jumlah'       => $request->jumlah,
+                'keperluan' => $keperluan,
             ]);
 
             $inventory->decrement('stok', $request->jumlah);

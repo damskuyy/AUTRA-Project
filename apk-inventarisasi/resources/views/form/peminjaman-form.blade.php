@@ -90,6 +90,23 @@
                         </select>
                     </div>
 
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Keperluan (Mapel / Guru)</label>
+
+                        <select name="keperluan" id="keperluanSelect" class="form-select">
+                            <option value="">-- pilih keperluan --</option>
+                            <option value="Kelistrikan / Bu Isri">Kelistrikan / Bu Isri</option>
+                            <option value="Elektronika / Pak Budi">Elektronika / Pak Budi</option>
+                            <option value="__manual">Lainnya</option>
+                        </select>
+
+                        <input type="text"
+                            name="keperluan_manual"
+                            id="keperluanManual"
+                            class="form-control mt-2 d-none"
+                            placeholder="Contoh: Kelistrikan / Bu Isri">
+                    </div>
+
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Jam Peminjaman</label>
                         <input type="text" class="form-control bg-light"
@@ -158,11 +175,25 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    //SELECT SISWA
     $('.select-siswa').select2({
         placeholder: "Ketik atau pilih nama siswa",
         allowClear: true,
         width: '100%'
     });
+
+    //KEPERLUAN MANUAL
+    const keperluanSelect = document.getElementById('keperluanSelect');
+    const keperluanManual = document.getElementById('keperluanManual');
+
+    if (keperluanSelect && keperluanManual) {
+        keperluanSelect.addEventListener('change', function () {
+            keperluanManual.classList.toggle(
+                'd-none',
+                this.value !== '__manual'
+            );
+        });
+    }
 });
 </script>
 @endpush
