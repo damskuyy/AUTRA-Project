@@ -86,7 +86,7 @@
                             <input type="text"
                                    name="qr_code"
                                    class="form-control"
-                                   placeholder="QR-ALT-XXXX / QR-BHN-XXXX"
+                                   placeholder="ALT-XX-XXX / BHN-XX-XXX"
                                    required>
                             <button type="submit" class="btn bg-gradient-primary mb-0 d-flex align-items-center justify-content-center">
                                 Proses
@@ -103,6 +103,28 @@
 
 </div>
 @endsection
+
+@push('styles')
+<style>
+  /* Disable input and button animations */
+  .input-group input,
+  .input-group .btn,
+  .form-control {
+    transition: none !important;
+    transform: scale(1) !important;
+  }
+
+  .input-group input:focus,
+  .input-group input:active,
+  .input-group .btn:focus,
+  .input-group .btn:active,
+  .form-control:focus,
+  .form-control:active {
+    transform: scale(1) !important;
+    transition: none !important;
+  }
+</style>
+@endpush
 
 @push('scripts')
 <script src="https://unpkg.com/html5-qrcode"></script>

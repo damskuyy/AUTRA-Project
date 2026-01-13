@@ -84,25 +84,6 @@
                                 placeholder="Contoh: Bosch, Makita, Kenmaster">
                         </div>
 
-                        <!-- Seri Alat -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Seri Alat</label>
-
-                            @if($riwayatSeriAlat->count())
-                                <select name="nomor_dokumen" id="seriSelect" class="form-select">
-                                    <option value="">-- pilih seri --</option>
-                                    @foreach($riwayatSeriAlat as $seri)
-                                        <option value="{{ $seri }}">{{ $seri }}</option>
-                                    @endforeach
-                                    <option value="__new">+ Tambah Seri Baru</option>
-                                </select>
-                                <input type="text" name="nomor_dokumen_new" id="seriNew"
-                                       class="form-control mt-2 d-none">
-                            @else
-                                <input type="text" name="nomor_dokumen" class="form-control">
-                            @endif
-                        </div>
-
                         <!-- Jumlah -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Jumlah</label>
@@ -120,6 +101,20 @@
                             </select>
                         </div>
 
+                        <!-- Penempatan Rak -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Penempatan Rak</label>
+                            <select name="penempatan_rak" class="form-select" required>
+                                <option value="">-- pilih rak --</option>
+                                <option value="PT">Power Tools</option>
+                                <option value="HT">Hand Tools</option>
+                                <option value="RK">Rak Komponen</option>
+                                <option value="RBK">Rak Bahan Kecil</option>
+                                <option value="RBB">Rak Bahan Besar</option>
+                                <option value="UK">Rak Alat Ukur</option>
+                                <option value="PPE">Rak PPE</option>
+                            </select>
+                        </div>
 
                         <!-- Sumber Manual -->
                         <div class="mb-3">
@@ -234,6 +229,21 @@
                             </select>
                         </div>
 
+                        <!-- Penempatan Rak -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Penempatan Rak</label>
+                            <select name="penempatan_rak" class="form-select" required>
+                                <option value="">-- pilih rak --</option>
+                                <option value="PT">Power Tools</option>
+                                <option value="HT">Hand Tools</option>
+                                <option value="RK">Rak Komponen</option>
+                                <option value="RBK">Rak Bahan Kecil</option>
+                                <option value="RBB">Rak Bahan Besar</option>
+                                <option value="UK">Rak Alat Ukur</option>
+                                <option value="PPE">Rak PPE</option>
+                            </select>
+                        </div>
+
                         <!-- Jumlah -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Jumlah</label>
@@ -306,9 +316,6 @@ document.getElementById('namaAlatSelect')?.addEventListener('change', function (
     document.getElementById('namaAlatNew').classList.toggle('d-none', this.value !== '__new');
 });
 
-document.getElementById('seriSelect')?.addEventListener('change', function () {
-    document.getElementById('seriNew').classList.toggle('d-none', this.value !== '__new');
-});
 </script>
 
 @push('scripts')

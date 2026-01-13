@@ -14,9 +14,8 @@ class Inventory extends Model
         'barang_masuk_id',
         'status',
         'kondisi',
-        'nomor_inventaris',
-        'serial_number',
         'stok',
+        'penempatan_rak',
         'kode_qr_jurusan',
     ];
 
@@ -39,6 +38,21 @@ class Inventory extends Model
     {
         return $this->hasMany(PemakaianBahan::class, 'inventory_id');
     }
+
+    public function getPenempatanRakLabelAttribute()
+    {
+        return match ($this->penempatan_rak) {
+            'PT'  => 'Power Tools',
+            'HT'  => 'Hand Tools',
+            'RK'  => 'Rak Komponen',
+            'RBK' => 'Rak Bahan Kecil',
+            'RBB' => 'Rak Bahan Besar',
+            'UK'  => 'Rak Alat Ukur',
+            'PPE' => 'Rak PPE',
+            default => '-',
+        };
+    }
+
 
     // public function barangMasuk()
     // {

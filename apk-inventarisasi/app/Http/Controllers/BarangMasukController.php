@@ -22,15 +22,11 @@ class BarangMasukController extends Controller
         $riwayatNamaAlat = BarangMasuk::where('jenis_barang', 'alat')
             ->pluck('nama_barang')->unique();
 
-        $riwayatSeriAlat = BarangMasuk::where('jenis_barang', 'alat')
-            ->pluck('nomor_dokumen')->unique();
-
         return view('barang-masuk.index', compact(
             'inventories',
             'ruangans',
             'riwayatNamaBahan',
             'riwayatNamaAlat',
-            'riwayatSeriAlat'
         ));
     }
 
@@ -44,7 +40,7 @@ class BarangMasukController extends Controller
             'satuan'          => 'nullable|string',
             'sumber'          => 'required|string',
             'sumber_manual'   => 'nullable|string',
-            'nomor_dokumen'   => 'nullable|string',
+            'penempatan_rak'  => 'required|string|max:10',
             'ruangan_id'      => 'required|exists:ruangans,id',
             'tanggal_masuk'   => 'required|date',
             'catatan'         => 'nullable|string',
@@ -53,10 +49,6 @@ class BarangMasukController extends Controller
         // handle input manual
         if ($request->nama_barang === '__new') {
             $validated['nama_barang'] = $request->nama_barang_new;
-        }
-
-        if ($request->nomor_dokumen === '__new') {
-            $validated['nomor_dokumen'] = $request->nomor_dokumen_new;
         }
 
         if ($request->sumber === '__manual') {
@@ -91,6 +83,7 @@ class BarangMasukController extends Controller
                         'stok'            => $validated['jumlah'],
                         'status'          => 'TERSEDIA',
                         'kondisi'         => 'BAIK',
+                        'penempatan_rak'  => strtoupper($validated['penempatan_rak']),
                     ]);
                 }
 
@@ -108,6 +101,7 @@ class BarangMasukController extends Controller
                         'stok'            => 1, // biar konsisten & bisa dihitung
                         'status'          => 'TERSEDIA',
                         'kondisi'         => 'BAIK',
+                        'penempatan_rak'  => strtoupper($validated['penempatan_rak']),
                     ]);
                 }
             }
