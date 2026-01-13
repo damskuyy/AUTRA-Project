@@ -66,6 +66,9 @@ class PeminjamanController extends Controller
             'kondisi_pinjam'  => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT',
             'waktu_kembali_aktual' => 'required',
             'catatan_pinjam' => 'nullable|string',
+            'keperluan' => 'nullable|string',
+            'keperluan_manual' => 'nullable|string',
+            
         ]);
 
         $siswa = Siswa::findOrFail($request->siswa_id);
@@ -74,29 +77,33 @@ class PeminjamanController extends Controller
             abort(403, 'Siswa sedang dibanned sampai ' . $siswa->banned_until);
         }
 
+        $keperluan = $request->keperluan === '__manual'
+        ? $request->keperluan_manual
+        : $request->keperluan;
 
 
-        DB::transaction(function () use ($request) {
 
-            // 🔒 LOCK BIAR AMAN
+        DB::transaction(function () use ($request, $keperluan) {
+
+            // LOCK BIAR AMAN
             $inventory = Inventory::lockForUpdate()
                 ->findOrFail($request->inventory_id);
 
-            // ❗ CEK STOK
+            // CEK STOK
             if ($inventory->stok < $request->quantity) {
                 abort(400, 'Stok tidak mencukupi');
             }
 
-            // 🔥 WIB
+            // WIB
             $waktuPinjam = Carbon::now('Asia/Jakarta');
 
-            // 🔥 Gabung tanggal + jam estimasi
+            // Gabung tanggal + jam estimasi
             $estimasiKembali = Carbon::parse(
                 $waktuPinjam->format('Y-m-d') . ' ' . $request->waktu_kembali_aktual,
                 'Asia/Jakarta'
             );
 
-            // ✅ SIMPAN PEMINJAMAN
+            // SIMPAN PEMINJAMAN
             Peminjaman::create([
                 'inventory_id' => $inventory->id,
                 'siswa_id' => $request->siswa_id,
@@ -106,6 +113,8 @@ class PeminjamanController extends Controller
                 'waktu_kembali_aktual' => $estimasiKembali,
                 'kondisi_pinjam' => $request->kondisi_pinjam,
                 'catatan_pinjam' => $request->catatan_pinjam,
+                'keperluan' => $keperluan,
+
             ]);
 
             // ➖ KURANGI STOK
