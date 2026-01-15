@@ -61,8 +61,11 @@
                                 <small class="text-muted">Pengembalian</small>
                             </div>
                             <div class="vr"></div>
-                            <div class="text-center">
-                                <div class="h5 mb-0">{{ $pelanggarans->count() }}</div>
+                            <div class="text-center">                                <div class="h5 mb-0">{{ $transaksiMassals->count() }}</div>
+                                <small class="text-muted">Transaksi Massal</small>
+                            </div>
+                            <div class="vr"></div>
+                            <div class="text-center">                                <div class="h5 mb-0">{{ $pelanggarans->count() }}</div>
                                 <small class="text-muted">Pelanggaran</small>
                             </div>
                         </div>
@@ -115,6 +118,7 @@
                                         <option value="peminjaman" {{ request('jenis')=='peminjaman'?'selected':'' }}>Peminjaman</option>
                                         <option value="pengembalian" {{ request('jenis')=='pengembalian'?'selected':'' }}>Pengembalian</option>
                                         <option value="pemakaian" {{ request('jenis')=='pemakaian'?'selected':'' }}>Pemakaian</option>
+                                        <option value="transaksi_massal" {{ request('jenis')=='transaksi_massal'?'selected':'' }}>Transaksi Massal</option>
                                         <option value="banned" {{ request('jenis')=='banned'?'selected':'' }}>Pelanggaran</option>
                                     </select>
                                 </div>
@@ -154,11 +158,46 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-end text-muted small">Admin {{ $bm->admin->name ?? '-' }}</div>
+                            <div class="text-end text-muted small">{{ $bm->admin->name ?? '-' }}</div>
                         </div>
                     </div>
                 @endforeach
-
+                {{-- TRANSAKSI MASSAL --}}
+                @foreach ($transaksiMassals as $tm)
+                <div class="activity-item mb-3 p-3 border rounded" data-type="transaksi_massal">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex gap-3">
+                            <div class="icon-circle bg-info text-white rounded-circle d-flex align-items-center justify-content-center"
+                                style="width:42px;height:42px;">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">
+                                    Transaksi massal oleh {{ $tm->siswa->nama }}
+                                </div>
+                                <div class="small text-muted">
+                                    {{ $tm->created_at->format('d M Y H:i') }}
+                                    ({{ $tm->created_at->diffForHumans() }})
+                                </div>
+                                <div class="small text-muted mt-1">
+                                    @foreach($tm->inventaris as $inv)
+                                        <div>• {{ $inv->barangMasuk->nama_barang }}
+                                        @if($inv->barangMasuk->jenis_barang == 'bahan')
+                                            ({{ $inv->pivot->quantity }} {{ $inv->barangMasuk->satuan }} - pemakaian)
+                                        @else
+                                            ({{ $inv->kode_qr_jurusan }} - peminjaman)
+                                        @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-muted small">
+                            {{ $tm->admin->name ?? '-' }}
+                        </div>
+                    </div>
+                </div>
+                @endforeach
                 {{-- PEMINJAMAN --}}
                 @foreach ($peminjamans as $p)
                     <div class="activity-item mb-3 p-3 border rounded" data-type="peminjaman">
@@ -172,28 +211,66 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-end text-muted small">Admin {{ $p->admin->name ?? '-' }}</div>
+                            <div class="text-end text-muted small">{{ $p->admin->name ?? '-' }}</div>
                         </div>
                     </div>
                 @endforeach
 
                 {{-- PENGEMBALIAN --}}
                 @foreach ($pengembalians as $k)
-                    <div class="activity-item mb-3 p-3 border rounded" data-type="pengembalian">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="d-flex align-items-start gap-3">
-                                    <div class="icon-circle bg-info text-dark rounded-circle d-inline-flex align-items-center justify-content-center" style="width:42px;height:42px;"><i class="fas fa-undo"></i></div>
-                                    <div>
-                                        <div class="fw-semibold">{{ $k->peminjaman->siswa->nama }} mengembalikan <strong>{{ $k->peminjaman->inventory->barangMasuk->nama_barang }}</strong></div>
-                                        <div class="small text-muted">Kondisi: <strong class="text-danger">{{ $k->kondisi }}</strong> • {{ $k->created_at->format('d M Y H:i') }} ({{ $k->created_at->diffForHumans() }})</div>
+
+                    {{-- PENGEMBALIAN SATUAN --}}
+                    @if ($k instanceof \App\Models\Pengembalian)
+                        <div class="activity-item mb-3 p-3 border rounded" data-type="pengembalian">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="icon-circle bg-info text-dark rounded-circle d-inline-flex align-items-center justify-content-center"
+                                            style="width:42px;height:42px;">
+                                            <i class="fas fa-undo"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">
+                                                {{ $k->peminjaman->siswa->nama }}
+                                                mengembalikan
+                                                <strong>{{ $k->peminjaman->inventory->barangMasuk->nama_barang }}</strong>
+                                            </div>
+                                            <div class="small text-muted">
+                                                Kondisi: <strong class="text-danger">{{ $k->kondisi }}</strong> •
+                                                {{ $k->created_at->format('d M Y H:i') }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="text-end text-muted small">{{ $k->admin->name ?? '-' }}</div>
                             </div>
-                            <div class="text-end text-muted small">Admin {{ $k->admin->name ?? '-' }}</div>
                         </div>
-                    </div>
+
+                    {{-- PENGEMBALIAN MASSAL --}}
+                    @elseif ($k instanceof \App\Models\TransaksiMassal)
+                        <div class="activity-item mb-3 p-3 border rounded" data-type="pengembalian">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex gap-3">
+                                    <div class="icon-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:42px;height:42px;">
+                                        <i class="fas fa-undo"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">
+                                            {{ $k->siswa->nama }} mengembalikan transaksi massal
+                                        </div>
+                                        <div class="small text-muted">
+                                            {{ $k->updated_at->format('d M Y H:i') }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-muted small">{{ $k->admin->name ?? '-' }}</div>
+                            </div>
+                        </div>
+                    @endif
+
                 @endforeach
+
 
                 {{-- PEMAKAIAN BAHAN --}}
                 @foreach ($pemakaians as $pb)
@@ -217,7 +294,7 @@
                             </div>
                         </div>
                         <div class="text-muted small">
-                            Admin {{ $pb->admin->name ?? '-' }}
+                            {{ $pb->admin->name ?? '-' }}
                         </div>
                     </div>
                 </div>
@@ -237,7 +314,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-end text-muted small">Admin {{ $pl->admin->name ?? '-' }}</div>
+                            <div class="text-end text-muted small">{{ $pl->admin->name ?? '-' }}</div>
                         </div>
                     </div>
                 @endforeach

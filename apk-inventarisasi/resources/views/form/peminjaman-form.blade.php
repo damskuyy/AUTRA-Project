@@ -116,14 +116,12 @@
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Jumlah Dipinjam</label>
                         <input type="number"
+                               class="form-control bg-light"
+                               value="1"
+                               readonly>
+                        <input type="hidden"
                                name="quantity"
-                               class="form-control"
-                               min="1"
-                               max="{{ $inventory->stok }}"
-                               required>
-                        <small class="text-muted">
-                            Stok tersedia: {{ $inventory->stok }}
-                        </small>
+                               value="1">
                     </div>
 
                     <div class="col-md-3">
@@ -136,14 +134,13 @@
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Kondisi Saat Dipinjam</label>
-                        <select name="kondisi_pinjam"
-                                class="form-select"
-                                required>
-                            <option value="">-- Pilih kondisi --</option>
-                            <option value="BAIK">Baik</option>
-                            <option value="RUSAK_RINGAN">Rusak Ringan</option>
-                            <option value="RUSAK_BERAT">Rusak Berat</option>
-                        </select>
+                        <input type="text"
+                               class="form-control bg-light"
+                               value="{{ $inventory->kondisi }}"
+                               readonly>
+                        <input type="hidden"
+                               name="kondisi_saat_dipinjam"
+                               value="{{ $inventory->kondisi }}">
                     </div>
 
                     <div class="col-md-6">

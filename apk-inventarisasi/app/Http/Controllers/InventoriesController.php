@@ -41,14 +41,22 @@ class InventoriesController extends Controller
         $request->validate([
             'barang_masuk_id' => 'required|exists:barang_masuks,id',
             'status' => 'required|in:TERSEDIA,DIPINJAM,RUSAK,HILANG,DIPERBAIKI',
-            'kondisi' => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT',
-            'nomor_inventaris' => 'nullable|unique:inventories,nomor_inventaris',
-            'serial_number' => 'nullable',
+            'kondisi' => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT,HILANG,SEDANG DIPERBAIKI',
             'stok' => 'nullable|integer|min:0',
             'kode_qr_jurusan' => 'nullable|unique:inventories,kode_qr_jurusan',
         ]);
 
-        Inventory::create($request->all());
+        // Jika status DIPERBAIKI, kondisi otomatis SEDANG DIPERBAIKI
+        $kondisi = $request->status === 'DIPERBAIKI' ? 'SEDANG DIPERBAIKI' : $request->kondisi;
+
+        Inventory::create([
+            'barang_masuk_id' => $request->barang_masuk_id,
+            'status' => $request->status,
+            'kondisi' => $kondisi,
+            'stok' => $request->stok,
+            'penempatan_rak' => strtoupper($request->penempatan_rak),
+            'kode_qr_jurusan' => $request->kode_qr_jurusan,
+        ]);
 
         return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil ditambahkan.');
     }
@@ -76,23 +84,23 @@ class InventoriesController extends Controller
     {
         $request->validate([
             'barang_masuk_id' => 'required|exists:barang_masuks,id',
-            'status' => 'required|in:TERSEDIA,DIPINJAM,RUSAK,HILANG,DIPERBAIKI',
-            'kondisi' => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT',
-            'stok' => 'nullable|integer|min:0',
-            'penempatan_rak' => 'required|string|max:10',
-            'kode_qr_jurusan' => 'nullable|unique:inventories,kode_qr_jurusan,' . $inventaris->id,
+            'status' => 'required|in:TERSEDIA,DIPINJAM,HILANG,DIPERBAIKI',
+            'kondisi' => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT,HILANG,SEDANG DIPERBAIKI',
         ]);
+
+        // Jika status DIPERBAIKI, kondisi otomatis SEDANG DIPERBAIKI
+        $kondisi = $request->status === 'DIPERBAIKI' ? 'SEDANG DIPERBAIKI' : $request->kondisi;
 
         $inventaris->update([
             'barang_masuk_id' => $request->barang_masuk_id,
             'status' => $request->status,
-            'kondisi' => $request->kondisi,
-            'stok' => $request->stok,
-            'penempatan_rak' => strtoupper($request->penempatan_rak),
+            'kondisi' => $kondisi,
         ]);
 
-        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui.');
+        return redirect()->route('inventaris.index')
+            ->with('success', 'Inventaris berhasil diperbarui.');
     }
+
 
     public function destroy(Inventory $inventaris)
     {

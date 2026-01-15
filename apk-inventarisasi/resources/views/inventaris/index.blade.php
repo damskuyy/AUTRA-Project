@@ -88,6 +88,7 @@
                                                     <th>Jenis</th>
                                                     <th>Merk</th>
                                                     <th>Penempatan Rak</th>
+                                                    <th>Status</th>
                                                     <th width="120">Aksi</th>
                                                 </tr>
                                             </thead>
@@ -98,6 +99,20 @@
                                                     <td>{{ $a->barangMasuk->jenis_barang }}</td>
                                                     <td>{{ $a->barangMasuk->merk ?? '-' }}</td>
                                                     <td>{{ $a->penempatan_rak_label }}</td>
+                                                    <td>
+                                                        @php
+                                                            $statusClass = match ($a->status) {
+                                                                'TERSEDIA'   => 'bg-success',
+                                                                'DIPINJAM'   => 'bg-warning',
+                                                                'HILANG'     => 'bg-danger',
+                                                                'DIPERBAIKI' => 'bg-info',
+                                                                default      => 'bg-secondary',
+                                                            };
+                                                        @endphp
+
+                                                        <span class="badge {{ $statusClass }}">
+                                                            {{ $a->status }}
+                                                        </span>
                                                     <td>
                                                     <a href="{{ route('inventaris.show', $a->id) }}" class="btn btn-xs btn-info">
                                                         <i class="fas fa-eye"></i>

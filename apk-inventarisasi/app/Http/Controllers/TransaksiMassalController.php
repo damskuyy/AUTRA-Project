@@ -4,78 +4,229 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
-use App\Models\BarangMasuk;
-use App\Models\TransaksiMassal; // nanti kita bikin model
+use App\Models\TransaksiMassal;
 use App\Models\Siswa;
+use App\Models\ActivityLog;
+use App\Models\Pelanggaran;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class TransaksiMassalController extends Controller
 {
+    /**
+     * INDEX → transaksi aktif (belum dikembalikan)
+     */
     public function index()
     {
-        // Riwayat transaksi aktif (belum dikembalikan)
-        $transaksis = TransaksiMassal::with('inventaris', 'siswa')
-            ->orderBy('created_at', 'desc')
+        $transaksis = TransaksiMassal::with(['inventaris', 'siswa'])
+            ->where('dikembalikan', false)
+            ->latest()
             ->get();
 
         return view('transaksi-massal.index', compact('transaksis'));
     }
 
+    /**
+     * RIWAYAT → transaksi sudah dikembalikan
+     */
+    public function riwayat()
+    {
+        $transaksis = TransaksiMassal::with(['inventaris', 'siswa'])
+            ->where('dikembalikan', true)
+            ->latest()
+            ->get();
+
+        return view('transaksi_massal.riwayat', compact('transaksis'));
+    }
+
+    /**
+     * FORM CREATE
+     */
     public function create()
     {
-        // Ambil inventaris yang tersedia & kondisi baik
-        $inventarisAlat = Inventory::whereHas('barangMasuk', fn($q) => $q->where('jenis_barang', 'alat'))
+        $inventarisAlat = Inventory::whereHas('barangMasuk', fn ($q) =>
+            $q->where('jenis_barang', 'alat')
+        )
             ->where('status', 'TERSEDIA')
             ->where('kondisi', 'BAIK')
             ->get();
 
-        $inventarisBahan = Inventory::whereHas('barangMasuk', fn($q) => $q->where('jenis_barang', 'bahan'))
-            ->where('status', 'TERSEDIA')
-            ->where('kondisi', 'BAIK')
-            ->get();
+        $inventarisBahan = Inventory::whereHas('barangMasuk', fn ($q) =>
+            $q->where('jenis_barang', 'bahan')
+        )->get();
 
         $siswas = Siswa::all();
 
-        return view('transaksi-massal.create', compact('inventarisAlat', 'inventarisBahan', 'siswas'));
+        return view('transaksi-massal.create', compact(
+            'inventarisAlat',
+            'inventarisBahan',
+            'siswas'
+        ));
     }
 
+    /**
+     * STORE TRANSAKSI MASSAL
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'siswa' => 'required|string',
-            'inventaris_ids' => 'required|array',
-            'jam_kembali' => 'required|date_format:H:i',
+            'siswa_id' => 'required|exists:siswas,id',
+            'inventaris_ids' => 'nullable|array',
+            'jumlah' => 'nullable|array',
+            'jam_kembali' => 'nullable|date_format:H:i',
             'catatan' => 'nullable|string|max:255',
         ]);
 
+        if (empty($validated['inventaris_ids']) && empty($validated['jumlah'])) {
+            return back()->withErrors('Pilih minimal 1 barang');
+        }
+
         DB::transaction(function () use ($validated) {
+
             $transaksi = TransaksiMassal::create([
-                'siswa' => $validated['siswa'],
+                'siswa_id' => $validated['siswa_id'],
+                'admin_id' => auth()->id(),
                 'jam_transaksi' => now(),
                 'jam_kembali' => $validated['jam_kembali'],
                 'catatan' => $validated['catatan'] ?? null,
             ]);
 
-            // Attach inventaris
-            foreach ($validated['inventaris_ids'] as $id) {
-                $inventory = Inventory::find($id);
-                $inventory->update(['status' => 'DIPINJAM']); // ubah status jadi dipinjam
-                $transaksi->inventaris()->attach($inventory->id);
+            $adaAlat = false;
+
+            // ALAT
+            if (!empty($validated['inventaris_ids'])) {
+                $adaAlat = true;
+                foreach ($validated['inventaris_ids'] as $id) {
+                    $inv = Inventory::findOrFail($id);
+                    $inv->update(['status' => 'DIPINJAM']);
+                    $transaksi->inventaris()->attach($inv->id, ['quantity' => 1]);
+                }
+            }
+
+            // BAHAN
+            if (!empty($validated['jumlah'])) {
+                foreach ($validated['jumlah'] as $id => $qty) {
+                    if ($qty > 0) {
+                        $inv = Inventory::findOrFail($id);
+                        $inv->decrement('stok', $qty);
+                        $transaksi->inventaris()->attach($inv->id, ['quantity' => $qty]);
+                    }
+                }
+            }
+
+            // Jika hanya bahan → langsung selesai
+            if (!$adaAlat) {
+                $transaksi->update(['dikembalikan' => true]);
             }
         });
 
-        return redirect()->route('transaksi.massal.index')->with('success', 'Transaksi massal berhasil dibuat.');
+        return redirect()
+            ->route('transaksi.massal.index')
+            ->with('success', 'Transaksi massal berhasil dibuat');
     }
 
-    public function kembalikan(TransaksiMassal $transaksi)
+    /**
+     * FORM PENGEMBALIAN
+     */
+    public function showFormKembalikan($id)
     {
-        DB::transaction(function () use ($transaksi) {
-            foreach ($transaksi->inventaris as $inventory) {
-                $inventory->update(['status' => 'TERSEDIA']);
+        $transaksi = TransaksiMassal::with(['inventaris', 'siswa'])->findOrFail($id);
+        return view('kembalikan.index', compact('transaksi'));
+    }
+
+    /**
+     * PROSES PENGEMBALIAN
+     */
+    public function formKembalikan(Request $request, $id)
+    {
+        $transaksi = TransaksiMassal::with(['inventaris', 'siswa'])->findOrFail($id);
+
+        $request->validate([
+            'kondisi' => 'nullable|array',
+            'kondisi.*' => 'in:BAIK,RUSAK_RINGAN,RUSAK_BERAT,HILANG',
+        ]);
+
+        DB::transaction(function () use ($request, $transaksi) {
+
+            $kenaPelanggaran = false;
+            $alasan = [];
+
+            // ================= INVENTARIS =================
+            foreach ($request->kondisi ?? [] as $invId => $kondisi) {
+                $inv = Inventory::findOrFail($invId);
+
+                $status = match ($kondisi) {
+                    'BAIK' => 'TERSEDIA',
+                    'RUSAK_RINGAN', 'RUSAK_BERAT' => 'RUSAK',
+                    'HILANG' => 'HILANG',
+                    default => $inv->status,
+                };
+
+                $inv->update([
+                    'kondisi' => $kondisi,
+                    'status' => $status,
+                ]);
+
+                if (in_array($kondisi, ['RUSAK_RINGAN', 'RUSAK_BERAT', 'HILANG'])) {
+                    $kenaPelanggaran = true;
+                    $alasan[] = "Barang {$inv->barangMasuk->nama_barang} {$kondisi}";
+                }
             }
+
+            // ================= TELAT =================
+            if ($transaksi->jam_kembali) {
+                $jamKembali = Carbon::parse(
+                    $transaksi->jam_transaksi->format('Y-m-d') . ' ' . $transaksi->jam_kembali
+                );
+
+                if (now()->greaterThan($jamKembali)) {
+                    $kenaPelanggaran = true;
+                    $alasan[] = 'Pengembalian terlambat';
+                }
+            }
+
+            // ================= PELANGGARAN (SATU KALI) =================
+            if ($kenaPelanggaran) {
+
+                Pelanggaran::create([
+                    'siswa_id' => $transaksi->siswa_id,
+                    'tipe' => 'TRANSAKSI_MASSAL',
+                    'poin' => 1,
+                    'keterangan' => implode(', ', $alasan),
+                    'tanggal_kejadian' => now(),
+                    'admin_id' => auth()->id(),
+                ]);
+
+                $siswa = Siswa::findOrFail($transaksi->siswa_id);
+                $siswa->increment('total_poin');
+
+                // AUTO BANNED
+                if ($siswa->total_poin >= 3) {
+                    $siswa->update([
+                        'is_banned' => true,
+                        'banned_until' => now()->addDays(3),
+                        'alasan_ban' => 'Mencapai batas maksimal pelanggaran',
+                        'total_poin' => 0,
+                    ]);
+                }
+            }
+
+            // ================= TRANSAKSI =================
             $transaksi->update(['dikembalikan' => true]);
+
+            ActivityLog::create([
+                'waktu' => now(),
+                'aktivitas' => 'Pengembalian Transaksi Massal',
+                'detail' => "Pengembalian oleh {$transaksi->siswa->nama}",
+                'admin_id' => auth()->id(),
+                'siswa_id' => $transaksi->siswa_id,
+                'subject_id' => $transaksi->id,
+                'subject_type' => TransaksiMassal::class,
+            ]);
         });
 
-        return back()->with('success', 'Semua inventaris berhasil dikembalikan.');
+        return redirect()
+            ->route('transaksi.massal.index')
+            ->with('success', 'Pengembalian berhasil diproses');
     }
 }

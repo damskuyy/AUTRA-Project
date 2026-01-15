@@ -74,4 +74,26 @@ class Inventory extends Model
     // {
     //     return $this->item->jenis === 'bahan';
     // }
+
+    // Accessor untuk status berdasarkan kondisi
+    public function getStatusAttribute($value)
+    {
+        // Jika status sudah DIPERBAIKI, tetap DIPERBAIKI (manual admin)
+        if ($value === 'DIPERBAIKI') {
+            return 'DIPERBAIKI';
+        }
+
+        // Jika DIPINJAM, tetap DIPINJAM
+        if ($value === 'DIPINJAM') {
+            return 'DIPINJAM';
+        }
+
+        // Berdasarkan kondisi
+        return match ($this->kondisi) {
+            'BAIK' => 'TERSEDIA',
+            'RUSAK_RINGAN', 'RUSAK_BERAT' => 'RUSAK',
+            'HILANG' => 'HILANG',
+            default => $value, // fallback
+        };
+    }
 }

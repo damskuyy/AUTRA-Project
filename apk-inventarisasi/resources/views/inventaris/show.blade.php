@@ -21,9 +21,21 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold mb-0">Informasi Barang</h5>
-                        <span class="badge {{ $inventaris->status === 'TERSEDIA' ? 'bg-success' : 'bg-warning' }}">
-                            {{ $inventaris->status }}
-                        </span>
+                        <td>
+                            @php
+                                $statusClass = match ($inventaris->status) {
+                                    'TERSEDIA'   => 'bg-success',
+                                    'DIPINJAM'   => 'bg-warning',
+                                    'HILANG'     => 'bg-danger',
+                                    'DIPERBAIKI' => 'bg-info',
+                                    default      => 'bg-secondary',
+                                };
+                            @endphp
+
+                            <span class="badge {{ $statusClass }}">
+                                {{ $inventaris->status }}
+                            </span>
+                        <td>
                     </div>
 
                     <table class="table table-borderless">

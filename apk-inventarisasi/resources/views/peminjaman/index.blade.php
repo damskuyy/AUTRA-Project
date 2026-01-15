@@ -40,14 +40,11 @@
                 <table class="table align-items-center mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold">Alat</th>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Qty</th>
+                            <th class="text-uppercase text-secondary text-xxs fw-bold">Nama Alat</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Siswa</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Kelas</th>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold">Waktu</th>
+                            <th class="text-uppercase text-secondary text-xxs fw-bold">Waktu Pinjam</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Keperluan</th>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Kondisi</th>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Status</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -61,12 +58,6 @@
                                 <h6 class="mb-0 text-sm">
                                     {{ $p->inventory->barangMasuk->nama_barang }}
                                 </h6>
-                            </td>
-
-
-                            <!-- QTY -->
-                            <td class="text-center fw-bold">
-                                {{ $p->quantity }}
                             </td>
 
                             <!-- SISWA -->
@@ -91,22 +82,6 @@
                                 <span class="badge bg-light text-dark">
                                     {{ $p->keperluan ?? '-' }}
                                 </span>
-                            </td>
-
-                            <!-- KONDISI -->
-                            <td class="text-center">
-                                <span class="badge bg-info px-3">
-                                    {{ $p->kondisi_pinjam }}
-                                </span>
-                            </td>
-
-                            <!-- STATUS -->
-                            <td class="text-center">
-                                @if($p->pengembalian)
-                                    <span class="badge bg-success px-3">Selesai</span>
-                                @else
-                                    <span class="badge bg-warning px-3">Dipinjam</span>
-                                @endif
                             </td>
 
                             <!-- AKSI -->
@@ -137,6 +112,20 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+@if(session('success'))
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil!',
+    text: '{{ session("success") }}',
+    confirmButtonText: 'OK'
+});
+@endif
+</script>
+@endpush
 
 @section('footer')
     @include('be.footer')

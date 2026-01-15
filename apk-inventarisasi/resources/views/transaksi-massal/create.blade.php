@@ -73,12 +73,22 @@
                 {{-- Tab Bahan --}}
                 <div class="tab-pane fade" id="tabBahan" role="tabpanel">
                     @forelse($inventarisBahan as $inv)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inventaris_ids[]" value="{{ $inv->id }}" id="inv{{ $inv->id }}">
-                        <label class="form-check-label" for="inv{{ $inv->id }}">
-                            {{ $inv->barangMasuk->nama_barang }} ({{ $inv->stok }} {{ $inv->barangMasuk->satuan ?? 'Unit' }}) - {{ $inv->kode_qr_jurusan }}
-                        </label>
-                    </div>
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-6">
+                                <strong>{{ $inv->barangMasuk->nama_barang }}</strong>
+                                <small class="text-muted">
+                                    (stok: {{ $inv->stok }} {{ $inv->barangMasuk->satuan }})
+                                </small>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number"
+                                    name="jumlah[{{ $inv->id }}]"
+                                    class="form-control"
+                                    min="0"
+                                    max="{{ $inv->stok }}"
+                                    placeholder="Jumlah">
+                            </div>
+                        </div>
                     @empty
                     <p class="text-muted">Tidak ada bahan tersedia.</p>
                     @endforelse

@@ -127,11 +127,21 @@
 @endpush
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
 let html5Qr;
 let isScanning = false;
+
+@if(session('error') && session('swal'))
+Swal.fire({
+    icon: 'error',
+    title: 'Tidak Dapat Dipinjam',
+    text: '{{ session("error") }}',
+    confirmButtonText: 'OK'
+});
+@endif
 
 document.getElementById('openCamera').addEventListener('click', () => {
 

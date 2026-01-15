@@ -56,6 +56,8 @@
                                 <option value="BAIK">Baik</option>
                                 <option value="RUSAK_RINGAN">Rusak Ringan</option>
                                 <option value="RUSAK_BERAT">Rusak Berat</option>
+                                <option value="HILANG">Hilang</option>
+                                <option value="SEDANG DIPERBAIKI">Sedang Diperbaiki</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -110,6 +112,8 @@
                                 <option value="BAIK">Baik</option>
                                 <option value="RUSAK_RINGAN">Rusak Ringan</option>
                                 <option value="RUSAK_BERAT">Rusak Berat</option>
+                                <option value="HILANG">Hilang</option>
+                                <option value="SEDANG DIPERBAIKI">Sedang Diperbaiki</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -136,3 +140,19 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.querySelector('select[name="status"]');
+    const kondisiSelect = document.querySelector('select[name="kondisi"]');
+
+    if (statusSelect && kondisiSelect) {
+        statusSelect.addEventListener('change', function() {
+            if (this.value === 'DIPERBAIKI') {
+                kondisiSelect.value = 'SEDANG DIPERBAIKI';
+            }
+        });
+    }
+});
+</script>

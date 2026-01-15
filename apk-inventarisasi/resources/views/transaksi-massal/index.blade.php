@@ -19,7 +19,7 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-0">Riwayat Transaksi Massal</h4>
+            <h4 class="fw-bold mb-0">Transaksi Massal</h4>
             <small class="text-muted">Transaksi peminjaman & pemakaian inventaris</small>
         </div>
         <a href="{{ route('transaksi.massal.create') }}" class="btn btn-primary">
@@ -32,44 +32,38 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th>#</th>
+                        <tr class="text-center">
+                            <th>No.</th>
                             <th>Nama Siswa</th>
                             <th>Inventaris</th>
                             <th>Jam Transaksi</th>
                             <th>Jam Kembali</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($transaksis as $t)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $t->siswa }}</td>
-                            <td>
+                            <td class="text-center">{{ $loop->iteration }}</td>
+                            <td class="text-center">{{ $t->siswa->nama }} ({{$t->siswa->kelas}})</td>
+                            <td class="text-center">
                                 @foreach($t->inventaris as $inv)
-                                    {{ $inv->barangMasuk->nama_barang }} ({{ $inv->kode_qr_jurusan }})<br>
+                                    {{ $inv->barangMasuk->nama_barang }}
+                                    @if($inv->barangMasuk->jenis_barang == 'bahan')
+                                        ({{ $inv->pivot->quantity }} {{ $inv->barangMasuk->satuan }})
+                                    @else
+                                        ({{ $inv->kode_qr_jurusan }})
+                                    @endif
+                                    <br>
                                 @endforeach
                             </td>
-                            <td>{{ \Carbon\Carbon::parse($t->jam_transaksi)->format('d-m-Y H:i') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($t->jam_kembali)->format('H:i') }}</td>
-                            <td>
-                                @if($t->dikembalikan)
-                                    <span class="badge bg-success">Sudah Dikembalikan</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">Dipinjam</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if(!$t->dikembalikan)
-                                <form method="POST" action="{{ route('transaksi.massal.kembalikan', $t->id) }}" class="d-inline">
-                                    @csrf
-                                    <button class="btn btn-success btn-sm">
-                                        <i class="fas fa-undo"></i> Kembalikan
-                                    </button>
-                                </form>
-                                @endif
+                            <td class="text-center">{{ \Carbon\Carbon::parse($t->jam_transaksi)->format('d-m-Y H:i') }}</td>
+                            <td class="text-center">{{ \Carbon\Carbon::parse($t->jam_kembali)->format('H:i') }}</td>
+                            <td class="text-center">
+                                <a href="{{ route('transaksi.massal.formKembalikan', $t->id) }}"
+                                    class="btn btn-warning btn-sm">
+                                    Kembalikan
+                                </a>
                             </td>
                         </tr>
                         @empty

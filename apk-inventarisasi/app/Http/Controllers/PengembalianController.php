@@ -52,7 +52,7 @@ class PengembalianController extends Controller
     {
         $request->validate([
             'peminjaman_id' => 'required|exists:peminjamans,id',
-            'kondisi' => 'required',
+            'kondisi' => 'required|in:BAIK,RUSAK_RINGAN,RUSAK_BERAT,HILANG',
             'catatan' => 'nullable|string',
         ]);
 
@@ -114,6 +114,21 @@ class PengembalianController extends Controller
              */
             $peminjaman->inventory
                 ->increment('stok', $peminjaman->quantity);
+
+            /**
+             * UPDATE KONDISI DAN STATUS INVENTARIS
+             */
+            $status = match ($request->kondisi) {
+                'BAIK' => 'TERSEDIA',
+                'RUSAK_RINGAN', 'RUSAK_BERAT' => 'RUSAK',
+                'HILANG' => 'HILANG',
+                default => 'TERSEDIA', // fallback
+            };
+
+            $peminjaman->inventory->update([
+                'kondisi' => $request->kondisi,
+                'status' => $status,
+            ]);
         });
 
         return redirect()

@@ -39,11 +39,32 @@ Route::middleware('auth')->group(function () {
     Route::post('/peminjaman',[PeminjamanController::class, 'store'])->name('peminjaman.store');
 
     Route::prefix('transaksi-massal')->group(function () {
-        Route::get('/', [TransaksiMassalController::class, 'index'])->name('transaksi.massal.index');
-        Route::get('/create', [TransaksiMassalController::class, 'create'])->name('transaksi.massal.create');
-        Route::post('/store', [TransaksiMassalController::class, 'store'])->name('transaksi.massal.store');
-        Route::post('/kembalikan/{transaksi}', [TransaksiMassalController::class, 'kembalikan'])->name('transaksi.massal.kembalikan');
+        // INDEX → transaksi aktif (belum dikembalikan)
+        Route::get('/', [TransaksiMassalController::class, 'index'])
+            ->name('transaksi.massal.index');
+
+        // CREATE → form transaksi baru
+        Route::get('/create', [TransaksiMassalController::class, 'create'])
+            ->name('transaksi.massal.create');
+
+        // STORE → simpan transaksi baru
+        Route::post('/store', [TransaksiMassalController::class, 'store'])
+            ->name('transaksi.massal.store');
+
+        // FORM PENGEMBALIAN → tampilkan form pengembalian
+        Route::get('/kembalikan/{transaksi}', [TransaksiMassalController::class, 'showFormKembalikan'])
+            ->name('transaksi.massal.formKembalikan');
+
+        // PROSES PENGEMBALIAN → submit pengembalian
+        Route::post('/kembalikan/{transaksi}', [TransaksiMassalController::class, 'formKembalikan'])
+            ->name('transaksi.massal.prosesKembalikan');
+
+        // RIWAYAT → transaksi yang sudah dikembalikan
+        Route::get('/riwayat', [TransaksiMassalController::class, 'riwayat'])
+            ->name('transaksi.massal.riwayat');
     });
+
+
 
 
     Route::get('/pengembalian', [PengembalianController::class, 'index'])

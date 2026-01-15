@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transaksi_massals', function (Blueprint $table) {
             $table->id();
-            $table->string('siswa');
+            $table->foreignId('siswa_id')->constrained('siswas');
             $table->timestamp('jam_transaksi');
             $table->time('jam_kembali');
             $table->text('catatan')->nullable();

@@ -95,6 +95,7 @@
                                 <option value="BAIK">Baik</option>
                                 <option value="RUSAK_RINGAN">Rusak Ringan</option>
                                 <option value="RUSAK_BERAT">Rusak Berat</option>
+                                <option value="HILANG">Hilang</option>
                             </select>
                         </div>
 
@@ -129,6 +130,54 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+
+    @if(session('success'))
+    console.log('Session success found');
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session("success") }}',
+        confirmButtonText: 'OK'
+    });
+    @endif
+
+    // Confirm untuk tombol submit
+    const form = document.querySelector('form');
+    if (form) {
+        console.log('Form found');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submit prevented');
+
+            Swal.fire({
+                title: 'Konfirmasi Pengembalian',
+                text: 'Apakah Anda yakin ingin mengkonfirmasi pengembalian alat ini?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Konfirmasi',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                console.log('Swal result:', result);
+                if (result.isConfirmed) {
+                    console.log('Submitting form');
+                    this.submit();
+                }
+            });
+        });
+    } else {
+        console.log('Form not found');
+    }
+});
+</script>
+@endpush
 
 @section('footer')
     @include('be.footer')

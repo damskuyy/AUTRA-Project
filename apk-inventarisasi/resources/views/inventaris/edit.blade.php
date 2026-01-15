@@ -49,7 +49,7 @@
                             @else
                                 @foreach ($barangMasukAlat as $a)
                                     <option value="{{ $a->id }}" {{ $inventaris->barang_masuk_id == $a->id ? 'selected' : '' }}>
-                                        {{ $a->nama_barang }} (Seri: {{ $a->nomor_dokumen }})
+                                        {{ $a->nama_barang }}
                                     </option>
                                 @endforeach
                             @endif
@@ -73,7 +73,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Kondisi</label>
                         <select name="kondisi" class="form-select" required>
-                            @foreach (['BAIK','RUSAK_RINGAN','RUSAK_BERAT'] as $k)
+                            @foreach (['BAIK','RUSAK_RINGAN','RUSAK_BERAT','HILANG','SEDANG DIPERBAIKI'] as $k)
                                 <option value="{{ $k }}"
                                     {{ $inventaris->kondisi === $k ? 'selected' : '' }}>
                                     {{ $k }}
@@ -82,32 +82,26 @@
                         </select>
                     </div>
 
-                    <!-- Nomor Inventaris -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Nomor Inventaris</label>
-                        <input type="text" name="nomor_inventaris" class="form-control"
-                               value="{{ $inventaris->nomor_inventaris }}">
-                    </div>
-
-                    <!-- Serial -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Serial Number</label>
-                        <input type="text" name="serial_number" class="form-control"
-                               value="{{ $inventaris->serial_number }}">
-                    </div>
-
                     <!-- Stok (untuk bahan) -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Stok</label>
-                        <input type="number" name="stok" class="form-control"
-                               value="{{ $inventaris->stok }}">
+                        <input type="number" name="stok"
+                               value="{{ $inventaris->stok }}" class="form-control"
+                               readonly>
+                        <small class="text-muted">
+                            Stok default alat adalah 1
+                        </small>
                     </div>
 
                     <!-- QR -->
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Kode QR Jurusan</label>
+                        <label class="form-label">Kode QR</label>
                         <input type="text" name="kode_qr_jurusan" class="form-control"
-                               value="{{ $inventaris->kode_qr_jurusan }}">
+                               value="{{ $inventaris->kode_qr_jurusan }}"
+                               readonly>
+                        <small class="text-muted">
+                            Kode QR hanya dapat diubah saat menambah barang masuk baru.
+                        </small>
                     </div>
 
                 </div>
@@ -123,6 +117,21 @@
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.querySelector('select[name="status"]');
+    const kondisiSelect = document.querySelector('select[name="kondisi"]');
+
+    statusSelect.addEventListener('change', function() {
+        if (this.value === 'DIPERBAIKI') {
+            kondisiSelect.value = 'SEDANG DIPERBAIKI';
+        }
+    });
+});
+</script>
+@endpush
 
 @section('footer')
     @include('be.footer')
