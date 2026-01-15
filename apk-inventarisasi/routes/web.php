@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 Use App\Http\Controllers\{InventoriesController, BarangMasukController, DashboardController, LoginController, SiswaController, RuanganController, ItemsController,
-ScanController, PemakaianBahanController, PeminjamanController, PengembalianController, LogController, ExportController, ProfileController, TransaksiMassalController};
+ScanController, PemakaianBahanController, PeminjamanController, PengembalianController, LogController, ExportController, ProfileController, TransaksiMassalController, SarprasController};
 
 // Arahkan root ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -93,6 +93,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     // Proses Update Password
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+
+
+    //SARPRAS
+
+    Route::post('/barang-masuk/sarpras/scan',
+        [SarprasController::class, 'scan']
+    )->name('sarpras.scan');
+
+    Route::post('/barang-masuk/sarpras/store',
+        [SarprasController::class, 'store']
+    )->name('sarpras.store');
 });
 
 

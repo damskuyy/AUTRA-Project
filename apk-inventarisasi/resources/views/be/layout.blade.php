@@ -14,7 +14,7 @@
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link id="pagestyle" href="{{asset('be/css/soft-ui-dashboard.css?v=1.1.0')}}" rel="stylesheet" />
 
-  <style>s
+  <style>
 
   body.g-sidenav-show {
     overflow: hidden; /* Soft UI bug, ini membuang gap */

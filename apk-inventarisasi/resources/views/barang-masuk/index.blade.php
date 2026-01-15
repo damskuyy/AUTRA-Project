@@ -28,6 +28,13 @@
                 <i class="fas fa-flask me-2"></i>Pendataan Bahan Habis Pakai
             </button>
         </li>
+        <li class="nav-item">
+            <button class="nav-link text-success"
+                    data-bs-toggle="tab"
+                    data-bs-target="#tabSarpras">
+                <i class="fas fa-qrcode me-2"></i>Pendataan Sarpras
+            </button>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -291,6 +298,121 @@
             </div>
         </div>
 
+        <div class="tab-pane fade" id="tabSarpras">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3 text-success">
+                        <i class="fas fa-qrcode me-2"></i>Pendataan Barang Sarpras
+                    </h5>
+
+                    {{-- INPUT QR SARPRAS --}}
+                    <div class="row mb-3 align-items-end">
+
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">
+                                Kode QR Barang Sarpras
+                            </label>
+                            <input type="text"
+                                id="qrSarpras"
+                                class="form-control"
+                                placeholder="Scan QR / input manual kode barang"
+                                autocomplete="off">
+                        </div>
+
+                        <div class="col-md-4 d-grid">
+                            <button type="button"
+                                    class="btn btn-outline-success mb-0"
+                                    onclick="openSarprasScanner()">
+                                <i class="fas fa-camera me-1"></i> Scan Kamera
+                            </button>
+                        </div>
+
+                    </div>
+
+
+                    {{-- CAMERA --}}
+                    <div id="sarpras-reader"
+                        class="mb-4 mx-auto"
+                        style="width: 280px;; display:none;"></div>
+
+                    {{-- FORM SARPRAS --}}
+                    <form action="{{ route('sarpras.store') }}" method="POST">
+                        @csrf
+
+                        <input type="hidden" name="kode_unik" id="sp_kode">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Nama Barang</label>
+                                <input type="text" id="sp_nama" name="nama_barang"
+                                    class="form-control" readonly>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Merk</label>
+                                <input type="text" id="sp_merk" name="merk"
+                                    class="form-control" readonly>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-semibold">Spesifikasi</label>
+                                <textarea id="sp_spesifikasi"
+                                        class="form-control"
+                                        rows="2"
+                                        readonly></textarea>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Ruangan</label>
+                                <select name="ruangan_id" class="form-select" required>
+                                    <option value="">-- pilih ruangan --</option>
+                                    @foreach($ruangans as $r)
+                                        <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">Status</label>
+                                <select name="status" class="form-select" required>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="dipinjam">Dipinjam</option>
+                                    <option value="rusak">Rusak</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">Kondisi</label>
+                                <select name="kondisi" class="form-select" required>
+                                    <option value="baik">Baik</option>
+                                    <option value="cukup">Cukup</option>
+                                    <option value="rusak">Rusak</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Foto</label>
+                                <img id="sp_foto"
+                                    class="img-fluid rounded border"
+                                    style="max-height:200px; display:none;">
+                                <input type="hidden" name="foto" id="sp_foto_input">
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-success px-4">
+                            <i class="fas fa-save me-2"></i>Simpan Barang Sarpras
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
 </div>
 
@@ -319,7 +441,125 @@ document.getElementById('namaAlatSelect')?.addEventListener('change', function (
 </script>
 
 @push('scripts')
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+let sarprasScanner;
+let scanned = false;
+
+/* ======================
+   BUKA SCANNER
+====================== */
+function openSarprasScanner() {
+    const reader = document.getElementById('sarpras-reader');
+    reader.style.display = 'block';
+
+    sarprasScanner = new Html5Qrcode("sarpras-reader");
+
+    sarprasScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        onSarprasScanSuccess
+    );
+}
+
+/* ======================
+   CALLBACK SCAN
+====================== */
+function onSarprasScanSuccess(qrText) {
+    if (scanned) return;
+    scanned = true;
+
+    console.log('QR RAW:', qrText);
+
+    sarprasScanner.stop();
+    document.getElementById('sarpras-reader').style.display = 'none';
+
+    const kode = extractKodeUnik(qrText);
+
+    console.log('KODE FINAL:', kode);
+
+    if (!kode) {
+        Swal.fire('QR Tidak Valid', 'Kode tidak dikenali', 'error');
+        scanned = false;
+        return;
+    }
+
+    fetchSarprasData(kode);
+
+    setTimeout(() => scanned = false, 3000);
+}
+
+/* ======================
+   NORMALISASI KODE
+====================== */
+function extractKodeUnik(text) {
+    if (!text) return null;
+
+    text = text.trim();
+
+    console.log('QR RAW:', text);
+
+    // Cari pola kodeunik=XXXX
+    const match = text.match(/kodeunik=([A-Za-z0-9.\-_]+)/);
+
+    if (match && match[1]) {
+        console.log('KODE FINAL:', match[1]);
+        return match[1];
+    }
+
+    // fallback: kalau isinya langsung kode
+    if (/^[0-9]+\.[0-9]+\.[0-9]+$/.test(text)) {
+        console.log('KODE FINAL (DIRECT):', text);
+        return text;
+    }
+
+    console.warn('Kode unik tidak ditemukan dari QR');
+    return null;
+}
+
+
+
+/* ======================
+   FETCH API
+====================== */
+function fetchSarprasData(kode) {
+    fetch(`/api/sarpras/by-kode-barang/${encodeURIComponent(kode)}`)
+        .then(res => {
+            if (!res.ok) throw new Error('404');
+            return res.json();
+        })
+        .then(res => {
+            const d = res.data;
+
+            document.getElementById('sp_kode').value = d.kodeUnik;
+            document.getElementById('sp_nama').value = d.namaBarang;
+            document.getElementById('sp_merk').value = d.merk ?? '';
+            document.getElementById('sp_spesifikasi').value = d.spesifikasi ?? '';
+
+            if (d.foto) {
+                document.getElementById('sp_foto').src = d.foto;
+                document.getElementById('sp_foto').style.display = 'block';
+                document.getElementById('sp_foto_input').value = d.foto;
+            }
+
+            Swal.fire('Berhasil', 'Data Sarpras ditemukan', 'success');
+        })
+        .catch(() => {
+            Swal.fire('Gagal', 'Data Sarpras tidak ditemukan', 'error');
+        });
+}
+
+
+const qrInput = document.getElementById('qrSarpras');
+if (qrInput) {
+    qrInput.addEventListener('change', function () {
+        if (this.value.trim()) {
+            fetchSarprasData(extractKodeUnik(this.value));
+        }
+    });
+}
+
+
 @if(session('success'))
 Swal.fire({
     icon: 'success',
@@ -331,6 +571,7 @@ Swal.fire({
 });
 @endif
 </script>
+
 @endpush
 
 @endsection

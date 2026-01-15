@@ -23,6 +23,12 @@ class BarangMasuk extends Model
         'tanggal_masuk',
         'catatan',
         'admin_id',
+
+        // SARPRAS
+        'kode_unik',
+        'foto',
+        'qr_code_url',
+        'from_sarpras'
     ];
 
     protected $casts = [
