@@ -70,7 +70,8 @@
                         <table class="table align-items-center mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Siswa</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama Siswa</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Kelas</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">NIS</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Poin</th>
@@ -83,9 +84,10 @@
                             <tr class="siswa-row"
                                 data-nama="{{ strtolower($siswa->nama) }}"
                                 data-kelas="{{ strtolower($siswa->kelas) }}">
-                                <td class="text-center">
-                                    <h6 class="mb-0 text-sm">{{ $siswa->nama }} ({{ $siswa->kelas }})</h6>
+                                <td>
+                                    <h6 class="mb-0 text-sm">{{ $siswa->nama }}</h6>
                                 </td>
+                                <td>{{ $siswa->kelas }}</td>
                                 <td>{{ $siswa->nis }}</td>
                                 <td>
                                     @if ($siswa->is_banned)
@@ -197,8 +199,9 @@
                         <input
                             type="text"
                             name="nis"
-                            class="form-control form-control-lg"
+                            class="form-control form-control-lg @error('nis') is-invalid @enderror"
                             placeholder="Masukkan NIS siswa"
+                            value="{{ old('nis') }}"
                             required
                         >
                     </div>
@@ -481,6 +484,19 @@ document.addEventListener('DOMContentLoaded', function () {
             text: "{{ session('success') }}",
             timer: 2000,
             showConfirmButton: false
+        });
+    });
+</script>
+@endif
+
+@if ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: "{{ $errors->first() }}",
+            confirmButtonText: 'OK'
         });
     });
 </script>

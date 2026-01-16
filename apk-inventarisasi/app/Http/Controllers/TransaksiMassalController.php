@@ -78,6 +78,7 @@ class TransaksiMassalController extends Controller
             'jumlah' => 'nullable|array',
             'jam_kembali' => 'nullable|date_format:H:i',
             'catatan' => 'nullable|string|max:255',
+            'keperluan' => 'nullable|string|max:255',
         ]);
 
         $siswa = Siswa::findOrFail($validated['siswa_id']);
@@ -99,6 +100,7 @@ class TransaksiMassalController extends Controller
                 'jam_transaksi' => now(),
                 'jam_kembali' => $validated['jam_kembali'],
                 'catatan' => $validated['catatan'] ?? null,
+                'keperluan' => $validated['keperluan'] ?? null,
             ]);
 
             $adaAlat = false;

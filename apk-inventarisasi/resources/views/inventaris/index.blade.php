@@ -153,9 +153,6 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 d-flex justify-content-between">
                     <input type="text" id="searchBahan" class="form-control w-25" placeholder="Cari bahan...">
-                    <a href="{{ route('inventaris.create', ['type' => 'bahan']) }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Tambah Bahan
-                    </a>
                 </div>
 
                 <div class="card-body pt-0">

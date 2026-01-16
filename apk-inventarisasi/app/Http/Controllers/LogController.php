@@ -39,6 +39,9 @@ class LogController extends Controller
         if (!$jenis || $jenis === 'pengembalian') {
             $pengembalianMassal = TransaksiMassal::with(['inventaris.barangMasuk', 'siswa', 'admin'])
                 ->where('dikembalikan', true)
+                ->whereHas('inventaris.barangMasuk', fn ($q) =>
+                    $q->where('jenis_barang', 'alat')
+                )
                 ->when($from && $to, fn ($q) =>
                     $q->whereBetween('updated_at', [$from, $to])
                 )
@@ -163,6 +166,7 @@ class LogController extends Controller
         // ================= TRANSAKSI MASSAL =================
         if (!$jenis || $jenis === 'transaksi_massal') {
             $transaksiMassals = TransaksiMassal::with(['inventaris.barangMasuk', 'siswa', 'admin'])
+                ->where('dikembalikan', true)
                 ->when($from && $to, fn ($q) =>
                     $q->whereBetween('created_at', [$from, $to])
                 )

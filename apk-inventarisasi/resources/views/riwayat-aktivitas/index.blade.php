@@ -248,26 +248,40 @@
 
                     {{-- PENGEMBALIAN MASSAL --}}
                     @elseif ($k instanceof \App\Models\TransaksiMassal)
-                        <div class="activity-item mb-3 p-3 border rounded" data-type="pengembalian">
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex gap-3">
-                                    <div class="icon-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
-                                        style="width:42px;height:42px;">
-                                        <i class="fas fa-undo"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold">
-                                            {{ $k->siswa->nama }} mengembalikan transaksi massal
-                                        </div>
-                                        <div class="small text-muted">
-                                            {{ $k->updated_at->format('d M Y H:i') }}
-                                        </div>
-                                    </div>
+                    <div class="activity-item mb-3 p-3 border rounded" data-type="pengembalian">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex gap-3">
+                                <div class="icon-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width:42px;height:42px;">
+                                    <i class="fas fa-undo"></i>
                                 </div>
-                                <div class="text-muted small">{{ $k->admin->name ?? '-' }}</div>
+                                <div>
+                                    <div class="fw-semibold">
+                                        {{ $k->siswa->nama }} mengembalikan transaksi massal
+                                    </div>
+                                    <div class="small text-muted">
+                                        {{ $k->updated_at->format('d M Y H:i') }}
+                                    </div>
+
+                                    {{-- LIST ALAT SAJA --}}
+                                    <div class="small text-muted mt-1">
+                                        @foreach ($k->inventaris as $inv)
+                                            @if ($inv->barangMasuk->jenis_barang !== 'bahan')
+                                                <div>
+                                                    • {{ $inv->barangMasuk->nama_barang }}
+                                                    ({{ $inv->kode_qr_jurusan }})
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+
+                                </div>
                             </div>
+                            <div class="text-muted small">{{ $k->admin->name ?? '-' }}</div>
                         </div>
-                    @endif
+                    </div>
+                @endif
+
 
                 @endforeach
 
@@ -311,6 +325,26 @@
                                     <div>
                                         <div class="fw-semibold">{{ $pl->siswa->nama }} <span class="text-muted">({{ $pl->siswa->kelas }})</span></div>
                                         <div class="small text-muted">{{ $pl->created_at->format('d M Y H:i') }} ({{ $pl->created_at->diffForHumans() }})</div>
+                                        <div class="small mt-1">
+                                            <strong>Pelanggaran:</strong> 
+                                            @switch($pl->tipe)
+                                                @case('TELAT_KEMBALI')
+                                                    Telat Mengembalikan Alat
+                                                    @break
+                                                @case('KERUSAKAN')
+                                                    Merusakkan Alat
+                                                    @break
+                                                @case('HILANG')
+                                                    Menghilangkan Alat
+                                                    @break
+                                                @default
+                                                    {{ $pl->tipe }}
+                                            @endswitch
+                                            ({{ $pl->poin }} poin)
+                                            @if($pl->keterangan)
+                                                <br><em>{{ $pl->keterangan }}</em>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -345,17 +379,6 @@
         });
     });
     </script>
-
-    <style>
-        .btn-export:focus,
-        .btn-export:active,
-        .btn-export:focus-visible {
-            box-shadow: none !important;
-            outline: none !important;
-            transform: none !important;
-        }
-    </style>
-
 
 </div>
 @endsection

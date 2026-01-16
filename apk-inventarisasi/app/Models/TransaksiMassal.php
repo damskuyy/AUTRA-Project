@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransaksiMassal extends Model
 {
-    protected $fillable = ['siswa_id','admin_id','jam_transaksi','jam_kembali','catatan','dikembalikan'];
+    protected $fillable = ['siswa_id','admin_id','jam_transaksi','jam_kembali','catatan','keperluan','dikembalikan'];
 
     protected $casts = [
         'jam_transaksi' => 'datetime',
