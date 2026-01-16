@@ -46,9 +46,6 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 d-flex justify-content-between">
                     <input type="text" id="searchAlat" class="form-control w-25" placeholder="Cari alat...">
-                    <a href="{{ route('inventaris.create', ['type' => 'alat']) }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Tambah Alat
-                    </a>
                 </div>
 
                 <div class="card-body pt-0">

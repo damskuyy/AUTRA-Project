@@ -88,6 +88,10 @@ class PeminjamanController extends Controller
             abort(403, 'Siswa sedang dibanned sampai ' . $siswa->banned_until);
         }
 
+        if (!$siswa->is_active) {
+            abort(403, 'Siswa tidak aktif');
+        }
+
         $keperluan = $request->keperluan === '__manual'
             ? $request->keperluan_manual
             : $request->keperluan;

@@ -50,15 +50,9 @@ class PelanggaranController extends Controller
         ]);
 
         // tambah total pelanggaran
-        $siswa->increment('total_pelanggaran');
-
-        // AUTO BAN JIKA >= 3
-        if ($siswa->total_pelanggaran >= 3 && !$siswa->is_banned) {
-            $siswa->update([
-                'is_banned' => true,
-                'banned_until' => now()->addDays(3)
-            ]);
-        }
+        $siswa->increment('total_poin');
+        $siswa->refresh();
+        $siswa->checkAndAutoBan();
 
         return back()->with('success', 'Pelanggaran berhasil dicatat');
     }

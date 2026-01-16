@@ -55,7 +55,10 @@ class TransaksiMassalController extends Controller
             $q->where('jenis_barang', 'bahan')
         )->get();
 
-        $siswas = Siswa::all();
+        $siswas = Siswa::where('is_active', true)
+            ->where('is_banned', false)
+            ->orderBy('nama')
+            ->get();
 
         return view('transaksi-massal.create', compact(
             'inventarisAlat',
@@ -76,6 +79,13 @@ class TransaksiMassalController extends Controller
             'jam_kembali' => 'nullable|date_format:H:i',
             'catatan' => 'nullable|string|max:255',
         ]);
+
+        $siswa = Siswa::findOrFail($validated['siswa_id']);
+
+        if ($siswa->is_banned) {
+            return back()->withErrors('Siswa sedang dibanned dan tidak dapat melakukan transaksi');
+        }
+
 
         if (empty($validated['inventaris_ids']) && empty($validated['jumlah'])) {
             return back()->withErrors('Pilih minimal 1 barang');
@@ -198,18 +208,12 @@ class TransaksiMassalController extends Controller
                 ]);
 
                 $siswa = Siswa::findOrFail($transaksi->siswa_id);
-                $siswa->increment('total_poin');
 
-                // AUTO BANNED
-                if ($siswa->total_poin >= 3) {
-                    $siswa->update([
-                        'is_banned' => true,
-                        'banned_until' => now()->addDays(3),
-                        'alasan_ban' => 'Mencapai batas maksimal pelanggaran',
-                        'total_poin' => 0,
-                    ]);
-                }
+                $siswa->increment('total_poin');
+                $siswa->refresh();          // 🔥 WAJIB
+                $siswa->checkAndAutoBan();  // 🔥 AUTO BANNED FIX
             }
+
 
             // ================= TRANSAKSI =================
             $transaksi->update(['dikembalikan' => true]);

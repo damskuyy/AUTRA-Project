@@ -84,7 +84,6 @@ class PengembalianController extends Controller
 
             if ($now->greaterThan($deadline)) {
 
-                // ➕ simpan ke pelanggarans
                 Pelanggaran::create([
                     'siswa_id' => $siswa->id,
                     'peminjaman_id' => $peminjaman->id,
@@ -95,19 +94,12 @@ class PengembalianController extends Controller
                     'admin_id' => auth()->id(),
                 ]);
 
-                // naikkan total pelanggaran
                 $siswa->increment('total_poin');
-                $siswa->refresh();
-
-                // 3️⃣ auto banned
-                if ($siswa->total_pelanggaran >= 3 && !$siswa->is_banned) {
-                    $siswa->update([
-                        'is_banned' => true,
-                        'banned_until' => now()->addDays(3),
-                        'alasan_ban' => 'Terlambat mengembalikan alat 3 kali',
-                    ]);
-                }
+                $siswa->refresh();          // 🔥
+                $siswa->checkAndAutoBan();  // 🔥
             }
+
+
 
             /**
              * TAMBAH STOK KEMBALI

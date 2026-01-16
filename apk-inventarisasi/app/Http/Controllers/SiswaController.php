@@ -18,30 +18,31 @@ class SiswaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Siswa::where('is_active', true);
+        $query = Siswa::where('kelas', '!=', 'LULUS'); // ⬅️ AMBIL SEMUA SISWA
 
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->search . '%')
-                  ->orWhere('kelas', 'like', '%' . $request->search . '%')
-                  ->orWhere('nis', 'like', '%' . $request->search . '%');
+                ->orWhere('kelas', 'like', '%' . $request->search . '%')
+                ->orWhere('nis', 'like', '%' . $request->search . '%');
             });
         }
 
         $siswas = $query
             ->orderBy('kelas')
             ->orderBy('nama')
+            ->orderBy('id')
             ->paginate(35)
             ->withQueryString();
 
-        $kelasList = Siswa::where('is_active', true)
-            ->select('kelas')
+        $kelasList = Siswa::select('kelas')
             ->distinct()
             ->orderBy('kelas')
             ->pluck('kelas');
 
         return view('siswa.index', compact('siswas', 'kelasList'));
     }
+
 
     /**
      * ==============================
@@ -162,9 +163,7 @@ class SiswaController extends Controller
         'kelas' => $request->kelas,
     ]);
 
-    return redirect()
-        ->route('siswa.index')
-        ->with('success', 'Data siswa berhasil diperbarui');
+    return back()->with('success', 'Data siswa berhasil diperbarui');
     }
 
     /**
@@ -188,7 +187,7 @@ class SiswaController extends Controller
             'alasan_ban'   => 'Dibanned manual oleh admin',
         ]);
 
-        return back()->with('success', 'Siswa berhasil dibanned selama 3 hari');
+        return back()->with('success', 'Siswa berhasil dibanned');
     }
 
     /**
@@ -199,12 +198,13 @@ class SiswaController extends Controller
         DB::transaction(function () use ($siswa) {
             $siswa->update([
                 'is_banned'    => false,
+                'is_active'    => true,
                 'banned_until' => null,
                 'alasan_ban'   => null,
                 'total_poin'   => 0,
             ]);
         });
 
-        return back()->with('success', 'Siswa berhasil di-unban');
+        return back()->with('success', 'Siswa berhasil diaktifkan kembali');
     }
 }

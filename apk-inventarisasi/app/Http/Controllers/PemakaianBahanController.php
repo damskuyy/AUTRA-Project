@@ -56,6 +56,16 @@ class PemakaianBahanController extends Controller
             'keperluan_manual' => 'nullable|string',
         ]);
 
+        $siswa = Siswa::findOrFail($request->siswa_id);
+
+        if ($siswa->is_banned) {
+            abort(403, 'Siswa sedang dibanned');
+        }
+
+        if (!$siswa->is_active) {
+            abort(403, 'Siswa tidak aktif');
+        }
+
         $inventory = Inventory::findOrFail($request->inventory_id);
 
         if ($request->jumlah > $inventory->stok) {

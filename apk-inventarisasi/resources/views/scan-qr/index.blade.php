@@ -88,9 +88,6 @@
                                    class="form-control"
                                    placeholder="ALT-XX-XXX / BHN-XX-XXX"
                                    required>
-                            <button type="submit" class="btn bg-gradient-primary mb-0 d-flex align-items-center justify-content-center">
-                                Proses
-                            </button>
                         </div>
                     </form>
 

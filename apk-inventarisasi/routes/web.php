@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('ruangan', RuanganController::class);
     Route::resource('siswa', SiswaController::class);
     Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
+    Route::post('/siswa/{siswa}/update', [SiswaController::class, 'update'])->name('siswa.update.post');
+
     //Route::resource('scan-qr', App\Http\Controllers\ScanController::class);
     Route::resource('items', ItemsController::class);
     

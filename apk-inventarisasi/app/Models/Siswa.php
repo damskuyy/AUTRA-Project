@@ -9,8 +9,6 @@ class Siswa extends Model
 {
     use HasFactory;
 
-    protected $table = 'siswas';
-
     protected $fillable = [
         'nis',
         'nama',
@@ -28,9 +26,7 @@ class Siswa extends Model
         'banned_until' => 'datetime',
     ];
 
-    /* =====================
-       RELATIONS
-    ===================== */
+    /* ================= RELATIONS ================= */
     public function peminjamans()
     {
         return $this->hasMany(Peminjaman::class);
@@ -41,25 +37,31 @@ class Siswa extends Model
         return $this->hasMany(Pelanggaran::class);
     }
 
-    /* =====================
-       HELPER
-    ===================== */
+    /* ================= AUTO BAN ================= */
+    public function checkAndAutoBan()
+    {
+        if ($this->total_poin >= 3 && !$this->is_banned) {
+            $this->update([
+                'is_banned'   => true,
+                'banned_until'=> null,
+                'alasan_ban'  => 'Mencapai 3 poin pelanggaran',
+            ]);
+        }
+    }
+
+    public function unban()
+    {
+        $this->update([
+            'is_banned' => false,
+            'is_active' => true,
+            'banned_until' => null,
+            'alasan_ban' => null,
+            'total_poin' => 0,
+        ]);
+    }
+
     public function isBanned()
     {
-        if (!$this->is_banned) {
-            return false;
-        }
-
-        if ($this->banned_until && $this->banned_until->isPast()) {
-            $this->update([
-                'is_banned' => false,
-                'banned_until' => null,
-                'alasan_ban' => null,
-            ]);
-
-            return false;
-        }
-
-        return true;
+        return $this->is_banned;
     }
 }

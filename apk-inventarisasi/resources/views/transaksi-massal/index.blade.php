@@ -35,6 +35,7 @@
                         <tr class="text-center">
                             <th>No.</th>
                             <th>Nama Siswa</th>
+                            <th>Keperluan</th>
                             <th>Inventaris</th>
                             <th>Jam Transaksi</th>
                             <th>Jam Kembali</th>
@@ -46,6 +47,7 @@
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td class="text-center">{{ $t->siswa->nama }} ({{$t->siswa->kelas}})</td>
+                            <td class="text-center">{{ $t->keperluan }}</td>
                             <td class="text-center">
                                 @foreach($t->inventaris as $inv)
                                     {{ $inv->barangMasuk->nama_barang }}

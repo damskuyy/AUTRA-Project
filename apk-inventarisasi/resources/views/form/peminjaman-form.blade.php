@@ -20,7 +20,7 @@
         {{-- HEADER --}}
         <div class="card-header bg-primary text-white py-3">
             <h6 class="mb-0">
-                <i class="fas fa-tools me-2"></i>Data Peminjaman Alat
+                <i class="fas fa-tools me-2"></i>Form Peminjaman Alat
             </h6>
         </div>
 
@@ -46,9 +46,9 @@
                     </div>
 
                     <div class="col-md-3">
-                        <small class="text-muted">Kode Inventaris</small>
+                        <small class="text-muted">Kode QR</small>
                         <div class="fw-semibold">
-                            {{ $inventory->nomor_inventaris ?? '-' }}
+                            {{ $inventory->kode_qr_jurusan }}
                         </div>
                     </div>
 
@@ -60,14 +60,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- JIKA DIPINJAM --}}
-            @if($peminjamanAktif)
-                <div class="alert alert-danger">
-                    <strong>Alat sedang dipinjam</strong><br>
-                    Oleh: {{ $peminjamanAktif->siswa->nama }}
-                </div>
-            @else
 
             {{-- FORM --}}
             <form action="{{ route('peminjaman.store') }}" method="POST">
@@ -160,7 +152,6 @@
                 </div>
 
             </form>
-            @endif
 
         </div>
     </div>

@@ -61,9 +61,6 @@
                                     class="form-control" 
                                     placeholder="Cari siswa..."
                                 >
-                                <button class="btn btn-primary mb-0 d-flex align-items-center justify-content-center" type="submit" style="z-index: 3;">
-                                    <i class="fas fa-search"></i>
-                                </button>
                             </div>
                         </form>
                     </div>
@@ -75,7 +72,6 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Siswa</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">NIS</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Kelas</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Poin</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Terdaftar</th>
@@ -87,11 +83,10 @@
                             <tr class="siswa-row"
                                 data-nama="{{ strtolower($siswa->nama) }}"
                                 data-kelas="{{ strtolower($siswa->kelas) }}">
-                                <td>
-                                    <h6 class="mb-0 text-sm">{{ $siswa->nama }}</h6>
+                                <td class="text-center">
+                                    <h6 class="mb-0 text-sm">{{ $siswa->nama }} ({{ $siswa->kelas }})</h6>
                                 </td>
                                 <td>{{ $siswa->nis }}</td>
-                                <td>{{ $siswa->kelas }}</td>
                                 <td>
                                     @if ($siswa->is_banned)
                                         <span class="badge bg-gradient-danger">Banned</span>
@@ -269,8 +264,6 @@
 
             <form id="editForm" method="POST">
                 @csrf
-                @method('PUT')
-
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Data Siswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -319,17 +312,6 @@
                                     list="kelasList"
                                     required
                                 >
-                            </div>
-                        </div>
-
-                        <!-- Status -->
-                        <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Status</label>
-                                <select name="is_active" id="editStatus" class="form-control">
-                                    <option value="1">Aktif</option>
-                                    <option value="0">Nonaktif</option>
-                                </select>
                             </div>
                         </div>
 
@@ -464,13 +446,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const nis    = button.getAttribute('data-nis');
         const nama   = button.getAttribute('data-nama');
         const kelas  = button.getAttribute('data-kelas');
-        const status = button.getAttribute('data-status');
 
         // Isi value input
         document.getElementById('editNama').value   = nama;
         document.getElementById('editNis').value    = nis;
         document.getElementById('editKelas').value  = kelas;
-        document.getElementById('editStatus').value = status;
 
         // Force floating label Soft UI
         document.getElementById('editNama')
@@ -485,16 +465,26 @@ document.addEventListener('DOMContentLoaded', function () {
             .closest('.input-group')
             .classList.add('focused', 'is-focused');
 
-        document.getElementById('editStatus')
-            .closest('.input-group')
-            .classList.add('focused', 'is-focused');
-
         // Set action form
-        document.getElementById('editForm').action = `/siswa/${id}`;
+        document.getElementById('editForm').action = `/siswa/${id}/update`;
     });
 
 });
 </script>
+
+@if (session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: "{{ session('success') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+</script>
+@endif
 @endpush
 
 @endsection

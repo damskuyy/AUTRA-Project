@@ -100,6 +100,23 @@
                 <input type="time" name="jam_kembali" class="form-control" required>
             </div>
 
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Keperluan (Mapel / Guru)</label>
+
+                <select name="keperluan" id="keperluanSelect" class="form-select">
+                    <option value="">-- pilih keperluan --</option>
+                    <option value="Kelistrikan / Bu Isri">Kelistrikan / Bu Isri</option>
+                    <option value="Elektronika / Pak Budi">Elektronika / Pak Budi</option>
+                    <option value="__manual">Lainnya</option>
+                </select>
+
+                <input type="text"
+                    name="keperluan_manual"
+                    id="keperluanManual"
+                    class="form-control mt-2 d-none"
+                    placeholder="Contoh: Kelistrikan / Bu Isri">
+            </div>
+
             <div class="mb-3">
                 <label class="form-label">Catatan (opsional)</label>
                 <textarea name="catatan" class="form-control" rows="2"></textarea>
