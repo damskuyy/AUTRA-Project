@@ -19,111 +19,150 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-0">Buat Transaksi Massal</h4>
-            <small class="text-muted">Pilih alat/bahan dan siswa</small>
+            <h4 class="fw-bold mb-1">Buat Transaksi Massal</h4>
+            <span class="text-muted small">
+                <i class="fas fa-layer-group me-1"></i>
+                Pilih siswa dan inventaris yang digunakan
+            </span>
         </div>
-        <a href="{{ route('transaksi.massal.index') }}" class="btn btn-secondary">
+        <a href="{{ route('transaksi.massal.index') }}" class="btn btn-secondary rounded-pill px-3">
             <i class="fas fa-arrow-left me-1"></i> Kembali
         </a>
     </div>
 
-    <div class="card border-0 shadow-sm p-4">
-        <form action="{{ route('transaksi.massal.store') }}" method="POST">
-            @csrf
+    {{-- Card Form --}}
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
 
-            <div class="col-md-6">
-                <label class="form-label fw-semibold">Nama Siswa</label>
-                <select name="siswa_id"
-                    class="form-select select-siswa" required>
-                    <option value="">-- Ketik atau pilih siswa --</option>
-                    @foreach ($siswas as $siswa)
-                        <option value="{{ $siswa->id }}">
-                            {{ $siswa->nama }} ({{ $siswa->kelas }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <br></br>
+            <form action="{{ route('transaksi.massal.store') }}" method="POST">
+                @csrf
 
-            {{-- Tabs Alat & Bahan --}}
-            <ul class="nav nav-tabs" id="tabInventaris" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="alat-tab" data-bs-toggle="tab" data-bs-target="#tabAlat" type="button">Alat</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="bahan-tab" data-bs-toggle="tab" data-bs-target="#tabBahan" type="button">Bahan</button>
-                </li>
-            </ul>
-
-            <div class="tab-content mt-3">
-                {{-- Tab Alat --}}
-                <div class="tab-pane fade show active" id="tabAlat" role="tabpanel">
-                    @forelse($inventarisAlat as $inv)
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="inventaris_ids[]" value="{{ $inv->id }}" id="inv{{ $inv->id }}">
-                        <label class="form-check-label" for="inv{{ $inv->id }}">
-                            {{ $inv->barangMasuk->nama_barang }} - {{ $inv->barangMasuk->merk ?? '-' }} ({{ $inv->kode_qr_jurusan }})
-                        </label>
-                    </div>
-                    @empty
-                    <p class="text-muted">Tidak ada alat tersedia.</p>
-                    @endforelse
+                {{-- Siswa --}}
+                <div class="mb-4 col-md-6">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-user-graduate me-1"></i> Nama Siswa
+                    </label>
+                    <select name="siswa_id" class="form-select select-siswa" required>
+                        <option value="">-- Ketik atau pilih siswa --</option>
+                        @foreach ($siswas as $siswa)
+                            <option value="{{ $siswa->id }}">
+                                {{ $siswa->nama }} ({{ $siswa->kelas }})
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
-                {{-- Tab Bahan --}}
-                <div class="tab-pane fade" id="tabBahan" role="tabpanel">
-                    @forelse($inventarisBahan as $inv)
-                        <div class="row align-items-center mb-2">
-                            <div class="col-md-6">
+                {{-- Tabs --}}
+                <ul class="nav nav-tabs mb-4" id="inventarisTabs" role="tablist" style="border-radius: 15px;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="alat-tab" data-bs-toggle="tab" data-bs-target="#tabAlat" type="button">
+                            <i class="fas fa-tools me-2"></i>Alat
+                        </button>
+                    </li>
+
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="bahan-tab" data-bs-toggle="tab" data-bs-target="#tabBahan" type="button">
+                            <i class="fas fa-flask me-2"></i>Bahan
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+
+                    {{-- Alat --}}
+                    <div class="tab-pane fade show active" id="tabAlat">
+                        @forelse($inventarisAlat as $inv)
+                        <div class="form-check border rounded-3 p-2 mb-2">
+                            <input class="form-check-input" type="checkbox"
+                                name="inventaris_ids[]"
+                                value="{{ $inv->id }}"
+                                id="inv{{ $inv->id }}">
+                            <label class="form-check-label ms-1" for="inv{{ $inv->id }}">
                                 <strong>{{ $inv->barangMasuk->nama_barang }}</strong>
+                                <br>
                                 <small class="text-muted">
-                                    (stok: {{ $inv->stok }} {{ $inv->barangMasuk->satuan }})
+                                    {{ $inv->barangMasuk->merk ?? '-' }} • QR: {{ $inv->kode_qr_jurusan }}
                                 </small>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number"
-                                    name="jumlah[{{ $inv->id }}]"
-                                    class="form-control"
-                                    min="0"
-                                    max="{{ $inv->stok }}"
-                                    placeholder="Jumlah">
+                            </label>
+                        </div>
+                        @empty
+                            <p class="text-muted">Tidak ada alat tersedia.</p>
+                        @endforelse
+                    </div>
+
+                    {{-- Bahan --}}
+                    <div class="tab-pane fade" id="tabBahan">
+                        @forelse($inventarisBahan as $inv)
+                        <div class="border rounded-3 p-3 mb-2">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <strong>{{ $inv->barangMasuk->nama_barang }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        Stok: {{ $inv->stok }} {{ $inv->barangMasuk->satuan }}
+                                    </small>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number"
+                                        name="jumlah[{{ $inv->id }}]"
+                                        class="form-control"
+                                        min="0"
+                                        max="{{ $inv->stok }}"
+                                        placeholder="Jumlah">
+                                </div>
                             </div>
                         </div>
-                    @empty
-                    <p class="text-muted">Tidak ada bahan tersedia.</p>
-                    @endforelse
+                        @empty
+                            <p class="text-muted">Tidak ada bahan tersedia.</p>
+                        @endforelse
+                    </div>
                 </div>
-            </div>
 
-            <div class="mb-3 mt-3">
-                <label class="form-label">Jam Kembali</label>
-                <input type="time" name="jam_kembali" class="form-control" required>
-            </div>
+                {{-- Jam Kembali --}}
+                <div class="mt-4 col-md-4">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-clock me-1"></i> Jam Kembali
+                    </label>
+                    <input type="time" name="jam_kembali" class="form-control" required>
+                </div>
 
-            <div class="col-md-6">
-                <label class="form-label fw-semibold">Keperluan (Mapel / Guru)</label>
+                {{-- Keperluan --}}
+                <div class="mt-4 col-md-6">
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-book me-1"></i> Keperluan (Mapel / Guru)
+                    </label>
 
-                <select name="keperluan" id="keperluanSelect" class="form-select">
-                    <option value="">-- pilih keperluan --</option>
-                    <option value="Kelistrikan / Bu Isri">Kelistrikan / Bu Isri</option>
-                    <option value="Elektronika / Pak Budi">Elektronika / Pak Budi</option>
-                    <option value="__manual">Lainnya</option>
-                </select>
+                    <select name="keperluan" id="keperluanSelect" class="form-select">
+                        <option value="">-- pilih keperluan --</option>
+                        <option value="Kelistrikan / Bu Isri">Kelistrikan / Bu Isri</option>
+                        <option value="Elektronika / Pak Budi">Elektronika / Pak Budi</option>
+                        <option value="__manual">Lainnya</option>
+                    </select>
 
-                <input type="text"
-                    name="keperluan_manual"
-                    id="keperluanManual"
-                    class="form-control mt-2 d-none"
-                    placeholder="Contoh: Kelistrikan / Bu Isri">
-            </div>
+                    <input type="text"
+                        name="keperluan_manual"
+                        id="keperluanManual"
+                        class="form-control mt-2 d-none"
+                        placeholder="Contoh: Kelistrikan / Bu Isri">
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Catatan (opsional)</label>
-                <textarea name="catatan" class="form-control" rows="2"></textarea>
-            </div>
+                {{-- Catatan --}}
+                <div class="mt-3">
+                    <label class="form-label">
+                        <i class="fas fa-sticky-note me-1"></i> Catatan (opsional)
+                    </label>
+                    <textarea name="catatan" class="form-control" rows="2"></textarea>
+                </div>
 
-            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i> Submit Massal</button>
-        </form>
+                {{-- Submit --}}
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-paper-plane me-1"></i> Submit Transaksi
+                    </button>
+                </div>
+
+            </form>
+        </div>
     </div>
 </div>
 @endsection

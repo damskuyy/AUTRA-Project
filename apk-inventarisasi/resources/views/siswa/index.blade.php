@@ -262,71 +262,89 @@
 
 <!-- Modal Edit Siswa -->
 <div class="modal fade" id="editSiswaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
 
             <form id="editForm" method="POST">
                 @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Data Siswa</h5>
+
+                {{-- Header --}}
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-1">
+                            <i class="fas fa-user-edit me-1 text-primary"></i>
+                            Edit Data Siswa
+                        </h5>
+                        <small class="text-muted">
+                            Perbarui informasi siswa dengan benar
+                        </small>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
-                    <div class="row">
+                {{-- Body --}}
+                <div class="modal-body pt-3">
+                    <div class="row g-3">
 
                         <!-- NIS -->
                         <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">NIS</label>
-                                <input
-                                    type="text"
-                                    name="nis"
-                                    id="editNis"
-                                    class="form-control"
-                                    required
-                                >
-                            </div>
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-id-card me-1"></i> NIS
+                            </label>
+                            <input
+                                type="text"
+                                name="nis"
+                                id="editNis"
+                                class="form-control"
+                                placeholder="Masukkan NIS siswa"
+                                required
+                            >
                         </div>
 
                         <!-- Nama -->
                         <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Nama Lengkap</label>
-                                <input 
-                                    type="text" 
-                                    name="nama" 
-                                    id="editNama"
-                                    class="form-control"
-                                    required
-                                >
-                            </div>
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-user me-1"></i> Nama Lengkap
+                            </label>
+                            <input 
+                                type="text" 
+                                name="nama" 
+                                id="editNama"
+                                class="form-control"
+                                placeholder="Masukkan nama lengkap"
+                                required
+                            >
                         </div>
 
                         <!-- Kelas -->
                         <div class="col-md-6">
-                            <div class="input-group input-group-outline my-3">
-                                <label class="form-label">Kelas</label>
-                                <input 
-                                    type="text"
-                                    name="kelas"
-                                    id="editKelas"
-                                    class="form-control"
-                                    list="kelasList"
-                                    required
-                                >
-                            </div>
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-school me-1"></i> Kelas
+                            </label>
+                            <input 
+                                type="text"
+                                name="kelas"
+                                id="editKelas"
+                                class="form-control"
+                                list="kelasList"
+                                placeholder="Contoh: XI RPL 1"
+                                required
+                            >
                         </div>
 
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                {{-- Footer --}}
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button"
+                            class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">
                         Batal
                     </button>
-                    <button type="submit" class="btn btn-primary">
-                        Simpan Perubahan
+                    <button type="submit"
+                            class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-save me-1"></i> Simpan Perubahan
                     </button>
                 </div>
 

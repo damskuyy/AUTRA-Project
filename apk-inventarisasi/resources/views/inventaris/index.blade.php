@@ -25,7 +25,7 @@
     </div>
 
     {{-- Tabs --}}
-        <ul class="nav nav-tabs mb-4" id="inventarisTabs" role="tablist" style="border-radius: 15px;">
+    <ul class="nav nav-tabs mb-4" id="inventarisTabs" role="tablist" style="border-radius: 15px;">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="alat-tab" data-bs-toggle="tab" data-bs-target="#tabAlat" type="button">
                 <i class="fas fa-tools me-2"></i>Alat

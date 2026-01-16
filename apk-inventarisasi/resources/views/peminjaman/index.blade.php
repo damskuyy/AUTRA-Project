@@ -43,7 +43,8 @@
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Nama Alat</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Siswa</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Kelas</th>
-                            <th class="text-uppercase text-secondary text-xxs fw-bold">Waktu Pinjam</th>
+                            <th class="text-uppercase text-secondary text-xxs fw-bold">Jam Pinjam</th>
+                            <th class="text-uppercase text-secondary text-xxs fw-bold">Jam Kembali</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold">Keperluan</th>
                             <th class="text-uppercase text-secondary text-xxs fw-bold text-center">Aksi</th>
                         </tr>
@@ -74,6 +75,13 @@
                             <td>
                                 <span class="badge bg-light text-dark">
                                     {{ $p->waktu_pinjam->format('H:i, d-m-Y') }}
+                                </span>
+                            </td>
+
+                            <!-- JAM KEMBALI -->
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    {{ $p->waktu_kembali_aktual ? $p->waktu_kembali_aktual->format('H:i') : '-' }}
                                 </span>
                             </td>
 

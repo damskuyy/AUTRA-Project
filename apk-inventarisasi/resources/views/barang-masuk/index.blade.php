@@ -16,355 +16,329 @@
 @section('main')
 <div class="container-fluid py-4">
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabAlat">
-                <i class="fas fa-tools me-2"></i>Pendataan Alat
+    {{-- ================= TABS ================= --}}
+    <ul class="nav nav-tabs mb-4" id="inventarisTabs" role="tablist" style="border-radius: 15px;">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="alat-tab" data-bs-toggle="tab" data-bs-target="#tabAlat" type="button">
+                <i class="fas fa-tools me-2"></i>Alat
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="bahan-tab" data-bs-toggle="tab" data-bs-target="#tabBahan" type="button">
+                <i class="fas fa-flask me-2"></i>Bahan
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBahan">
-                <i class="fas fa-flask me-2"></i>Pendataan Bahan Habis Pakai
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link text-success"
+            <button class="nav-link rounded-3 px-4 text-success"
                     data-bs-toggle="tab"
                     data-bs-target="#tabSarpras">
-                <i class="fas fa-qrcode me-2"></i>Pendataan Sarpras
+                <i class="fas fa-qrcode me-2"></i>Sarpras
             </button>
         </li>
     </ul>
 
     <div class="tab-content">
 
-                <!-- ============================ ALAT =============================== -->
+        {{-- ============================ ALAT ============================ --}}
         <div class="tab-pane fade show active" id="tabAlat">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
 
-                    <h5 class="fw-bold mb-3 text-primary">Form Pendataan Alat</h5>
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-primary mb-1">Pendataan Alat</h5>
+                        <small class="text-muted">Input data alat baru yang masuk ke TOI</small>
+                    </div>
 
                     <form action="{{ route('barang-masuk.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="jenis_barang" value="alat">
 
-                        <!-- Inventory -->
-                        <!-- <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Inventory</label>
-                            <select name="inventory_id" class="form-select">
-                                <option value="">-- pilih inventory --</option>
-                                @foreach($inventories as $inv)
-                                    <option value="{{ $inv->id }}">{{ $inv->nama_barang }}</option>
-                                @endforeach
-                                
-                            </select>
-                        </div> -->
+                        <div class="row g-3">
 
-                        <!-- Nama Alat -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Nama Alat</label>
+                            {{-- Nama Alat --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nama Alat</label>
+                                @if($riwayatNamaAlat->count())
+                                    <select name="nama_barang" id="namaAlatSelect" class="form-select">
+                                        <option value="">-- pilih alat --</option>
+                                        @foreach($riwayatNamaAlat as $alat)
+                                            <option value="{{ $alat }}">{{ $alat }}</option>
+                                        @endforeach
+                                        <option value="__new">+ Tambah Nama Baru</option>
+                                    </select>
+                                    <input type="text"
+                                           name="nama_barang_new"
+                                           id="namaAlatNew"
+                                           class="form-control mt-2 d-none"
+                                           placeholder="Nama alat baru">
+                                @else
+                                    <input type="text" name="nama_barang" class="form-control">
+                                @endif
+                            </div>
 
-                            @if($riwayatNamaAlat->count())
-                                <select name="nama_barang" id="namaAlatSelect" class="form-select">
-                                    <option value="">-- pilih alat --</option>
-                                    @foreach($riwayatNamaAlat as $alat)
-                                        <option value="{{ $alat }}">{{ $alat }}</option>
+                            {{-- Merk --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Merk</label>
+                                <input type="text"
+                                       name="merk"
+                                       class="form-control"
+                                       placeholder="Bosch, Makita, dll">
+                            </div>
+
+                            {{-- Jumlah --}}
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Jumlah</label>
+                                <input type="number"
+                                       name="jumlah"
+                                       class="form-control"
+                                       value="1"
+                                       min="1">
+                            </div>
+
+                            {{-- Ruangan --}}
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Ruangan</label>
+                                <select name="ruangan_id" class="form-select">
+                                    <option value="">-- pilih ruangan --</option>
+                                    @foreach($ruangans as $r)
+                                        <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
                                     @endforeach
-                                    <option value="__new">+ Tambah Nama Baru</option>
                                 </select>
-                                <input type="text" name="nama_barang_new" id="namaAlatNew"
-                                       class="form-control mt-2 d-none">
-                            @else
-                                <input type="text" name="nama_barang" class="form-control">
-                            @endif
+                            </div>
+
+                            {{-- Rak --}}
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Rak</label>
+                                <select name="penempatan_rak" class="form-select" required>
+                                    <option value="">-- pilih rak --</option>
+                                    <option value="PT">Power Tools</option>
+                                    <option value="HT">Hand Tools</option>
+                                    <option value="RK">Rak Komponen</option>
+                                    <option value="RBK">Rak Bahan Kecil</option>
+                                    <option value="RBB">Rak Bahan Besar</option>
+                                    <option value="UK">Rak Alat Ukur</option>
+                                    <option value="PPE">Rak PPE</option>
+                                </select>
+                            </div>
+
+                            {{-- Sumber --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Sumber Barang</label>
+                                <select name="sumber" id="sumberSelectAlat" class="form-select">
+                                    <option value="">-- pilih sumber --</option>
+                                    <option value="BOPD">BOPD</option>
+                                    <option value="BOS">BOS</option>
+                                    <option value="Bantuan Pemerintah">Bantuan Pemerintah</option>
+                                    <option value="__manual">Lainnya</option>
+                                </select>
+                                <input type="text"
+                                       name="sumber_manual"
+                                       id="sumberManualAlat"
+                                       class="form-control mt-2 d-none"
+                                       placeholder="Sumber manual">
+                            </div>
+
+                            {{-- Tanggal --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tanggal Masuk</label>
+                                <input type="date" name="tanggal_masuk" class="form-control">
+                            </div>
+
+                            {{-- Catatan --}}
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Catatan</label>
+                                <textarea name="catatan" class="form-control" rows="2"></textarea>
+                            </div>
+
                         </div>
 
-                        <!-- Merk -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Merk</label>
-                            <input
-                                type="text"
-                                name="merk"
-                                class="form-control"
-                                placeholder="Contoh: Bosch, Makita, Kenmaster">
+                        <div class="text-end mt-4">
+                            <button class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Simpan Data Alat
+                            </button>
                         </div>
 
-                        <!-- Jumlah -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Jumlah</label>
-                            <input type="number" name="jumlah" class="form-control" value="1" min="1">
-                        </div>
-
-                        <!-- Ruangan -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Lokasi Penempatan Barang</label>
-                            <select name="ruangan_id" class="form-select">
-                                <option value="">-- pilih ruangan --</option>
-                                @foreach($ruangans as $r)
-                                    <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Penempatan Rak -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Penempatan Rak</label>
-                            <select name="penempatan_rak" class="form-select" required>
-                                <option value="">-- pilih rak --</option>
-                                <option value="PT">Power Tools</option>
-                                <option value="HT">Hand Tools</option>
-                                <option value="RK">Rak Komponen</option>
-                                <option value="RBK">Rak Bahan Kecil</option>
-                                <option value="RBB">Rak Bahan Besar</option>
-                                <option value="UK">Rak Alat Ukur</option>
-                                <option value="PPE">Rak PPE</option>
-                            </select>
-                        </div>
-
-                        <!-- Sumber Manual -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Sumber Barang</label>
-
-                            <select name="sumber" id="sumberSelectAlat" class="form-select">
-                                <option value="">-- pilih sumber --</option>
-                                <option value="BOPD">BOPD</option>
-                                <option value="BOS">BOS</option>
-                                <option value="Bantuan Pemerintah">Bantuan Pemerintah</option>
-                                <option value="__manual">Lainnya</option>
-                            </select>
-
-                            <input
-                                type="text"
-                                name="sumber_manual"
-                                id="sumberManualAlat"
-                                class="form-control mt-2 d-none"
-                                placeholder="Ketik sumber barang manual">
-                        </div>
-
-
-                        <!-- Tanggal -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Tanggal Masuk</label>
-                            <input type="date" name="tanggal_masuk" class="form-control">
-                        </div>
-
-                        <!-- Catatan -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Catatan</label>
-                            <textarea name="catatan" class="form-control"></textarea>
-                        </div>
-
-                        <button class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i>Simpan Data Alat
-                        </button>
                     </form>
-
                 </div>
             </div>
         </div>
 
-        <!-- ============================= BAHAN =============================== -->
+        {{-- ============================ BAHAN ============================ --}}
         <div class="tab-pane fade" id="tabBahan">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
 
-                    <h5 class="fw-bold mb-3 text-primary">Form Pendataan Bahan Habis Pakai</h5>
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-primary mb-1">Pendataan Bahan</h5>
+                        <small class="text-muted">Input bahan habis pakai</small>
+                    </div>
 
                     <form action="{{ route('barang-masuk.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="jenis_barang" value="bahan">
 
-                        <!-- Inventory -->
-                        <!-- <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Inventory</label>
-                            <select name="inventory_id" class="form-select">
-                                <option value="">-- pilih inventory --</option>
-                                @foreach($inventories as $inv)
-                                    <option value="{{ $inv->id }}">{{ $inv->nama_barang }}</option>
-                                @endforeach
-                               
-                            </select>
-                        </div> -->
+                        <div class="row g-3">
 
-                        <!-- Nama Bahan -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Nama Bahan</label>
+                            {{-- Nama --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nama Bahan</label>
+                                @if($riwayatNamaBahan->count())
+                                    <select name="nama_barang" id="namaBahanSelect" class="form-select">
+                                        <option value="">-- pilih bahan --</option>
+                                        @foreach($riwayatNamaBahan as $item)
+                                            <option value="{{ $item }}">{{ $item }}</option>
+                                        @endforeach
+                                        <option value="__new">+ Tambah Nama Baru</option>
+                                    </select>
+                                    <input type="text"
+                                           name="nama_barang_new"
+                                           id="namaBahanNew"
+                                           class="form-control mt-2 d-none"
+                                           placeholder="Nama bahan baru">
+                                @else
+                                    <input type="text" name="nama_barang" class="form-control">
+                                @endif
+                            </div>
 
-                            @if($riwayatNamaBahan->count())
-                                <select name="nama_barang" id="namaBahanSelect" class="form-select">
-                                    <option value="">-- pilih bahan --</option>
-                                    @foreach($riwayatNamaBahan as $item)
-                                        <option value="{{ $item }}">{{ $item }}</option>
+                            {{-- Merk --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Merk</label>
+                                <input type="text" name="merk" class="form-control">
+                            </div>
+
+                            {{-- Satuan --}}
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Satuan</label>
+                                <input type="text" name="satuan" class="form-control">
+                            </div>
+
+                            {{-- Jumlah --}}
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Jumlah</label>
+                                <input type="number" name="jumlah" class="form-control">
+                            </div>
+
+                            {{-- Ruangan --}}
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Ruangan</label>
+                                <select name="ruangan_id" class="form-select">
+                                    <option value="">-- pilih ruangan --</option>
+                                    @foreach($ruangans as $r)
+                                        <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
                                     @endforeach
-                                    <option value="__new">+ Tambah Nama Baru</option>
                                 </select>
-                                <input type="text" name="nama_barang_new" id="namaBahanNew"
+                            </div>
+
+                            {{-- Rak --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Rak</label>
+                                <select name="penempatan_rak" class="form-select" required>
+                                    <option value="">-- pilih rak --</option>
+                                    <option value="PT">Power Tools</option>
+                                    <option value="HT">Hand Tools</option>
+                                    <option value="RK">Rak Komponen</option>
+                                    <option value="RBK">Rak Bahan Kecil</option>
+                                    <option value="RBB">Rak Bahan Besar</option>
+                                    <option value="UK">Rak Alat Ukur</option>
+                                    <option value="PPE">Rak PPE</option>
+                                </select>
+                            </div>
+
+                            {{-- Sumber --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Sumber</label>
+                                <select name="sumber" id="sumberSelectBahan" class="form-select">
+                                    <option value="">-- pilih sumber --</option>
+                                    <option value="BOPD">BOPD</option>
+                                    <option value="BOS">BOS</option>
+                                    <option value="Bantuan Pemerintah">Bantuan Pemerintah</option>
+                                    <option value="__manual">Lainnya</option>
+                                </select>
+                                <input type="text"
+                                       name="sumber_manual"
+                                       id="sumberManualBahan"
                                        class="form-control mt-2 d-none">
-                            @else
-                                <input type="text" name="nama_barang" class="form-control"
-                                       placeholder="ketik nama bahan...">
-                            @endif
+                            </div>
+
+                            {{-- Tanggal --}}
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tanggal Masuk</label>
+                                <input type="date" name="tanggal_masuk" class="form-control">
+                            </div>
+
+                            {{-- Catatan --}}
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Catatan</label>
+                                <textarea name="catatan" class="form-control" rows="2"></textarea>
+                            </div>
+
                         </div>
 
-                        <!-- Merk -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Merk</label>
-                            <input
-                                type="text"
-                                name="merk"
-                                class="form-control"
-                                placeholder="Contoh: AIRTAC, Ebara, dll">
+                        <div class="text-end mt-4">
+                            <button class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Simpan Data Bahan
+                            </button>
                         </div>
 
-
-                        <!-- Satuan -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Satuan</label>
-                            <input type="text" name="satuan" class="form-control" placeholder="contoh: pcs, gulung">
-                        </div>
-
-                        <!-- Ruangan -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Lokasi Penempatan Barang</label>
-                            <select name="ruangan_id" class="form-select">
-                                <option value="">-- pilih ruangan --</option>
-                                @foreach($ruangans as $r)
-                                    <option value="{{ $r->id }}">{{ $r->nama_ruangan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Penempatan Rak -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Penempatan Rak</label>
-                            <select name="penempatan_rak" class="form-select" required>
-                                <option value="">-- pilih rak --</option>
-                                <option value="PT">Power Tools</option>
-                                <option value="HT">Hand Tools</option>
-                                <option value="RK">Rak Komponen</option>
-                                <option value="RBK">Rak Bahan Kecil</option>
-                                <option value="RBB">Rak Bahan Besar</option>
-                                <option value="UK">Rak Alat Ukur</option>
-                                <option value="PPE">Rak PPE</option>
-                            </select>
-                        </div>
-
-                        <!-- Jumlah -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Jumlah</label>
-                            <input type="number" name="jumlah" class="form-control">
-                        </div>
-
-                        <!-- Sumber -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Sumber Barang</label>
-
-                            <select name="sumber" id="sumberSelectBahan" class="form-select">
-                                <option value="">-- pilih sumber --</option>
-                                <option value="BOPD">BOPD</option>
-                                <option value="BOS">BOS</option>
-                                <option value="Bantuan Pemerintah">Bantuan Pemerintah</option>
-                                <option value="__manual">Lainnya</option>
-                            </select>
-
-                            <input
-                                type="text"
-                                name="sumber_manual"
-                                id="sumberManualBahan"
-                                class="form-control mt-2 d-none"
-                                placeholder="Ketik sumber barang manual">
-                        </div>
-
-
-                        <!-- Tanggal -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Tanggal Masuk</label>
-                            <input type="datetime-local" name="tanggal_masuk" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Catatan</label>
-                            <textarea name="catatan" class="form-control"></textarea>
-                        </div>
-
-                        <button class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i>Simpan Data Bahan
-                        </button>
                     </form>
-
                 </div>
             </div>
         </div>
 
+        {{-- ============================ SARPRAS ============================ --}}
         <div class="tab-pane fade" id="tabSarpras">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
 
-                    <h5 class="fw-bold mb-3 text-success">
-                        <i class="fas fa-qrcode me-2"></i>Pendataan Barang Sarpras
+                    <h5 class="fw-bold text-success mb-3">
+                        <i class="fas fa-qrcode me-2"></i>Pendataan Sarpras
                     </h5>
 
-                    {{-- INPUT QR SARPRAS --}}
-                    <div class="row mb-3 align-items-end">
-
+                    {{-- QR INPUT --}}
+                    <div class="row g-3 align-items-end mb-4">
                         <div class="col-md-8">
-                            <label class="form-label fw-semibold">
-                                Kode QR Barang Sarpras
-                            </label>
+                            <label class="form-label fw-semibold">Kode QR</label>
                             <input type="text"
-                                id="qrSarpras"
-                                class="form-control"
-                                placeholder="Scan QR / input manual kode barang"
-                                autocomplete="off">
+                                   id="qrSarpras"
+                                   class="form-control"
+                                   placeholder="Scan / input kode barang">
                         </div>
-
                         <div class="col-md-4 d-grid">
                             <button type="button"
-                                    class="btn btn-outline-success mb-0"
+                                    class="btn btn-outline-success"
                                     onclick="openSarprasScanner()">
-                                <i class="fas fa-camera me-1"></i> Scan Kamera
+                                <i class="fas fa-camera me-2"></i>Scan QR
                             </button>
                         </div>
-
                     </div>
 
-
-                    {{-- CAMERA --}}
                     <div id="sarpras-reader"
-                        class="mb-4 mx-auto"
-                        style="width: 280px;; display:none;"></div>
+                         class="mx-auto mb-4"
+                         style="width:280px; display:none;"></div>
 
-                    {{-- FORM SARPRAS --}}
+                    {{-- FORM --}}
                     <form action="{{ route('sarpras.store') }}" method="POST">
                         @csrf
-
                         <input type="hidden" name="kode_unik" id="sp_kode">
 
-                        <div class="row">
+                        <div class="row g-3">
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold">Nama Barang</label>
-                                <input type="text" id="sp_nama" name="nama_barang"
-                                    class="form-control" readonly>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nama</label>
+                                <input type="text" id="sp_nama" name="nama_barang" class="form-control" readonly>
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label class="form-label fw-semibold">Merk</label>
-                                <input type="text" id="sp_merk" name="merk"
-                                    class="form-control" readonly>
+                                <input type="text" id="sp_merk" name="merk" class="form-control" readonly>
                             </div>
 
-                            <div class="col-md-12 mb-3">
+                            <div class="col-12">
                                 <label class="form-label fw-semibold">Spesifikasi</label>
-                                <textarea id="sp_spesifikasi"
-                                        class="form-control"
-                                        rows="2"
-                                        readonly></textarea>
+                                <textarea id="sp_spesifikasi" class="form-control" rows="2" readonly></textarea>
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label class="form-label fw-semibold">Ruangan</label>
                                 <select name="ruangan_id" class="form-select" required>
                                     <option value="">-- pilih ruangan --</option>
@@ -374,7 +348,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select name="status" class="form-select" required>
                                     <option value="aktif">Aktif</option>
@@ -383,7 +357,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-3">
                                 <label class="form-label fw-semibold">Kondisi</label>
                                 <select name="kondisi" class="form-select" required>
                                     <option value="baik">Baik</option>
@@ -392,26 +366,27 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label class="form-label fw-semibold">Foto</label>
                                 <img id="sp_foto"
-                                    class="img-fluid rounded border"
-                                    style="max-height:200px; display:none;">
+                                     class="img-fluid rounded border"
+                                     style="max-height:200px; display:none;">
                                 <input type="hidden" name="foto" id="sp_foto_input">
                             </div>
 
                         </div>
 
-                        <button class="btn btn-success px-4">
-                            <i class="fas fa-save me-2"></i>Simpan Barang Sarpras
-                        </button>
+                        <div class="text-end mt-4">
+                            <button class="btn btn-success px-4">
+                                <i class="fas fa-save me-2"></i>Simpan Sarpras
+                            </button>
+                        </div>
+
                     </form>
 
                 </div>
             </div>
         </div>
-
-
 
     </div>
 </div>
@@ -573,9 +548,5 @@ Swal.fire({
 </script>
 
 @endpush
-
-@endsection
-
-@section('footer')
-    @include('be.footer')
+@include('be.footer')
 @endsection
