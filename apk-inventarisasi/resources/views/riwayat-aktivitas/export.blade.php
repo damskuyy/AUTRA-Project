@@ -64,6 +64,28 @@
         </tr>
         @endforeach
 
+        @foreach($transaksiMassals as $tm)
+        <tr>
+            <td>{{ $tm->jam_transaksi }}</td>
+            <td>Transaksi Massal</td>
+            <td>
+                <strong>{{ $tm->siswa->nama }}</strong><br>
+
+                @foreach($tm->inventaris as $inv)
+                    - {{ $inv->barangMasuk->nama_barang }}
+                    x{{ $inv->pivot->quantity }}
+                    (Rak: {{ $inv->penempatan_rak ?? '-' }})<br>
+                @endforeach
+
+                @if($tm->keperluan)
+                    <em>Keperluan: {{ $tm->keperluan }}</em>
+                @endif
+            </td>
+            <td>{{ $tm->admin->name ?? '-' }}</td>
+        </tr>
+        @endforeach
+
+
 
         @foreach($pelanggarans as $pl)
         <tr>

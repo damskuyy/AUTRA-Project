@@ -7,6 +7,7 @@ use App\Models\Peminjaman;
 use App\Models\Pengembalian;
 use App\Models\PemakaianBahan;
 use App\Models\Pelanggaran;
+use App\Models\TransaksiMassal;
 
 class RiwayatService
 {
@@ -59,6 +60,27 @@ class RiwayatService
                 )
             )
             ->get();
+        
+        $transaksiMassals = TransaksiMassal::with([
+            'siswa',
+            'admin',
+            'inventaris.barangMasuk'
+        ])
+        ->when($from && $to, fn ($q) =>
+            $q->whereBetween('jam_transaksi', [$from, $to])
+        )
+        ->when($siswa, fn ($q) =>
+            $q->whereHas('siswa', fn ($s) =>
+                $s->where('nama', 'like', "%$siswa%")
+            )
+        )
+        ->when($kelas, fn ($q) =>
+            $q->whereHas('siswa', fn ($s) =>
+                $s->where('kelas', $kelas)
+            )
+        )
+        ->get();
+
 
 
         $pelanggarans = Pelanggaran::with(['siswa','admin'])
@@ -69,6 +91,7 @@ class RiwayatService
             $peminjamans = $jenis === 'peminjaman' ? $peminjamans : collect();
             $pengembalians = $jenis === 'pengembalian' ? $pengembalians : collect();
             $pemakaians    = $jenis === 'pemakaian' ? $pemakaians : collect();
+            $transaksiMassals = $jenis === 'transaksi_massal'? $transaksiMassals: collect();
             $pelanggarans = $jenis === 'banned' ? $pelanggarans : collect();
         }
 
@@ -77,6 +100,7 @@ class RiwayatService
             'peminjamans',
             'pengembalians',
             'pemakaians',
+            'transaksiMassals',
             'pelanggarans'
         );
     }

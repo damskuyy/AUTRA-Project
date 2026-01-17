@@ -59,11 +59,31 @@ class TransaksiMassalController extends Controller
             ->where('is_banned', false)
             ->orderBy('nama')
             ->get();
+        
+        //AMBIL RAK YANG BENAR-BENAR ADA DI INVENTORIES
+        $rakInventories = Inventory::whereNotNull('penempatan_rak')
+            ->select('penempatan_rak')
+            ->distinct()
+            ->pluck('penempatan_rak')
+            ->toArray();
+
+        //MASTER LABEL RAK (SAMA DENGAN BARANG MASUK)
+        $rakLabels = [
+            'PT'  => 'Power Tools',
+            'HT'  => 'Hand Tools',
+            'RK'  => 'Rak Komponen',
+            'RBK' => 'Rak Bahan Kecil',
+            'RBB' => 'Rak Bahan Besar',
+            'UK'  => 'Rak Alat Ukur',
+            'PPE' => 'Rak PPE',
+        ];
 
         return view('transaksi-massal.create', compact(
             'inventarisAlat',
             'inventarisBahan',
-            'siswas'
+            'siswas',
+            'rakInventories',
+            'rakLabels'
         ));
     }
 

@@ -14,9 +14,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('barang-masuk', BarangMasukController::class);
     Route::resource('inventaris', InventoriesController::class)->parameters(['inventaris' => 'inventaris']);
     Route::get(
-        'inventaris/generate-qr-bulk/{barangMasuk}',
-        [InventoriesController::class, 'generateQrBulk']
-    )->name('inventaris.generateQrBulk');
+        'inventaris/generate-qr-bulk/{barangMasuk}',[InventoriesController::class, 'generateQrBulk'])->name('inventaris.generateQrBulk');
 
     Route::resource('items', App\Http\Controllers\ItemsController::class);
     Route::get("/dashboard", [DashboardController::class, "index"])->name('dashboard');
@@ -25,7 +23,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('ruangan', RuanganController::class);
     Route::resource('siswa', SiswaController::class);
     Route::post('/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
-    Route::post('/siswa/{siswa}/update', [SiswaController::class, 'update'])->name('siswa.update.post');
 
     //Route::resource('scan-qr', App\Http\Controllers\ScanController::class);
     Route::resource('items', ItemsController::class);

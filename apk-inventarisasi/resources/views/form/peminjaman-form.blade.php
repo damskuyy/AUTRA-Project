@@ -15,61 +15,86 @@
 
 @section('main')
 <div class="container-fluid py-4">
-    <div class="card shadow border-0">
 
-        {{-- HEADER --}}
-        <div class="card-header bg-primary text-white py-3">
-            <h6 class="mb-0">
-                <i class="fas fa-tools me-2"></i>Form Peminjaman Alat
-            </h6>
+    {{-- ================= HEADER CARD ================= --}}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm bg-gradient-primary rounded-4">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="fw-bold text-white mb-1">
+                            <i class="fas fa-tools me-2"></i> Form Peminjaman Alat
+                        </h5>
+                        <p class="text-white opacity-8 mb-0 small">
+                            Isi data peminjaman alat oleh siswa
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
+    {{-- ================= MAIN CARD ================= --}}
+    <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
 
-            {{-- INFO ALAT --}}
-            <div class="bg-light rounded p-3 mb-4">
-                <h6 class="fw-bold mb-3">Informasi Alat</h6>
+            {{-- ================= INFO ALAT ================= --}}
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3 text-primary">
+                    <i class="fas fa-info-circle me-1"></i> Informasi Alat
+                </h6>
 
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <small class="text-muted">Nama Alat</small>
-                        <div class="fw-semibold">
-                            {{ $inventory->barangMasuk->nama_barang }}
+                        <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted">Nama Alat</small>
+                            <div class="fw-semibold">
+                                {{ $inventory->barangMasuk->nama_barang }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <small class="text-muted">Merk</small>
-                        <div class="fw-semibold">
-                            {{ $inventory->barangMasuk->merk ?? '-' }}
+                        <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted">Merk</small>
+                            <div class="fw-semibold">
+                                {{ $inventory->barangMasuk->merk ?? '-' }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <small class="text-muted">Kode QR</small>
-                        <div class="fw-semibold">
-                            {{ $inventory->kode_qr_jurusan }}
+                        <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted">Kode QR</small>
+                            <div class="fw-semibold">
+                                {{ $inventory->kode_qr_jurusan }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <small class="text-muted">Status</small>
-                        <div class="fw-bold text-success">
-                            {{ $inventory->status }}
+                        <div class="border rounded-3 p-3 h-100 bg-light">
+                            <small class="text-muted">Status</small>
+                            <div class="fw-bold text-success">
+                                {{ $inventory->status }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- FORM --}}
+            {{-- ================= FORM ================= --}}
             <form action="{{ route('peminjaman.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="inventory_id" value="{{ $inventory->id }}">
 
                 <div class="row g-3">
 
+                    {{-- SISWA --}}
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Nama Siswa</label>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-user-graduate me-1"></i> Nama Siswa
+                        </label>
                         <select name="siswa_id"
                                 class="form-select select-siswa"
                                 required>
@@ -82,8 +107,11 @@
                         </select>
                     </div>
 
+                    {{-- KEPERLUAN --}}
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Keperluan (Mapel / Guru)</label>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-book me-1"></i> Keperluan (Mapel / Guru)
+                        </label>
 
                         <select name="keperluan" id="keperluanSelect" class="form-select">
                             <option value="">-- pilih keperluan --</option>
@@ -93,39 +121,51 @@
                         </select>
 
                         <input type="text"
-                            name="keperluan_manual"
-                            id="keperluanManual"
-                            class="form-control mt-2 d-none"
-                            placeholder="Contoh: Kelistrikan / Bu Isri">
+                               name="keperluan_manual"
+                               id="keperluanManual"
+                               class="form-control mt-2 d-none"
+                               placeholder="Contoh: Kelistrikan / Bu Isri">
                     </div>
 
+                    {{-- JAM PINJAM --}}
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold">Jam Peminjaman</label>
-                        <input type="text" class="form-control bg-light"
-                               value="{{ now('Asia/Jakarta')->format('H:i') }}" readonly>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-clock me-1"></i> Jam Peminjaman
+                        </label>
+                        <input type="text"
+                               class="form-control bg-light"
+                               value="{{ now('Asia/Jakarta')->format('H:i') }}"
+                               readonly>
                     </div>
 
+                    {{-- JUMLAH --}}
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold">Jumlah Dipinjam</label>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-sort-numeric-up me-1"></i> Jumlah Dipinjam
+                        </label>
                         <input type="number"
                                class="form-control bg-light"
                                value="1"
                                readonly>
-                        <input type="hidden"
-                               name="quantity"
-                               value="1">
+                        <input type="hidden" name="quantity" value="1">
                     </div>
 
+                    {{-- ESTIMASI KEMBALI --}}
                     <div class="col-md-3">
-                        <label class="form-label fw-semibold">Estimasi Kembali</label>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-hourglass-end me-1"></i> Estimasi Kembali
+                        </label>
                         <input type="time"
                                name="waktu_kembali_aktual"
                                class="form-control"
                                required>
                     </div>
 
+                    {{-- KONDISI --}}
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Kondisi Saat Dipinjam</label>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-clipboard-check me-1"></i> Kondisi Saat Dipinjam
+                        </label>
                         <input type="text"
                                class="form-control bg-light"
                                value="{{ $inventory->kondisi }}"
@@ -135,8 +175,11 @@
                                value="{{ $inventory->kondisi }}">
                     </div>
 
+                    {{-- CATATAN --}}
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Catatan Peminjaman</label>
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-sticky-note me-1"></i> Catatan Peminjaman
+                        </label>
                         <textarea name="catatan_pinjam"
                                   class="form-control"
                                   rows="2"
@@ -145,9 +188,10 @@
 
                 </div>
 
+                {{-- SUBMIT --}}
                 <div class="mt-4 text-end">
-                    <button class="btn btn-success px-4">
-                        <i class="fas fa-check me-1"></i>Konfirmasi Peminjaman
+                    <button class="btn btn-success rounded-pill px-4">
+                        <i class="fas fa-check me-1"></i> Konfirmasi Peminjaman
                     </button>
                 </div>
 
@@ -163,23 +207,19 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    //SELECT SISWA
+
     $('.select-siswa').select2({
         placeholder: "Ketik atau pilih nama siswa",
         allowClear: true,
         width: '100%'
     });
 
-    //KEPERLUAN MANUAL
     const keperluanSelect = document.getElementById('keperluanSelect');
     const keperluanManual = document.getElementById('keperluanManual');
 
     if (keperluanSelect && keperluanManual) {
         keperluanSelect.addEventListener('change', function () {
-            keperluanManual.classList.toggle(
-                'd-none',
-                this.value !== '__manual'
-            );
+            keperluanManual.classList.toggle('d-none', this.value !== '__manual');
         });
     }
 });

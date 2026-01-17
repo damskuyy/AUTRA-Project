@@ -79,6 +79,28 @@ class RiwayatExport implements FromArray, WithHeadings
             ];
         }
 
+        /** =========================
+         * TRANSAKSI MASSAL
+         * ========================= */
+        foreach ($data['transaksiMassals'] as $tm) {
+
+            $items = $tm->inventaris->map(function ($inv) {
+                return
+                    $inv->barangMasuk->nama_barang .
+                    ' x' . $inv->pivot->quantity .
+                    ' (Rak: ' . ($inv->penempatan_rak ?? '-') . ')';
+            })->implode(', ');
+
+            $rows[] = [
+                $tm->jam_transaksi,
+                'Transaksi Massal',
+                $tm->siswa->nama . ' | ' . $items .
+                ($tm->keperluan ? ' | Keperluan: '.$tm->keperluan : ''),
+                $tm->admin->name ?? '-',
+            ];
+        }
+
+
 
         /** =========================
          * PELANGGARAN / BANNED

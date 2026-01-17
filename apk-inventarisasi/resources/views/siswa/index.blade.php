@@ -49,21 +49,26 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header pb-2">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
                         <h6 class="mb-0">Daftar Siswa</h6>
-                        
-                        <form method="GET" action="{{ route('siswa.index') }}">
-                            <div class="input-group input-group-outline" style="width: 300px;">
-                                <input 
-                                    type="text" 
-                                    name="search" 
-                                    value="{{ request('search') }}" 
-                                    class="form-control" 
-                                    placeholder="Cari siswa..."
-                                >
-                            </div>
-                        </form>
+
+                        <div class="d-flex gap-2">
+                            {{-- FILTER KELAS --}}
+                            <select id="filterKelas" class="form-select form-select-sm" style="width: 180px;">
+                                <option value="">Semua Kelas</option>
+                            </select>
+
+                            {{-- SEARCH --}}
+                            <input 
+                                type="text" 
+                                id="searchNama"
+                                class="form-control form-control-sm"
+                                style="width: 220px;"
+                                placeholder="Cari siswa..."
+                            >
+                        </div>
                     </div>
+
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
@@ -267,7 +272,7 @@
 
             <form id="editForm" method="POST">
                 @csrf
-
+                 @method('PUT')
                 {{-- Header --}}
                 <div class="modal-header border-0 pb-0">
                     <div>
@@ -473,6 +478,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editNis').value    = nis;
         document.getElementById('editKelas').value  = kelas;
 
+        document.getElementById('editForm').action = `/siswa/${id}`;
+
         // Force floating label Soft UI
         document.getElementById('editNama')
             .closest('.input-group')
@@ -490,6 +497,50 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editForm').action = `/siswa/${id}/update`;
     });
 
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const filterKelas = document.getElementById('filterKelas');
+    const searchNama  = document.getElementById('searchNama');
+    const rows        = document.querySelectorAll('.siswa-row');
+
+    /* ===============================
+       GENERATE KELAS OTOMATIS
+    =============================== */
+    const kelasSet = new Set();
+
+    rows.forEach(row => {
+        const kelas = row.dataset.kelas;
+        if (kelas) kelasSet.add(kelas);
+    });
+
+    [...kelasSet].sort().forEach(kelas => {
+        const option = document.createElement('option');
+        option.value = kelas;
+        option.textContent = kelas.toUpperCase();
+        filterKelas.appendChild(option);
+    });
+
+    /* ===============================
+       FILTER FUNCTION
+    =============================== */
+    function filterTable() {
+        const kelasValue = filterKelas.value;
+        const namaValue  = searchNama.value.toLowerCase();
+
+        rows.forEach(row => {
+            const rowKelas = row.dataset.kelas;
+            const rowNama  = row.dataset.nama;
+
+            const matchKelas = !kelasValue || rowKelas === kelasValue;
+            const matchNama  = rowNama.includes(namaValue);
+
+            row.style.display = (matchKelas && matchNama) ? '' : 'none';
+        });
+    }
+
+    filterKelas.addEventListener('change', filterTable);
+    searchNama.addEventListener('keyup', filterTable);
 });
 </script>
 
