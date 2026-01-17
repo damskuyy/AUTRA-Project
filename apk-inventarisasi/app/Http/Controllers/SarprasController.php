@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 class SarprasController extends Controller
 {
     /**
-     * 1️⃣ PROSES SCAN QR SARPRAS
+     * PROSES SCAN QR SARPRAS
      * Ambil data dari API & simpan ke session
      */
     public function scan(Request $request)
@@ -19,7 +19,7 @@ class SarprasController extends Controller
         $raw = trim($request->qr_code);
         $kode = null;
 
-        // 1️⃣ Kalau QR berupa URL
+        //Kalau QR berupa URL
         if (filter_var($raw, FILTER_VALIDATE_URL)) {
 
             // Ambil query (?kodeunik=xxx)
@@ -43,9 +43,9 @@ class SarprasController extends Controller
         }
 
         // 🔗 Call API lokal
-        $res = Http::get(
-            "http://localhost:8000/api/sarpras/by-kode-barang/$kode"
-        );
+        $apiUrl = config('app.url') . "/api/sarpras/by-kode-barang/$kode";
+
+        $res = Http::timeout(5)->get($apiUrl);
 
         if (!$res->successful() || empty($res->json('data'))) {
             return back()->with('error', 'Data Sarpras tidak ditemukan');

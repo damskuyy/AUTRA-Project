@@ -23,19 +23,19 @@
             <small class="text-muted">Ringkasan aktivitas perangkat dan siswa — kelola, ekspor, dan cari cepat.</small>
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-3">
             <a href="{{ route('riwayat-aktivitas.export.pdf', request()->query()) }}"
-            class="btn btn-outline-danger btn-export d-flex align-items-center gap-1">
-                <i class="fas fa-file-pdf"></i>
-                <span class="d-none d-sm-inline">PDF</span>
+            class="btn btn-light btn-icon-only border px-5 py-3  d-flex justify-content-center align-items-center">
+                <i class="fas fa-file-pdf text-danger fs-4"></i>
             </a>
 
             <a href="{{ route('riwayat-aktivitas.export.excel', request()->query()) }}"
-            class="btn btn-outline-success btn-export d-flex align-items-center gap-1">
-                <i class="fas fa-file-excel"></i>
-                <span class="d-none d-sm-inline">Excel</span>
+            class="btn btn-light btn-icon-only border px-5 py-3  d-flex justify-content-center align-items-center">
+                <i class="fas fa-file-excel text-success fs-4"></i>
             </a>
         </div>
+
+
 
     </div>
 
