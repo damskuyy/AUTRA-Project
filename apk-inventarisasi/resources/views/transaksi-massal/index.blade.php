@@ -171,3 +171,7 @@ Swal.fire({
 </script>
 @endif
 @endpush
+
+@section('footer')
+    @include('be.footer')
+@endsection
