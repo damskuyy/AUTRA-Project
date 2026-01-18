@@ -98,17 +98,24 @@
                                                     <td>{{ $a->penempatan_rak_label }}</td>
                                                     <td>
                                                         @php
-                                                            $statusClass = match ($a->status) {
+                                                            // Jika bahan dan stok 0, tampilkan HABIS
+                                                            $displayStatus = $a->status;
+                                                            if ($a->barangMasuk?->jenis_barang === 'bahan' && $a->stok <= 0) {
+                                                                $displayStatus = 'HABIS';
+                                                            }
+
+                                                            $statusClass = match ($displayStatus) {
                                                                 'TERSEDIA'   => 'bg-success',
                                                                 'DIPINJAM'   => 'bg-warning',
                                                                 'HILANG'     => 'bg-danger',
                                                                 'DIPERBAIKI' => 'bg-info',
+                                                                'HABIS'      => 'bg-danger',
                                                                 default      => 'bg-secondary',
                                                             };
                                                         @endphp
 
                                                         <span class="badge {{ $statusClass }}">
-                                                            {{ $a->status }}
+                                                            {{ $displayStatus }}
                                                         </span>
                                                     <td>
                                                     <a href="{{ route('inventaris.show', $a->id) }}" class="btn btn-xs btn-info">
@@ -196,7 +203,7 @@
                                             <i class="fas fa-qrcode"></i>
                                         </button>
 
-                                        <a href="{{ route('inventaris.edit', $b->id) }}" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i></a>
+                                        {{-- Tombol edit dihilangkan untuk bahan --}}
                                         <form action="{{ route('inventaris.destroy', $b->id) }}"
                                             method="POST"
                                             class="d-inline delete-form">

@@ -131,10 +131,10 @@
 let html5Qr;
 let isScanning = false;
 
-@if(session('error') && session('swal'))
+@if(session('error'))
 Swal.fire({
     icon: 'error',
-    title: 'Tidak Dapat Dipinjam',
+    title: 'Tidak Dapat Digunakan',
     text: '{{ session("error") }}',
     confirmButtonText: 'OK'
 });

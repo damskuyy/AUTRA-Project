@@ -74,6 +74,12 @@ class InventoriesController extends Controller
         if (!$inventaris->barangMasuk) {
             abort(404, 'Data barang masuk tidak ditemukan untuk inventaris ini.');
         }
+
+        // Bahan tidak boleh diedit
+        if ($inventaris->barangMasuk->jenis_barang === 'bahan') {
+            abort(403, 'Bahan tidak dapat diedit.');
+        }
+
         $barangMasukBahan = BarangMasuk::where('jenis_barang', 'bahan')->get();
         $barangMasukAlat = BarangMasuk::where('jenis_barang', 'alat')->get();
 

@@ -23,17 +23,24 @@
                         <h5 class="fw-bold mb-0">Informasi Barang</h5>
                         <td>
                             @php
-                                $statusClass = match ($inventaris->status) {
+                                // Jika bahan dan stok 0, tampilkan HABIS
+                                $displayStatus = $inventaris->status;
+                                if ($inventaris->barangMasuk?->jenis_barang === 'bahan' && $inventaris->stok <= 0) {
+                                    $displayStatus = 'HABIS';
+                                }
+
+                                $statusClass = match ($displayStatus) {
                                     'TERSEDIA'   => 'bg-success',
                                     'DIPINJAM'   => 'bg-warning',
                                     'HILANG'     => 'bg-danger',
                                     'DIPERBAIKI' => 'bg-info',
+                                    'HABIS'      => 'bg-danger',
                                     default      => 'bg-secondary',
                                 };
                             @endphp
 
                             <span class="badge {{ $statusClass }}">
-                                {{ $inventaris->status }}
+                                {{ $displayStatus }}
                             </span>
                         <td>
                     </div>
@@ -53,9 +60,11 @@
                         <a href="{{ route('inventaris.index') }}" class="btn btn-outline-secondary px-4">
                             <i class="fas fa-arrow-left me-2"></i>Kembali
                         </a>
+                        @if($inventaris->barangMasuk?->jenis_barang !== 'bahan')
                         <a href="{{ route('inventaris.edit', $inventaris->id) }}" class="btn btn-warning px-4">
                             <i class="fas fa-edit me-2"></i>Edit Data
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -184,8 +184,75 @@ document.addEventListener('DOMContentLoaded', function () {
             keperluanManual.classList.toggle('d-none', this.value !== '__manual');
         });
     }
+
+    // ================= VALIDASI STOK =================
+    const stokTersedia = {{ $inventory->stok }};
+    const inputJumlah = document.querySelector('input[name="jumlah"]');
+
+    // Cek stok saat halaman dimuat
+    if (stokTersedia === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Stok Habis',
+            text: 'Stok bahan ini sudah habis dan tidak dapat digunakan.',
+            confirmButtonText: 'Kembali',
+            allowOutsideClick: false
+        }).then(() => {
+            window.history.back();
+        });
+        return; // Stop eksekusi selanjutnya
+    }
+
+    // Validasi real-time saat input jumlah
+    if (inputJumlah) {
+        inputJumlah.addEventListener('input', function () {
+            const jumlahInput = parseInt(this.value) || 0;
+
+            if (jumlahInput > stokTersedia) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stok Tidak Mencukupi',
+                    text: `Jumlah yang diminta (${jumlahInput}) melebihi stok tersedia (${stokTersedia}).`,
+                    confirmButtonText: 'OK'
+                });
+                this.value = stokTersedia; // Set ke maksimal stok
+            }
+        });
+
+        // Validasi saat form disubmit
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                const jumlahInput = parseInt(inputJumlah.value) || 0;
+
+                if (jumlahInput > stokTersedia) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Stok Tidak Mencukupi',
+                        text: `Jumlah yang diminta (${jumlahInput}) melebihi stok tersedia (${stokTersedia}).`,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    }
 });
 </script>
+
+@if(session('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: "{{ session('error') }}",
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
+@endif
+
 @endpush
 
 @endsection

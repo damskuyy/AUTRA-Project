@@ -32,6 +32,11 @@ class PemakaianBahanController extends Controller
             abort(404);
         }
 
+        // Cek stok - jika 0, redirect dengan error
+        if ($inventory->stok <= 0) {
+            return redirect()->route('scan.index')->with('error', 'Stok bahan habis dan tidak dapat digunakan.');
+        }
+
         $siswas = Siswa::where('is_active', true)
             ->where('is_banned', false)
             ->orderBy('nama')
@@ -69,9 +74,7 @@ class PemakaianBahanController extends Controller
         $inventory = Inventory::findOrFail($request->inventory_id);
 
         if ($request->jumlah > $inventory->stok) {
-            return back()->withErrors([
-                'jumlah' => 'Stok tidak mencukupi'
-            ]);
+            return redirect()->back()->with('error', 'Stok bahan tidak mencukupi. Stok tersedia: ' . $inventory->stok);
         }
 
         $keperluan = $request->keperluan === '__manual'
