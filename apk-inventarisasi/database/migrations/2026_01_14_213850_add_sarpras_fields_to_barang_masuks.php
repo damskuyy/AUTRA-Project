@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('barang_masuks', function (Blueprint $table) {
             $table->string('kode_unik')->nullable()->unique();
             $table->string('foto')->nullable();
-            $table->string('qr_code_url')->nullable();
+            $table->string('spesifikasi')->nullable();
             $table->boolean('from_sarpras')->default(false);
         });
     }

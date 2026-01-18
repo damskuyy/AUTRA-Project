@@ -295,13 +295,13 @@
                     </h5>
 
                     {{-- QR INPUT --}}
-                    <div class="row g-3 align-items-end mb-4">
+                    <div class="row g-3 align-items-end mb-2">
                         <div class="col-md-8">
                             <label class="form-label fw-semibold">Kode QR</label>
                             <input type="text"
-                                   id="qrSarpras"
-                                   class="form-control"
-                                   placeholder="Scan / input kode barang">
+                                id="qrSarpras"
+                                class="form-control"
+                                placeholder="Scan / input kode barang">
                         </div>
                         <div class="col-md-4 d-grid">
                             <button type="button"
@@ -310,11 +310,19 @@
                                 <i class="fas fa-camera me-2"></i>Scan QR
                             </button>
                         </div>
+                        {{-- Tombol Input Manual --}}
+                        <div class="mt-2" id="manualQrDiv" style="display:none;">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    onclick="enableManualQr()">
+                                Input Manual
+                            </button>
+                        </div>
                     </div>
 
                     <div id="sarpras-reader"
-                         class="mx-auto mb-4"
-                         style="width:280px; display:none;"></div>
+                        class="mx-auto mb-4"
+                        style="width:280px; display:none;"></div>
 
                     {{-- FORM --}}
                     <form action="{{ route('sarpras.store') }}" method="POST">
@@ -369,8 +377,8 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Foto</label>
                                 <img id="sp_foto"
-                                     class="img-fluid rounded border"
-                                     style="max-height:200px; display:none;">
+                                    class="img-fluid rounded border"
+                                    style="max-height:200px; display:none;">
                                 <input type="hidden" name="foto" id="sp_foto_input">
                             </div>
 
@@ -444,20 +452,23 @@ function onSarprasScanSuccess(qrText) {
     if (scanned) return;
     scanned = true;
 
-    console.log('QR RAW:', qrText);
-
     sarprasScanner.stop();
     document.getElementById('sarpras-reader').style.display = 'none';
 
     const kode = extractKodeUnik(qrText);
-
-    console.log('KODE FINAL:', kode);
 
     if (!kode) {
         Swal.fire('QR Tidak Valid', 'Kode tidak dikenali', 'error');
         scanned = false;
         return;
     }
+
+    // tampilkan di input readonly
+    qrInput.value = kode;
+    qrInput.readOnly = true;
+
+    // tampilkan tombol input manual hanya setelah scan
+    document.getElementById('manualQrDiv').style.display = 'block';
 
     fetchSarprasData(kode);
 
@@ -497,7 +508,39 @@ function extractKodeUnik(text) {
 /* ======================
    FETCH API
 ====================== */
+function enableManualQr() {
+    const qrInput = document.getElementById('qrSarpras');
+    qrInput.readOnly = false;
+    qrInput.value = '';
+    qrInput.focus();
+
+    // sembunyikan tombol
+    document.getElementById('manualQrDiv').style.display = 'none';
+
+    resetSarprasForm();
+}
+
+function resetSarprasForm() {
+    document.getElementById('sp_kode').value = '';
+    document.getElementById('sp_nama').value = '';
+    document.getElementById('sp_merk').value = '';
+    document.getElementById('sp_spesifikasi').value = '';
+
+    const foto = document.getElementById('sp_foto');
+    foto.src = '';
+    foto.style.display = 'none';
+
+    document.getElementById('sp_foto_input').value = '';
+}
+
 function fetchSarprasData(kode) {
+    resetSarprasForm(); // 🔥 penting
+
+    if (!kode) {
+        Swal.fire('Error', 'Kode unik tidak valid', 'error');
+        return;
+    }
+
     fetch(`/api/sarpras/by-kode-barang/${encodeURIComponent(kode)}`)
         .then(res => {
             if (!res.ok) throw new Error('404');
@@ -512,28 +555,38 @@ function fetchSarprasData(kode) {
             document.getElementById('sp_spesifikasi').value = d.spesifikasi ?? '';
 
             if (d.foto) {
-                document.getElementById('sp_foto').src = d.foto;
-                document.getElementById('sp_foto').style.display = 'block';
+                const foto = document.getElementById('sp_foto');
+                foto.src = d.foto;
+                foto.style.display = 'block';
                 document.getElementById('sp_foto_input').value = d.foto;
             }
 
             Swal.fire('Berhasil', 'Data Sarpras ditemukan', 'success');
         })
         .catch(() => {
+            resetSarprasForm(); // 🔥 reset juga kalau gagal
             Swal.fire('Gagal', 'Data Sarpras tidak ditemukan', 'error');
         });
 }
 
 
 const qrInput = document.getElementById('qrSarpras');
+
 if (qrInput) {
-    qrInput.addEventListener('change', function () {
-        if (this.value.trim()) {
-            fetchSarprasData(extractKodeUnik(this.value));
+    qrInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+
+            const kode = extractKodeUnik(this.value);
+
+            if (kode) {
+                fetchSarprasData(kode);
+            } else {
+                Swal.fire('Error', 'Kode tidak valid', 'error');
+            }
         }
     });
 }
-
 
 @if(session('success'))
 Swal.fire({

@@ -27,7 +27,7 @@ class BarangMasuk extends Model
         // SARPRAS
         'kode_unik',
         'foto',
-        'qr_code_url',
+        'spesifikasi',
         'from_sarpras'
     ];
 
