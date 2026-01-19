@@ -343,7 +343,7 @@
 
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Spesifikasi</label>
-                                <textarea id="sp_spesifikasi" class="form-control" rows="2" readonly></textarea>
+                                <textarea id="sp_spesifikasi" name="spesifikasi" class="form-control" rows="2" readonly></textarea>
                             </div>
 
                             <div class="col-md-6">

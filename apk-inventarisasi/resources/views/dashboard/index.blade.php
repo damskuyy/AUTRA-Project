@@ -68,7 +68,7 @@
         @php
             $barangs = \App\Models\BarangMasuk::select(
                     'nama_barang',
-                    DB::raw('SUM(jumlah) as total_stok')
+                    DB::raw('SUM(COALESCE(jumlah, 1)) as total_stok')
                 )
                 ->where('ruangan_id', $ruangan->id)
                 ->groupBy('nama_barang')

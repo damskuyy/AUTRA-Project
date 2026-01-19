@@ -74,6 +74,8 @@ class SarprasController extends Controller
             'nama_barang'    => $request->nama_barang,
             'jenis_barang'   => 'alat',
             'merk'           => $request->merk,
+            'spesifikasi'    => $request->spesifikasi,
+            'jumlah'         => 1,
             'kode_unik'      => $request->kode_unik,
             'sumber'         => 'SARPRAS',
             'ruangan_id'     => $request->ruangan_id,
