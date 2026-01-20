@@ -82,7 +82,7 @@
                                 <input type="text"
                                        name="merk"
                                        class="form-control"
-                                       placeholder="Bosch, Makita, dll">
+                                       placeholder="Masukkan merk alat">
                             </div>
 
                             {{-- Jumlah --}}
@@ -203,13 +203,13 @@
                             {{-- Merk --}}
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Merk</label>
-                                <input type="text" name="merk" class="form-control">
+                                <input type="text" name="merk" class="form-control" placeholder="Masukkan merk bahan">
                             </div>
 
                             {{-- Satuan --}}
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Satuan</label>
-                                <input type="text" name="satuan" class="form-control">
+                                <input type="text" name="satuan" class="form-control" placeholder="Contoh: pcs, meter dll">
                             </div>
 
                             {{-- Jumlah --}}

@@ -74,32 +74,53 @@ class PengembalianController extends Controller
                 'catatan' => $request->catatan,
             ]);
 
+            $siswa = $peminjaman->siswa;
+
             /**
-             * ===== CEK TELAT =====
+             * ==============================
+             * LOGIKA PELANGGARAN (FIX UTAMA)
+             * ==============================
              */
             $now = Carbon::now();
             $deadline = Carbon::parse($peminjaman->waktu_kembali_aktual);
 
-            $siswa = $peminjaman->siswa;
+            $isTelat = $now->greaterThan($deadline);
+            $isRusakAtauHilang = in_array($request->kondisi, [
+                'RUSAK_RINGAN',
+                'RUSAK_BERAT',
+                'HILANG'
+            ]);
 
-            if ($now->greaterThan($deadline)) {
+            // 👉 kalau ADA pelanggaran (telat ATAU rusak/hilang)
+            if ($isTelat || $isRusakAtauHilang) {
+
+                $tipe = match (true) {
+                    $isRusakAtauHilang && $request->kondisi === 'HILANG' => 'HILANG',
+                    $isRusakAtauHilang => 'KERUSAKAN',
+                    default => 'TELAT_KEMBALI',
+                };
+
+                $keterangan = match ($tipe) {
+                    'HILANG' => 'Barang hilang saat pengembalian',
+                    'KERUSAKAN' => 'Barang dikembalikan dalam kondisi rusak',
+                    'TELAT_KEMBALI' => 'Terlambat mengembalikan alat',
+                };
 
                 Pelanggaran::create([
                     'siswa_id' => $siswa->id,
                     'peminjaman_id' => $peminjaman->id,
-                    'tipe' => 'TELAT_KEMBALI',
+                    'tipe' => $tipe,
                     'poin' => 1,
-                    'keterangan' => 'Terlambat mengembalikan alat',
+                    'keterangan' => $keterangan,
                     'tanggal_kejadian' => now(),
                     'admin_id' => auth()->id(),
                 ]);
 
+                // ⚠️ HANYA +1 POIN (TIDAK DOBEL)
                 $siswa->increment('total_poin');
-                $siswa->refresh();          // 🔥
-                $siswa->checkAndAutoBan();  // 🔥
+                $siswa->refresh();
+                $siswa->checkAndAutoBan();
             }
-
-
 
             /**
              * TAMBAH STOK KEMBALI
@@ -114,7 +135,7 @@ class PengembalianController extends Controller
                 'BAIK' => 'TERSEDIA',
                 'RUSAK_RINGAN', 'RUSAK_BERAT' => 'RUSAK',
                 'HILANG' => 'HILANG',
-                default => 'TERSEDIA', // fallback
+                default => 'TERSEDIA',
             };
 
             $peminjaman->inventory->update([

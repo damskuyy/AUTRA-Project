@@ -122,11 +122,11 @@
                                                         <i class="fas fa-eye"></i>
                                                     </a>
 
-                                                    <button type="button"
-                                                        class="btn btn-xs btn-secondary"
-                                                        onclick="generateQr('{{ route('inventaris.generateQrBulk', $a->barangMasuk->id) }}')">
+                                                    <a href="{{ route('inventaris.generateQrBulk', $a->barangMasuk->id) }}"
+                                                    class="btn btn-xs btn-secondary">
                                                         <i class="fas fa-qrcode"></i>
-                                                    </button>
+                                                    </a>
+
 
 
                                                     <form action="{{ route('inventaris.destroy', $a->id) }}"
@@ -197,12 +197,11 @@
                                     <td>{{ $b->penempatan_rak_label }}</td>
                                     <td>
                                         <a href="{{ route('inventaris.show', $b->id) }}" class="btn btn-xs btn-info"><i class="fas fa-eye"></i></a>
-                                        <button type="button"
-                                            class="btn btn-xs btn-secondary"
-                                            onclick="generateQr('{{ route('inventaris.generateQrBulk', $b->barangMasuk->id) }}')">
-                                            <i class="fas fa-qrcode"></i>
-                                        </button>
-
+                                        <a href="{{ route('inventaris.generateQrBulk', $b->barangMasuk->id) }}"
+                                        class="btn btn-xs btn-secondary">
+                                        <i class="fas fa-qrcode"></i>
+                                        </a>
+                                        
                                         {{-- Tombol edit dihilangkan untuk bahan --}}
                                         <form action="{{ route('inventaris.destroy', $b->id) }}"
                                             method="POST"
@@ -230,23 +229,6 @@
 @push('scripts')
 
 <script>
-    function generateQr(url) {
-        Swal.fire({
-            icon: 'success',
-            title: 'QR Berhasil Dibuat',
-            text: 'QR Code berhasil di-generate',
-            showConfirmButton: false,
-            timer: 1300,
-            timerProgressBar: true
-        });
-
-        // redirect setelah swal tampil
-        setTimeout(() => {
-            window.location.href = url;
-        }, 1300);
-    }
-
-
     // SEARCH ALAT
     document.getElementById('searchAlat').addEventListener('keyup', function () {
         let keyword = this.value.toLowerCase();
@@ -295,6 +277,19 @@
         });
     });
 </script>
+
+@if(session('qr_generated'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'QR Berhasil Dibuat',
+        text: 'QR Code berhasil di‑generate',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+    });
+</script>
+@endif
 
 @endpush
 
