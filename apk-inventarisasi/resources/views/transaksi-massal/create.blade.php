@@ -121,6 +121,7 @@
                                                         ? ($rakLabels[$inv->penempatan_rak] ?? $inv->penempatan_rak)
                                                         : 'Tanpa Rak' }}
                                                 </strong>
+                                                 • {{ $inv->kode_qr_jurusan }}
                                             </div>
                                         </label>
                                     </div>

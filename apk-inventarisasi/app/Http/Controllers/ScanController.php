@@ -25,7 +25,7 @@ class ScanController extends Controller
          * ALT-PT-001
          * BHN-RBK-015
          */
-        if (!preg_match('/^(ALT|BHN)-[A-Z]{2,4}-\d{3}$/', $qr)) {
+        if (!preg_match('/^(ALT|BHN)-[A-G]\.(PT|HT|RK|RBK|RBB|UK|PPE)-\d{3}$/', $qr)) {
             return redirect()
                 ->route('scan.index')
                 ->withErrors('Format QR tidak valid');

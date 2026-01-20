@@ -153,41 +153,6 @@
 
 
   <script>
-  // Dark Mode Toggle
-  document.getElementById("darkModeToggle").addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-  });
-
-  // Chart Dummy Data
-  const dataPinjam = [5, 9, 6, 8, 10, 7, 12];
-  const dataPakai = [3, 4, 5, 3, 6, 4, 5];
-
-  // Chart Peminjaman
-  new Chart(document.getElementById("chartPinjam"), {
-    type: "bar",
-    data: {
-      labels: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
-      datasets: [{
-        label: "Peminjaman",
-        data: dataPinjam,
-        borderWidth: 1
-      }]
-    }
-  });
-
-  // Chart Penggunaan
-  new Chart(document.getElementById("chartPakai"), {
-    type: "line",
-    data: {
-      labels: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
-      datasets: [{
-        label: "Pemakaian",
-        data: dataPakai,
-        borderWidth: 1
-      }]
-    }
-  });
-
   document.addEventListener("DOMContentLoaded", function () {
       const body = document.body;
       const iconNavbarSidenav = document.getElementById('iconNavbarSidenav');

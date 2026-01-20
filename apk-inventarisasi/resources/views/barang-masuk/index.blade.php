@@ -305,7 +305,7 @@
                         </div>
                         <div class="col-md-4 d-grid">
                             <button type="button"
-                                    class="btn btn-outline-success"
+                                    class="btn btn-outline-success mb-0"
                                     onclick="openSarprasScanner()">
                                 <i class="fas fa-camera me-2"></i>Scan QR
                             </button>

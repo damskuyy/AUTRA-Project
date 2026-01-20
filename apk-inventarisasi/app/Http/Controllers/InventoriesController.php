@@ -147,9 +147,29 @@ class InventoriesController extends Controller
 
     private function generateKodeQr($jenis, $rak)
     {
+        // Mapping rak ke huruf
+        $rakMap = [
+            'PT'  => 'A',
+            'HT'  => 'B',
+            'RK'  => 'C',
+            'RBK' => 'D',
+            'RBB' => 'E',
+            'UK'  => 'F',
+            'PPE' => 'G',
+        ];
+
+        $huruf = $rakMap[$rak] ?? 'X';
+
+        // Prefix ALT / BHN
         $prefix = $jenis === 'alat' ? 'ALT' : 'BHN';
 
-        $last = Inventory::where('kode_qr_jurusan', 'LIKE', "$prefix-$rak-%")
+        // Prefix rak: A.PT
+        $rakPrefix = "{$huruf}.{$rak}";
+
+        // Contoh: ALT-A.PT-001
+        $fullPrefix = "{$prefix}-{$rakPrefix}";
+
+        $last = Inventory::where('kode_qr_jurusan', 'LIKE', "$fullPrefix-%")
             ->orderBy('kode_qr_jurusan', 'desc')
             ->first();
 
@@ -160,7 +180,7 @@ class InventoriesController extends Controller
             $number = intval(end($parts)) + 1;
         }
 
-        return sprintf('%s-%s-%03d', $prefix, $rak, $number);
+        return sprintf('%s-%03d', $fullPrefix, $number);
     }
 
 

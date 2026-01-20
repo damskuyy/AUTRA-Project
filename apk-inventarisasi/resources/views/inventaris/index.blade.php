@@ -67,7 +67,7 @@
                                         </span>
                                     </td>
                                     <td width="120">
-                                        <button class="btn btn-sm btn-outline-primary"
+                                        <button class="btn btn-sm btn-outline-primary mb-0"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#alat-{{ Str::slug($nama) }}">
                                             Detail
