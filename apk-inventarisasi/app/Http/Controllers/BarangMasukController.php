@@ -107,6 +107,6 @@ class BarangMasukController extends Controller
             }
         });
 
-        return back()->with('success', 'Barang masuk berhasil & otomatis masuk ke inventaris.');
+        return back()->with('success', 'Barang masuk berhasil dan otomatis masuk ke inventaris.');
     }
 }

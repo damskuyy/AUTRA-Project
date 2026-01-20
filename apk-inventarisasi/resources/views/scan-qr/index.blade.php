@@ -86,7 +86,7 @@
                             <input type="text"
                                    name="qr_code"
                                    class="form-control"
-                                   placeholder="ALT-XX-XXX / BHN-XX-XXX"
+                                   placeholder="ALT-X.XX-XXX / BHN-X.XX-XXX"
                                    required>
                         </div>
                     </form>

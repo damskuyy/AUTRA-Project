@@ -141,9 +141,8 @@ class InventoriesController extends Controller
             }
         }
 
-        return back()->with('success', 'QR berhasil digenerate');
+        return back()->with('qr_generated', true);
     }
-
 
     private function generateKodeQr($jenis, $rak)
     {

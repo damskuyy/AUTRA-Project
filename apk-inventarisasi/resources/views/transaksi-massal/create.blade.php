@@ -166,12 +166,13 @@
                                                 </div>
                                                 <small class="text-muted">
                                                     Stok: {{ $inv->stok }} {{ $inv->barangMasuk->satuan }}
-                                                    • Rak:
+                                                    • 
                                                     <strong>
                                                         {{ $inv->penempatan_rak
                                                             ? ($rakLabels[$inv->penempatan_rak] ?? $inv->penempatan_rak)
                                                             : 'Tanpa Rak' }}
                                                     </strong>
+                                                    • {{ $inv->kode_qr_jurusan }}
                                                 </small>
                                             </div>
 
@@ -179,6 +180,7 @@
                                                 <input type="number"
                                                     name="jumlah[{{ $inv->id }}]"
                                                     class="form-control"
+                                                    placeholder="Masukkan jumlah yang ingin dipakai..."
                                                     min="0"
                                                     max="{{ $inv->stok }}">
                                             </div>
