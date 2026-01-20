@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{asset('be/img/apple-icon.png')}}">
-    <link rel="icon" type="image/png" href="{{asset('be/img/favicon.png')}}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{asset('be/img/logos/logo-autra-nonBG.png')}}">
+    <link rel="icon" type="image/png" href="{{asset('be/img/logos/logo-autra-nonBG.png')}}">
     <title>Login - AUTRA Inventaris</title>
     
     <!-- Fonts & Icons -->

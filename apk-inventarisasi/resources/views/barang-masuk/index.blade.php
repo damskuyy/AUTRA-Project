@@ -592,7 +592,7 @@ if (qrInput) {
 Swal.fire({
     icon: 'success',
     title: 'Berhasil!',
-    text: '{{ session("success") }}',
+    html: '{{ session("success") }}',
     timer: 3000,
     showConfirmButton: false,
     timerProgressBar: true
