@@ -29,6 +29,83 @@ function showNotification(message, type = 'error') {
 }
 
 // ==========================================
+// USER PROFILE DROPDOWN MENU
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const userProfileContainer = document.querySelector('.user-profile-container');
+    const userProfile = document.querySelector('.user-profile');
+    const userDropdown = document.querySelector('.user-dropdown');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (userProfile && userDropdown) {
+        // Toggle dropdown on profile click
+        userProfile.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!userProfileContainer.contains(e.target)) {
+                userDropdown.classList.remove('active');
+            }
+        });
+        
+        // Handle logout button
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // SweetAlert confirmation
+                Swal.fire({
+                    title: 'Logout?',
+                    text: 'Apakah Anda ingin logout dari sistem?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Logout',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading
+                        Swal.fire({
+                            title: 'Logging out...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // Send logout request
+                        fetch('/logout', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(response => {
+                            // Clear session and redirect
+                            sessionStorage.clear();
+                            window.location.href = '/login';
+                        }).catch(error => {
+                            console.error('Logout error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan saat logout'
+                            });
+                        });
+                    }
+                });
+            });
+        }
+    }
+});
+
+// ==========================================
 // LOGIN PAGE FUNCTIONALITY
 // ==========================================
 
@@ -39,7 +116,7 @@ if (document.getElementById('loginForm')) {
     const btnLogin = document.querySelector('.btn-login');
 
     // Form Submit Handler
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const username = usernameInput.value.trim();
@@ -53,21 +130,52 @@ if (document.getElementById('loginForm')) {
         // Show loading
         btnLogin.classList.add('loading');
         btnLogin.disabled = true;
+        const originalText = btnLogin.textContent;
+        btnLogin.textContent = 'Sedang login...';
         
-        // Simulate API call
-        setTimeout(() => {
-            // Store session
-            sessionStorage.setItem('isLoggedIn', 'true');
-            sessionStorage.setItem('username', username);
-            sessionStorage.setItem('loginTime', new Date().toISOString());
+        try {
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
-            showNotification('Login berhasil! Mengalihkan ke dashboard...', 'success');
+            // Send login request
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
             
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 1200);
+            const data = await response.json();
             
-        }, 1500);
+            if (data.success) {
+                showNotification(data.message, 'success');
+                
+                // Clear old session data
+                sessionStorage.clear();
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = data.redirect;
+                }, 800);
+            } else {
+                showNotification(data.message, 'error');
+                btnLogin.classList.remove('loading');
+                btnLogin.disabled = false;
+                btnLogin.textContent = originalText;
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showNotification('Terjadi kesalahan saat login', 'error');
+            btnLogin.classList.remove('loading');
+            btnLogin.disabled = false;
+            btnLogin.textContent = originalText;
+        }
     });
 
     // Enter key navigation
@@ -85,19 +193,12 @@ if (document.getElementById('loginForm')) {
         }
     });
 
-    // Check if already logged in
-    window.addEventListener('DOMContentLoaded', function() {
-        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (isLoggedIn === 'true') {
-            window.location.href = '/dashboard';
-        }
-    });
-
     // Reset button on back
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
             btnLogin.classList.remove('loading');
             btnLogin.disabled = false;
+            btnLogin.textContent = 'Login';
         }
     });
 }
@@ -108,19 +209,15 @@ if (document.getElementById('loginForm')) {
 
 if (document.querySelector('.dashboard-page')) {
     
-    // Check authentication
+    // Note: Authentication is handled by backend middleware
+    // If user reaches this page, they are already authenticated
+    
+    // Get username from page or set default
     window.addEventListener('DOMContentLoaded', function() {
-        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-        if (isLoggedIn !== 'true') {
-            window.location.href = '/login';
-            return;
-        }
-
-        // Set username
-        const username = sessionStorage.getItem('username') || 'Admin User';
         const userNameElement = document.querySelector('.user-name');
-        if (userNameElement) {
-            userNameElement.textContent = username;
+        // Username will be set by the backend view if authenticated
+        if (!userNameElement?.textContent?.trim()) {
+            userNameElement.textContent = 'User';
         }
     });
 
@@ -542,18 +639,6 @@ if (document.querySelector('.dashboard-page')) {
 
     // Update data every 3 seconds
     setInterval(generateNewData, 3000);
-
-    // User Profile Click (Logout)
-    const userProfile = document.querySelector('.user-profile');
-    if (userProfile) {
-        userProfile.addEventListener('click', function() {
-            const confirmed = confirm('Apakah Anda ingin logout?');
-            if (confirmed) {
-                sessionStorage.clear();
-                window.location.href = '/login';
-            }
-        });
-    }
 }
 
 // ==========================================
@@ -562,11 +647,8 @@ if (document.querySelector('.dashboard-page')) {
 
 if (document.querySelector('.control-grid')) {
     
-    // Check authentication
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    if (isLoggedIn !== 'true') {
-        window.location.href = '/login';
-    }
+    // Note: Authentication is handled by backend middleware
+    // If user reaches this page, they are already authenticated
 
     // Update time for each device (WIB - UTC+7)
     function updateDeviceTimes() {
@@ -720,18 +802,6 @@ if (document.querySelector('.control-grid')) {
                 setTimeout(() => {
                     this.style.transform = 'scale(1)';
                 }, 100);
-            }
-        });
-    }
-
-    // User Profile Click (Logout)
-    const userProfile = document.querySelector('.user-profile');
-    if (userProfile) {
-        userProfile.addEventListener('click', function() {
-            const confirmed = confirm('Apakah Anda ingin logout?');
-            if (confirmed) {
-                sessionStorage.clear();
-                window.location.href = '/login';
             }
         });
     }

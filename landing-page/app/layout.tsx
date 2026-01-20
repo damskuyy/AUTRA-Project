@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "Welcome to the world of automation",
   icons: {
     icon: "/logo-toi.png",
+    apple: "/logo-toi.png",
   },
 };
 

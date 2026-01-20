@@ -3,41 +3,41 @@
 export default function PrestasiSection() {
   const prestasiList = [
     {
-      year: "2024",
+      year: "2022",
       title: "Juara 1 LKS Provinsi Jawa Barat",
       description: "Meraih juara pertama pada Lomba Kompetensi Siswa bidang Industrial Control tingkat Provinsi Jawa Barat",
       location: "Bandung, Jawa Barat"
     },
     {
-      year: "2023",
-      title: "Juara 2 LKS Nasional",
-      description: "Meraih juara kedua pada Lomba Kompetensi Siswa bidang Industrial Control tingkat Nasional",
+      year: "2022",
+      title: "Juara 1 Pemrograman PLC UPI",
+      description: "Meraih juara pertama pada Lomba Pemrograman PLC yang diselenggarakan Universitas Pendidikan Indonesia",
+      location: "Bandung, Jawa Barat"
+    },
+    {
+      year: "2022",
+      title: "Juara 3 Pemrograman PLC PNJ",
+      description: "Meraih juara ketiga pada lomba Pemrograman PLC yang diselenggarakan Politeknik Negeri Jakarta",
       location: "Jakarta, Indonesia"
     },
     {
-      year: "2024",
-      title: "Juara 1 Robotik Competition",
-      description: "Meraih juara pertama pada kompetisi robotik tingkat Jawa Barat kategori Industrial Automation",
-      location: "Cimahi, Jawa Barat"
+      year: "2021",
+      title: "Juara 3 LKS Provinsi - Industrial Control",
+      description: "Meraih juara ketiga bidang mata lomba industrial control pada Lomba Kompetensi Siswa tingkat Provinsi Jawa Barat",
+      location: "Jawa Barat, Indonesia"
     },
     {
-      year: "2023",
-      title: "Best Innovation Award",
-      description: "Penghargaan inovasi terbaik dalam bidang sistem otomasi industri tingkat regional",
-      location: "Surabaya, Jawa Timur"
+      year: "2021",
+      title: "Juara 3 LKS Provinsi - Electrical Installation",
+      description: "Meraih juara ketiga bidang mata lomba electrical installation pada Lomba Kompetensi Siswa tingkat Provinsi Jawa Barat",
+      location: "Jawa Barat, Indonesia"
     },
-    {
-      year: "2024",
-      title: "Juara 3 IoT Competition",
-      description: "Meraih juara ketiga pada kompetisi Internet of Things untuk aplikasi industri 4.0",
-      location: "Semarang, Jawa Tengah"
-    },
-    {
-      year: "2023",
-      title: "Excellence Award PLC Programming",
-      description: "Penghargaan keunggulan dalam kompetisi pemrograman PLC tingkat nasional",
-      location: "Yogyakarta, Indonesia"
-    }
+    // {
+    //   year: "2023",
+    //   title: "Excellence Award PLC Programming",
+    //   description: "Penghargaan keunggulan dalam kompetisi pemrograman PLC tingkat nasional",
+    //   location: "Yogyakarta, Indonesia"
+    // }
   ];
 
   return (
@@ -86,65 +86,55 @@ export default function PrestasiSection() {
         </div>
 
         {/* Prestasi Grid */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-6">
           {prestasiList.map((prestasi, index) => (
             <div
               key={index}
               className="prestasi-card group"
               style={{
-                animation: `prestasiCardFadeIn 0.6s ease-out ${index * 0.1}s backwards`
+                animation: `prestasiCardFadeIn 0.6s ease-out ${index * 0.1}s backwards`,
+                width: '360px'
               }}
             >
               <div 
                 className="relative rounded-3xl overflow-hidden shadow-xl hover-lift-prestasi"
                 style={{ 
-                  background: 'hsl(var(--orange-bright)) !important',
-                  minHeight: '280px',
+                  background: 'hsl(var(--orange-bright))',
                   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
-                {/* Year Badge */}
-                <div 
-                  className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-10"
-                  style={{
-                    width: '100px',
-                    height: '100px'
-                  }}
-                >
-                  <div 
-                    className="w-full h-full rounded-full flex items-center justify-center shadow-2xl year-badge"
-                    style={{
-                      background: 'white',
-                      border: '8px solid hsl(var(--orange-bright))'
-                    }}
-                  >
-                    <span 
-                      className="text-3xl font-black"
+                {/* Card Content */}
+                <div className="p-6 flex flex-col" style={{ minHeight: '280px' }}>
+                  {/* Year Section with Divider */}
+                  <div className="text-center mb-5">
+                    <h3 
+                      className="text-4xl font-black mb-2"
                       style={{ color: 'hsl(var(--brown-dark))' }}
                     >
                       {prestasi.year}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Content */}
-                <div className="pt-14 pb-6 px-8 text-center flex flex-col justify-between" style={{ minHeight: '280px' }}>
-                  <div>
-                    <h3 
-                      className="text-2xl font-black mb-4 text-white leading-tight"
-                    >
-                      {prestasi.title}
                     </h3>
-
-                    <p 
-                      className="text-base text-white/95 leading-relaxed italic mb-6"
-                    >
-                      {prestasi.description}
-                    </p>
+                    <div 
+                      className="w-24 h-1 mx-auto rounded-full"
+                      style={{ background: 'hsl(var(--brown-dark))' }}
+                    />
                   </div>
+
+                  {/* Title */}
+                  <h4 
+                    className="text-xl font-black mb-3 text-white leading-tight text-center"
+                  >
+                    {prestasi.title}
+                  </h4>
+
+                  {/* Description */}
+                  <p 
+                    className="text-sm text-white/95 leading-relaxed italic text-center mb-5 flex-1"
+                  >
+                    {prestasi.description}
+                  </p>
 
                   {/* Location */}
-                  <div className="flex items-center justify-center gap-2 text-white mt-auto">
+                  <div className="flex items-center justify-center gap-2 text-white">
                     <svg 
                       width="24" 
                       height="24" 
@@ -156,7 +146,7 @@ export default function PrestasiSection() {
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
-                    <span className="text-base font-bold">
+                    <span className="text-sm font-bold">
                       {prestasi.location}
                     </span>
                   </div>
@@ -164,7 +154,7 @@ export default function PrestasiSection() {
 
                 {/* Hover Overlay */}
                 <div 
-                  className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"
                 />
               </div>
             </div>

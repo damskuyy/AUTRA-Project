@@ -6,36 +6,61 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function CareerSection() {
   const careers = [
-    { title: "Control Engineer", salary: "Rp7.000.000 – Rp22.000.000 / bulan", image: "/karir/controller.png" },
-    { title: "PLC Programmer", salary: "Rp6.500.000 – Rp25.000.000 / bulan", image: "/karir/plc.png" },
-    { title: "SCADA Engineer", salary: "Rp7.000.000 – Rp23.000.000 / bulan", image: "/karir/scada.png" },
+    { 
+      title: "Control Engineer", 
+      salary: "Rp7.000.000 – Rp22.000.000 / bulan", 
+      image: "/karir/controller.png",
+      url: "https://news.bsi.ac.id/berita/edukasi/control-engineer-program-studi-teknik-industri/"
+    },
+    { 
+      title: "PLC Programmer", 
+      salary: "Rp6.500.000 – Rp25.000.000 / bulan", 
+      image: "/karir/plc.png",
+      url: "https://maukuliah.id/jobs/spesialis-plc-1"
+    },
+    { 
+      title: "SCADA Engineer", 
+      salary: "Rp7.000.000 – Rp23.000.000 / bulan", 
+      image: "/karir/scada.png",
+      url: "https://www.ziprecruiter.com/career/Scada-Engineer/What-Is-How-to-Become"
+    },
 
     {
       title: "Electrical Engineer (Industri)",
       salary: "Rp6.000.000 – Rp17.000.000 / bulan",
       image: "/karir/electrical.png",
+      url: "https://campus.quipper.com/careers/teknisi-listrik-electrical-engineer"
     },
     {
       title: "Power Plant Technician",
       salary: "Rp6.500.000 – Rp19.000.000 / bulan",
       image: "/karir/powerplan.png",
+      url: "https://www.ziprecruiter.com/career/Power-Plant-Technician/What-Is-How-to-Become"
     },
-    { title: "Energy Engineer", salary: "Rp7.000.000 – Rp20.000.000 / bulan", image: "/karir/energy.png" },
+    { 
+      title: "Energy Engineer", 
+      salary: "Rp7.000.000 – Rp20.000.000 / bulan", 
+      image: "/karir/energy.png",
+      url: "https://www.ece.fr/en/everything-you-need-to-know-about-the-renewable-energy-engineering-profession-studies-salary/"
+    },
 
     {
       title: "Robotics Engineer / Technician",
       salary: "Rp6.000.000 – Rp20.000.000 / bulan",
       image: "/karir/roboticts.png",
+      url: "https://campus.quipper.com/careers/teknisi-robot"
     },
     {
       title: "Mechatronics Engineer",
       salary: "Rp6.500.000 – Rp18.000.000 / bulan",
       image: "/karir/mechatronics.png",
+      url: "https://www.careerexplorer.com/careers/mechatronics-engineer/#:~:text=Apa%20itu%20Insinyur%20Mekatronika?,peningkatan%20fungsionalitas%20dalam%20berbagai%20aplikasi."
     },
     {
       title: "Industrial IoT Engineer",
       salary: "Rp8.000.000 – Rp25.000.000 / bulan",
       image: "/karir/IoT.png",
+      url: "https://soracom.io/blog/what-does-it-mean-to-be-an-iot-engineer/#:~:text=Apa%20Artinya%20Menjadi%20Insinyur%20IoT?&text=Istilah%20%22Insinyur%20IoT%22%20mencakup%20puluhan,contoh%20aplikasi%20dalam%20kategori%20tersebut."
     },
   ];
 
@@ -122,26 +147,33 @@ export default function CareerSection() {
                       pageIndex * itemsPerPage + itemsPerPage
                     )
                     .map((career, index) => (
-                      <Card
+                      <a
                         key={index}
-                        className="bg-muted border border-orange-bright rounded-3xl shadow-md"
+                        href={career.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="no-underline"
                       >
-                        <div className="p-4">
-                          <img
-                            src={career.image}
-                            alt={career.title}
-                            className="bg-background rounded-2xl h-56 mb-4 shadow-sm object-cover w-full"
-                          />
-                          <div className="text-center">
-                            <p className="text-sm font-medium text-foreground">
-                              ({career.title})
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              ({career.salary})
-                            </p>
+                        <Card
+                          className="bg-muted border border-orange-bright rounded-3xl shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                        >
+                          <div className="p-4">
+                            <img
+                              src={career.image}
+                              alt={career.title}
+                              className="bg-background rounded-2xl h-56 mb-4 shadow-sm object-cover w-full"
+                            />
+                            <div className="text-center">
+                              <p className="text-sm font-medium text-foreground">
+                                ({career.title})
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                ({career.salary})
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </Card>
+                        </Card>
+                      </a>
                     ))}
                 </div>
               ))}
