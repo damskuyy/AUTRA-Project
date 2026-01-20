@@ -1,14 +1,11 @@
-<aside
-  class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3"
-  id="sidenav-main"
->
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-white"
+       id="sidenav-main">
+
   <!-- HEADER -->
   <div class="sidenav-header px-3 py-3">
-    <i
-      class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none"
-      aria-hidden="true"
-      id="iconSidenav"
-    ></i>
+    <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-xl-none"
+   id="iconSidenav"></i>
+
 
     <a class="navbar-brand m-0 d-flex align-items-center gap-2" href="#">
       <img

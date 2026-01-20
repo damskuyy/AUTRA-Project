@@ -16,6 +16,30 @@
 @section('main')
 <div class="container-fluid py-4">
 
+    {{-- ================= WELCOME CARD ================= --}}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-gradient-primary border-0 shadow-sm">
+            <div class="card-body py-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h4 class="text-white mb-1">
+                        👋 Selamat Datang, {{ auth()->user()->name ?? 'Admin' }}
+                    </h4>
+                    <p class="text-white-50 mb-0">
+                        Kelola data inventaris, ruangan, dan aktivitas peminjaman dengan mudah di dashboard ini.
+                    </p>
+                </div>
+
+                <div class="d-none d-md-block">
+                    <i class="fas fa-warehouse text-white opacity-6" style="font-size: 64px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- ================= END WELCOME CARD ================= --}}
+
+
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm border-0">

@@ -34,7 +34,7 @@
                                     <!-- Status Messages -->
                                     @if(session('status'))
                                         <div class="alert alert-success alert-dismissible fade show text-white" role="alert">
-                                            <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                                            <span class="alert-icon"><i class="fas fa-check-circle"></i></span>
                                             <span class="alert-text">{{ session('status') }}</span>
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>

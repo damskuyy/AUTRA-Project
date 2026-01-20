@@ -1,6 +1,6 @@
 <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl d-flex align-items-center justify-content-between" id="navbarBlur" navbar-scroll="true">
 
-    <button class="navbar-toggler d-xl-none" type="button" id="iconNavbarSidenav">
+    <button class="navbar-toggler d-xxl-none" type="button" id="iconNavbarSidenav">
         <i class="fas fa-bars fs-5 text-dark"></i>
     </button>
 
