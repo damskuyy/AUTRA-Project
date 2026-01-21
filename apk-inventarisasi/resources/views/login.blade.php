@@ -106,7 +106,6 @@
                                                 <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
                                                 <label class="form-check-label" for="rememberMe">Ingat Saya</label>
                                             </div>
-                                            <a href="#" class="text-primary text-gradient font-weight-bold text-xs">Lupa Password?</a>
                                         </div>
 
                                         <!-- Submit Button -->
