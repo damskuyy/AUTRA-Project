@@ -47,6 +47,7 @@
 
                     <table class="table table-borderless">
                         <tr><th>Kategori</th><td>: <span class="badge bg-secondary text-uppercase">{{ $inventaris->barangMasuk?->jenis_barang ?? 'Tidak diketahui' }}</span></td></tr>
+                        <tr><th>Tanggal Masuk</th><td>: {{ $inventaris->barangMasuk?->tanggal_masuk?->format('Y-m-d') }}</td></tr>
                         <tr><th width="30%">Nama Barang</th><td>: {{ $inventaris->barangMasuk?->nama_barang ?? 'Data tidak ditemukan' }}</td></tr>
                         <tr><th>Merk</th><td>: {{ $inventaris->barangMasuk->merk ?? '-' }}</td></tr>
                         <tr><th>Lokasi Penempatan Barang</th><td>: {{ $inventaris->barangMasuk?->ruangan?->nama_ruangan ?? '-' }}</td></tr>

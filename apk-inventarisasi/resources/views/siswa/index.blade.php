@@ -415,8 +415,8 @@
 
                 <div class="modal-body">
                     <div class="alert alert-info text-white">
-                        File Excel (.xlsx) dengan kolom minimal:
-                        <strong>nama</strong> dan <strong>kelas</strong>
+                        File Excel (.xlsx) dengan kolom
+                        <strong>nama</strong>, <strong>kelas</strong>, dan <strong>nis</strong>.
                     </div>
 
                     <div class="mb-3">
