@@ -49,13 +49,13 @@
                         <table class="table align-items-center mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7 ps-4">
-                                        #
+                                    <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7 ps-4 text-center">
+                                        No.
                                     </th>
-                                    <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">
+                                    <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7 text-center">
                                         Kode
                                     </th>
-                                    <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">
+                                    <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7 text-center">
                                         Nama Ruangan
                                     </th>
                                     <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7 text-center">
@@ -87,7 +87,7 @@
                                             <div class="d-flex justify-content-center gap-2">
 
                                                 <a href="{{ route('ruangan.edit', $ruangan->id) }}"
-                                                   class="btn btn-link text-warning p-0"
+                                                   class="btn btn-warning btn-sm mb-0"
                                                    title="Edit">
                                                     <i class="fas fa-pen-to-square fa-lg"></i>
                                                 </a>
@@ -97,8 +97,8 @@
                                                       class="form-hapus">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button"
-                                                            class="btn btn-link text-danger p-0 btn-hapus"
+                                                    <button
+                                                            class="btn btn btn-danger btn-sm mb-0"
                                                             title="Hapus">
                                                         <i class="fas fa-trash fa-lg"></i>
                                                     </button>

@@ -112,7 +112,7 @@
                                     <div class="d-flex gap-1">
                                         <!-- Edit -->
                                         <button 
-                                            class="btn btn-warning btn-sm"
+                                            class="btn btn-warning btn-sm mb-0"
                                             data-bs-toggle="modal"
                                             data-bs-target="#editSiswaModal"
                                             data-id="{{ $siswa->id }}"
@@ -127,14 +127,14 @@
                                         @if(!$siswa->is_banned)
                                             <form action="{{ route('siswa.ban', $siswa->id) }}" method="POST">
                                                 @csrf
-                                                <button class="btn btn-danger btn-sm">
+                                                <button class="btn btn-danger btn-sm mb-0">
                                                     <i class="fas fa-ban"></i>
                                                 </button>
                                             </form>
                                         @else
                                             <form action="{{ route('siswa.unban', $siswa->id) }}" method="POST">
                                                 @csrf
-                                                <button class="btn btn-secondary btn-sm">
+                                                <button class="btn btn-secondary btn-sm mb-0">
                                                     <i class="fas fa-unlock"></i>
                                                 </button>
                                             </form>
@@ -142,7 +142,7 @@
 
                                         <!-- Hapus -->
                                         <button 
-                                            class="btn btn-danger btn-sm "
+                                            class="btn btn-danger btn-sm mb-0"
                                             data-bs-toggle="modal"
                                             data-bs-target="#hapusSiswaModal"
                                             data-id="{{ $siswa->id }}"

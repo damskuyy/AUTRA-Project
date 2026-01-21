@@ -99,7 +99,7 @@
                                     {{-- KEMBALIKAN --}}
                                     @if(!$p->pengembalian)
                                         <a href="{{ route('pengembalian.create', $p->id) }}"
-                                           class="btn btn-sm btn-success">
+                                           class="btn btn-sm btn-success mb-0">
                                             Kembalikan
                                         </a>
                                     @endif

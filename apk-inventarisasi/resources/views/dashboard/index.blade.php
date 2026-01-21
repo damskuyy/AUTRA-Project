@@ -26,7 +26,7 @@
                         👋 Selamat Datang, {{ auth()->user()->name ?? 'Admin' }}
                     </h4>
                     <p class="text-white-50 mb-0">
-                        Kelola data inventaris, ruangan, dan aktivitas peminjaman dengan mudah di dashboard ini.
+                        Pantau barang di seluruh ruangan secara cepat.
                     </p>
                 </div>
 
@@ -46,7 +46,7 @@
 
                 {{-- HEADER CARD --}}
                 <div class="card-header bg-gradient-primary text-white py-3">
-                    <h6 class="mb-0">Main Room</h6>
+                    <h6 class="mb-0">Data Barang Tiap Ruangan</h6>
                 </div>
 
                 {{-- BODY --}}
