@@ -455,41 +455,36 @@ article {
   }
 }
 
-/* Card spacing for year badge */
-.prestasi-card {
-  margin-top: 8rem;
-}
-
 /* Hover Lift Effect for Prestasi Cards */
 .hover-lift-prestasi {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hover-lift-prestasi:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
 }
 
-/* Year Badge Animation on Hover */
-.prestasi-card:hover .year-badge {
-  animation: yearBadgePulse 0.6s ease-in-out;
+/* Year text animation on hover */
+.prestasi-card:hover h3 {
+  animation: yearPulse 0.6s ease-in-out;
 }
 
-@keyframes yearBadgePulse {
+@keyframes yearPulse {
   0%, 100% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(1);
   }
   50% {
-    transform: scale(1.15) rotate(5deg);
+    transform: scale(1.1);
   }
 }
 
 /* Smooth transitions for card content */
-.prestasi-card h3 {
-  transition: transform 0.3s ease, color 0.3s ease;
+.prestasi-card h4 {
+  transition: transform 0.3s ease;
 }
 
-.prestasi-card:hover h3 {
+.prestasi-card:hover h4 {
   transform: scale(1.03);
 }
 
@@ -499,47 +494,819 @@ article {
 }
 
 .prestasi-card:hover svg {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.1);
+}
+
+/* Divider line animation */
+.prestasi-card:hover .w-32 {
+  animation: expandLine 0.5s ease-in-out;
+}
+
+@keyframes expandLine {
+  0%, 100% {
+    width: 8rem;
+  }
+  50% {
+    width: 10rem;
+  }
 }
 
 /* Mobile adjustments for Prestasi */
 @media (max-width: 1024px) {
-  .prestasi-card {
-    margin-top: 6.5rem;
+  .hover-lift-prestasi {
+    min-height: 280px;
   }
 }
 
 @media (max-width: 768px) {
-  .prestasi-card {
-    margin-top: 7rem;
-  }
-  
   .prestasi-header h2 {
     font-size: 1.875rem;
   }
   
   .hover-lift-prestasi {
-    min-height: 260px;
+    min-height: 270px;
+  }
+  
+  .prestasi-card h3 {
+    font-size: 2rem;
+  }
+  
+  .prestasi-card h4 {
+    font-size: 1.25rem;
+  }
+  
+  .prestasi-card p {
+    font-size: 0.875rem;
   }
 }
 
 @media (max-width: 640px) {
-  .prestasi-card {
-    margin-top: 7rem;
+  .hover-lift-prestasi {
+    min-height: 260px;
   }
   
-  /* Smaller year badge on mobile */
-  .prestasi-card .year-badge {
-    width: 80px !important;
-    height: 80px !important;
-    border-width: 6px !important;
+  .prestasi-card h3 {
+    font-size: 1.75rem;
   }
   
-  .prestasi-card .year-badge span {
+  .prestasi-card h4 {
+    font-size: 1.125rem;
+  }
+  
+  .prestasi-card p {
+    font-size: 0.8rem;
+  }
+}
+
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   Tambahkan di bagian paling bawah globals.css
+   ============================================ */
+
+/* ============================================
+   NAVIGATION - MOBILE
+   ============================================ */
+
+/* Mobile Hamburger Menu Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Navbar transparent on mobile */
+@media (max-width: 768px) {
+  nav {
+    padding: 0.75rem 1rem !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Force show navbar */
+  nav {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 60 !important;
+    transform: translateY(0) !important;
+  }
+
+  /* Logo adjustment - smaller on mobile */
+  nav .flex.items-center.gap-3 {
+    transform: translateY(0) !important;
+    padding: 0.5rem !important;
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* Mobile menu button styling */
+  nav button[aria-label="Toggle menu"] {
+    display: flex !important;
+    position: relative;
+    z-index: 60;
+  }
+
+  /* Smooth transitions for mobile menu */
+  nav button[aria-label="Toggle menu"] svg {
+    transition: transform 0.3s ease;
+  }
+
+  nav button[aria-label="Toggle menu"]:active {
+    transform: scale(0.95);
+  }
+
+  /* Remove desktop pill on mobile */
+  nav .absolute.top-\[25\%\] {
+    display: none !important;
+  }
+}
+
+/* Prevent body scroll when menu open */
+body.menu-open {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+}
+
+/* ============================================
+   HERO SECTION - MOBILE
+   ============================================ */
+@media (max-width: 1024px) {
+  #home {
+    min-height: auto !important;
+    padding-top: 6rem !important;
+    padding-bottom: 3rem !important;
+    border-bottom-left-radius: 120px !important;
+    border-bottom-right-radius: 120px !important;
+  }
+
+  #home .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  #home .grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  /* Mascot */
+  #home .relative.z-30 {
+    margin-left: 0 !important;
+    display: flex;
+    justify-content: center;
+  }
+
+  #home .relative.z-30 img {
+    width: 280px !important;
+    height: 280px !important;
+  }
+
+  /* Welcome Box */
+  #home .rounded-lg.p-12 {
+    padding: 2rem !important;
+    width: 100% !important;
+    border-width: 4px !important;
+  }
+
+  #home h1 {
+    font-size: 3rem !important;
+    text-align: center;
+  }
+
+  #home .text-base.md\:text-lg {
+    font-size: 0.875rem !important;
+    text-align: center;
+  }
+
+  /* Buttons */
+  #home .flex.gap-4 {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  #home .flex.gap-4 button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  #home {
+    border-bottom-left-radius: 60px !important;
+    border-bottom-right-radius: 60px !important;
+    padding-top: 5rem !important;
+  }
+
+  #home .relative.z-30 img {
+    width: 220px !important;
+    height: 220px !important;
+  }
+
+  #home .rounded-lg.p-12 {
+    padding: 1.5rem !important;
+  }
+
+  #home h1 {
+    font-size: 2.5rem !important;
+    line-height: 1.1;
+  }
+
+  #home .text-base.md\:text-lg {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ============================================
+   INFORMATION SECTION - MOBILE
+   ============================================ */
+@media (max-width: 1024px) {
+  #about {
+    margin-top: -200px !important;
+    padding-top: 280px !important;
+    border-top-left-radius: 100px !important;
+    border-top-right-radius: 100px !important;
+  }
+
+  #about .grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  #about .space-y-6 {
+    text-align: center;
+  }
+
+  #about p {
+    max-width: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #about .flex.justify-center img {
+    width: 100% !important;
+    max-width: 400px;
+    height: auto !important;
+  }
+
+  /* Video */
+  #about .max-w-5xl {
+    max-width: 100%;
+  }
+
+  #about .inline-block.rounded-full.px-10 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  #about h2 {
     font-size: 1.75rem !important;
   }
+
+  #about h3 {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #about {
+    margin-top: -100px !important;
+    padding-top: 180px !important;
+    border-top-left-radius: 50px !important;
+    border-top-right-radius: 50px !important;
+  }
+
+  #about h2 {
+    font-size: 1.5rem !important;
+  }
+
+  #about h3 {
+    font-size: 1.25rem !important;
+  }
+
+  #about p {
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
+   SKILLS SECTION - MOBILE
+   ============================================ */
+@media (max-width: 1024px) {
+  #skills .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  #skills .skill-card {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  #skills h2 {
+    font-size: 1.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #skills .grid {
+    grid-template-columns: 1fr;
+  }
+
+  #skills h2 {
+    font-size: 1.5rem !important;
+  }
+
+  #skills .skill-card h3 {
+    font-size: 1.125rem;
+  }
+
+  #skills .skill-card p {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  #skills {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  #skills h2 {
+    font-size: 1.25rem !important;
+  }
+
+  #skills .inline-block.rounded-full {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* ============================================
+   PRESTASI SECTION - MOBILE
+   ============================================ */
+@media (max-width: 1024px) {
+  #prestasi .flex-wrap {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #prestasi .prestasi-card {
+    width: 100% !important;
+    max-width: 500px;
+  }
+
+  #prestasi h2 {
+    font-size: 1.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #prestasi {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  #prestasi h2 {
+    font-size: 1.5rem !important;
+  }
+
+  #prestasi .prestasi-card h3 {
+    font-size: 1.75rem;
+  }
+
+  #prestasi .prestasi-card h4 {
+    font-size: 1.125rem;
+  }
+
+  #prestasi .hover-lift-prestasi {
+    min-height: 250px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #prestasi h2 {
+    font-size: 1.25rem !important;
+  }
+
+  #prestasi .prestasi-card {
+    padding: 0 0.5rem;
+  }
+
+  #prestasi .prestasi-card h3 {
+    font-size: 1.5rem;
+  }
+
+  #prestasi .prestasi-card h4 {
+    font-size: 1rem;
+  }
+
+  #prestasi .prestasi-card p {
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================
+   STAFF SECTION - MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  #tendik {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  #tendik h2 {
+    font-size: 1.75rem !important;
+  }
+
+  #tendik .staff-card {
+    width: 280px !important;
+  }
+
+  #tendik .staff-card h3 {
+    font-size: 1rem;
+    min-height: 2.5rem;
+  }
+
+  #tendik .staff-card p {
+    font-size: 0.8rem;
+  }
+
+  /* Scroll indicator */
+  #tendik .flex.justify-center.mt-8 span {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  #tendik h2 {
+    font-size: 1.5rem !important;
+  }
+
+  #tendik .staff-card {
+    width: 250px !important;
+  }
+
+  #tendik .staff-card .relative.h-80 {
+    height: 280px !important;
+  }
+
+  #tendik .inline-block.rounded-full {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* ============================================
+   CAREER SECTION - MOBILE
+   ============================================ */
+@media (max-width: 1024px) {
+  #career {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  #career h2 {
+    font-size: 1.75rem !important;
+  }
+
+  /* SHOW navigation buttons on mobile - adjust position */
+  #career .absolute.left-\[-60px\] {
+    left: 10px !important;
+    display: flex !important;
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
   
-  .hover-lift-prestasi {
-    min-height: 240px;
+  #career .absolute.right-\[-60px\] {
+    right: 10px !important;
+    display: flex !important;
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #career .absolute.left-\[-60px\] svg,
+  #career .absolute.right-\[-60px\] svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  #career .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  #career .min-w-full {
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  #career h2 {
+    font-size: 1.5rem !important;
+  }
+
+  #career .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #career .overflow-hidden {
+    padding: 0 0.5rem;
+  }
+
+  /* Adjust button position for smaller screens */
+  #career .absolute.left-\[-60px\] {
+    left: 5px !important;
+    width: 36px;
+    height: 36px;
+    padding: 0.4rem;
+  }
+  
+  #career .absolute.right-\[-60px\] {
+    right: 5px !important;
+    width: 36px;
+    height: 36px;
+    padding: 0.4rem;
+  }
+
+  #career .absolute.left-\[-60px\] svg,
+  #career .absolute.right-\[-60px\] svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Card adjustments */
+  #career img {
+    height: 200px !important;
+  }
+
+  #career .text-sm {
+    font-size: 0.8rem;
+  }
+
+  #career .text-xs {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  #career h2 {
+    font-size: 1.25rem !important;
+  }
+
+  #career .inline-block.rounded-full {
+    padding: 0.75rem 1.5rem;
+  }
+
+  #career p {
+    font-size: 0.875rem;
+  }
+
+  /* Dot indicator */
+  #career .flex.justify-center.gap-3 {
+    gap: 0.5rem;
+  }
+
+  #career .flex.justify-center.gap-3 button {
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+}
+
+/* ============================================
+   FOOTER - MOBILE
+   ============================================ */
+@media (max-width: 1024px) {
+  footer .grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  footer .grid-cols-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  footer {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  footer .flex.items-center.gap-4 {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  footer .flex.items-center.gap-4 img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  footer h3 {
+    font-size: 1.25rem;
+  }
+
+  footer .grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  footer h4 {
+    font-size: 1rem;
+  }
+
+  footer ul {
+    font-size: 0.875rem;
+  }
+
+  footer .text-sm {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  footer .space-y-4 a {
+    font-size: 0.8rem;
+  }
+
+  footer .flex.items-start.gap-3 svg,
+  footer .flex.items-center.gap-3 svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+/* ============================================
+   GENERAL MOBILE UTILITIES
+   ============================================ */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  /* Header badges */
+  .inline-block.rounded-full.px-12 {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .inline-block.rounded-full.px-10 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  /* Decorative circles - hide on small screens */
+  .absolute.rounded-full.opacity-5 {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Further reduce padding */
+  .py-16 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  .py-20 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+}
+
+/* ============================================
+   TOUCH IMPROVEMENTS
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase tap targets */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Smooth scrolling for touch devices */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Disable hover effects on touch */
+  .hover-lift:hover,
+  .hover-lift-staff:hover,
+  .hover-lift-prestasi:hover {
+    transform: none !important;
+  }
+}
+
+/* ============================================
+   LANDSCAPE MODE - MOBILE
+   ============================================ */
+@media (max-width: 896px) and (orientation: landscape) {
+  #home {
+    min-height: auto !important;
+    padding-top: 4rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  #home .relative.z-30 img {
+    width: 200px !important;
+    height: 200px !important;
+  }
+
+  #home .rounded-lg.p-12 {
+    padding: 1.5rem !important;
+  }
+
+  #home h1 {
+    font-size: 2rem !important;
+  }
+
+  section {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+}
+
+/* ============================================
+   SMALL MOBILE OPTIMIZATION (320px)
+   ============================================ */
+@media (max-width: 375px) {
+  #home h1 {
+    font-size: 2rem !important;
+  }
+
+  #home .rounded-lg.p-12 {
+    padding: 1rem !important;
+  }
+
+  .inline-block.rounded-full {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+
+  .text-4xl {
+    font-size: 1.75rem !important;
+  }
+
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY - HIGH CONTRAST MODE
+   ============================================ */
+@media (prefers-contrast: high) {
+  button,
+  a {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

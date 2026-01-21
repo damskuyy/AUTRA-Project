@@ -1,4 +1,10 @@
 @extends('layout.master')
+@section('sidebar')
+    @include('layout.sidebar')
+@endsection
+@section('navbar')
+    @include('layout.navbar')
+@endsection
 
 @section('title', 'Notifikasi & Alert - Automation System')
 

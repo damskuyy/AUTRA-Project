@@ -18,7 +18,7 @@ export default function Page() {
       <HeroSection />
       <InformationSection />
       <SkillsSection />
-      {/* <PrestasiSection /> */}
+      <PrestasiSection />
       <StaffSection />
       <CareerSection />
       <Footer />

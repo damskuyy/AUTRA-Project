@@ -36,9 +36,9 @@ export default function HeroSection() {
       <section id="home"
         className="relative"
         style={{
-          background: 'hsl(var(--white))',
-          paddingTop: '10rem',
-          paddingBottom: '6.5rem',
+          background: 'rgb(249, 249, 249)',
+          paddingTop: '7rem',
+          paddingBottom: '4rem',
           minHeight: '675px',
           borderBottomLeftRadius: '220px',
           borderBottomRightRadius: '220px',
@@ -55,12 +55,12 @@ export default function HeroSection() {
             <div className="flex justify-center md:justify-start relative">
               <div className="relative z-30" style={{ marginLeft: '-8px' }}>
                 <Image
-                  src="https://res.cloudinary.com/dqzc35nrh/image/upload/v1767997718/Animate_this_image_202601081912_1_gcafgz.gif"
+                  src="https://res.cloudinary.com/dqzc35nrh/image/upload/v1768921206/IMG_1494_dkbrlx.gif"
                   alt="SMK Mascot"
                   width={480}
                   height={480}
                   unoptimized={true}
-                  className="w-100 h-100 md:w-[420px] md:h-[420px] object-contain"
+                  className="w-100 h-100 md:w-[520px] md:h-[520px] object-contain"
                 />
               </div>
             </div>
@@ -95,7 +95,7 @@ export default function HeroSection() {
 
               <div className="flex gap-4 justify-center md:justify-start">
                 <Button
-                  onClick={() => window.location.href = 'http://localhost:8002/dashboard'}
+                  onClick={() => window.location.href = 'http://localhost:8000/dashboard'}
                   className="font-bold px-6 py-3 text-sm rounded-xl shadow-md flex items-center gap-3"
                   style={{ background: 'hsl(var(--brown-dark))', color: 'hsl(var(--yellow-warm))', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
                 >
@@ -119,4 +119,3 @@ export default function HeroSection() {
     </div>
   );
 }
-

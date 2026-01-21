@@ -79,7 +79,7 @@ export default function Footer() {
             <div>
               <h4 className="font-bold text-brown-dark mb-4 text-lg">Portfolio</h4>
               <ul className="space-y-3 text-sm">
-                <li><a href="http://localhost:8002/" target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-orange-bright transition-colors">AUTRA Inventaris</a></li>
+                <li><a href="http://localhost:8000/dashboard" target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-orange-bright transition-colors">AUTRA Inventaris</a></li>
                 <li><a href="http://localhost:8001/dashboard" target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-orange-bright transition-colors">AUTRA Monitoring</a></li>
               </ul>
             </div>
