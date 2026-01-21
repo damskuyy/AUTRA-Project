@@ -15,6 +15,7 @@
     
     <!-- Soft UI Dashboard CSS -->
     <link id="pagestyle" href="{{asset('be/css/soft-ui-dashboard.css?v=1.1.0')}}" rel="stylesheet" />
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body class="bg-gray-100">
@@ -105,7 +106,6 @@
                                                 <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
                                                 <label class="form-check-label" for="rememberMe">Ingat Saya</label>
                                             </div>
-                                            <a href="#" class="text-primary text-gradient font-weight-bold text-xs">Lupa Password?</a>
                                         </div>
 
                                         <!-- Submit Button -->
