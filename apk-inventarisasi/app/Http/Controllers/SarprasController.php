@@ -77,6 +77,7 @@ class SarprasController extends Controller
             'spesifikasi'    => $request->spesifikasi,
             'jumlah'         => 1,
             'kode_unik'      => $request->kode_unik,
+            'foto'           => $request->foto,
             'sumber'         => 'SARPRAS',
             'ruangan_id'     => $request->ruangan_id,
             //'penempatan_rak' => $request->penempatan_rak,

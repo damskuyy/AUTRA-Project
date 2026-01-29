@@ -17,10 +17,18 @@
 <div class="container-fluid py-4">
 
     {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold mb-0">Inventaris Barang</h4>
-            <small class="text-muted">Kelola alat dan bahan laboratorium</small>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm bg-gradient-primary">
+                <div class="card-body">
+                    <h4 class="mb-1 fw-bold text-white">
+                        <i class="fas fa-history me-2"></i> Inventaris Barang
+                    </h4>
+                    <p class="mb-0 text-sm text-white opacity-8">
+                        Kelola alat dan bahan laboratorium
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
