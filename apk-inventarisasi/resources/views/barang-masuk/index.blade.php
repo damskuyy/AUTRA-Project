@@ -359,9 +359,8 @@
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select name="status" class="form-select" required>
-                                    <option value="aktif">Aktif</option>
-                                    <option value="dipinjam">Dipinjam</option>
-                                    <option value="rusak">Rusak</option>
+                                    <option value="aktif">Tersedia</option>
+                                    <option value="dipinjam">Hilang</option>
                                 </select>
                             </div>
 
@@ -369,8 +368,8 @@
                                 <label class="form-label fw-semibold">Kondisi</label>
                                 <select name="kondisi" class="form-select" required>
                                     <option value="baik">Baik</option>
-                                    <option value="cukup">Cukup</option>
-                                    <option value="rusak">Rusak</option>
+                                    <option value="cukup">Rusak Ringan</option>
+                                    <option value="rusak">Rusak Berat</option>
                                 </select>
                             </div>
 
