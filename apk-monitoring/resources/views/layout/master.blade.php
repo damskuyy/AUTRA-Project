@@ -16,6 +16,9 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+
+    <!-- Mobile CSS - ADD THIS LINE -->
+    <link rel="stylesheet" href="{{ asset('assets/css/mobile.css') }}">
     
     @stack('styles')
 </head>
@@ -23,30 +26,10 @@
     <!-- Sidebar -->
     @yield('sidebar')
 
-    <!-- Top Bar  -->
-    {{-- <header class="topbar">
-        <div class="page-title">
-            <h1>@yield('page-title', 'Dashboard')</h1>
-            <p>@yield('page-subtitle', 'Real-time monitoring sensor PLC')</p>
-        </div>
-
-        <div class="topbar-right">
-            @yield('topbar-actions')
-
-            <div class="user-profile">
-                <div class="user-avatar">AU</div>
-                <div class="user-info">
-                    <span class="user-name">Admin User</span>
-                    <span class="user-role">Administrator</span>
-                </div>
-                <i class="fa-solid fa-chevron-down"></i>
-            </div>
-        </div>
-    </header> --}}
-    @yield('navbar')
-
+    
     <!-- Main Content -->
     <main class="main-content">
+        @yield('navbar')
         <div class="dashboard-content">
             @yield('content')
         </div>

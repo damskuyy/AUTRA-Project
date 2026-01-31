@@ -217,9 +217,12 @@
                 <!-- Password -->
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <div class="input-container">
+                    <div class="input-container input-password-group">
                         <i class="fa-solid fa-lock input-icon"></i>
                         <input type="password" id="password" name="password" placeholder="Masukkan password" autocomplete="current-password">
+                        <button type="button" class="btn-toggle-password" id="togglePassword" aria-label="Tampilkan password" aria-pressed="false">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -237,5 +240,55 @@
     <!-- Scripts -->
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.getElementById('togglePassword');
+            const pwd = document.getElementById('password');
+            if (!toggle || !pwd) return;
+
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                const isPassword = pwd.getAttribute('type') === 'password';
+                pwd.setAttribute('type', isPassword ? 'text' : 'password');
+
+                const icon = toggle.querySelector('i');
+                if (isPassword) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                    toggle.setAttribute('aria-label', 'Sembunyikan password');
+                    toggle.setAttribute('aria-pressed', 'true');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                    toggle.setAttribute('aria-label', 'Tampilkan password');
+                    toggle.setAttribute('aria-pressed', 'false');
+                }
+            });
+
+            // Prevent the button from blurring the input when held
+            toggle.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+            });
+        });
+    </script>
+
+    <style>
+        /* Small styles for password toggle on login page */
+        .input-password-group { position: relative; }
+        .btn-toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 6px;
+            font-size: 14px;
+        }
+        .btn-toggle-password:focus { outline: none; }
+    </style>
 </body>
 </html>

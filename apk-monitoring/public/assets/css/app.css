@@ -2100,6 +2100,33 @@ body {
     font-size: 16px;
 }
 
+.btn-delete-all {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.12);
+}
+
+.btn-delete-all i {
+    background: rgba(255,255,255,0.12);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.btn-delete-all:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(249, 115, 22, 0.12);
+}
+
 /* Notifications List */
 .notifications-list {
     display: flex;
@@ -3261,3 +3288,5 @@ body {
         min-height: 250px;
     }
 }
+
+

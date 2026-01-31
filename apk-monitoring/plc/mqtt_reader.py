@@ -1,57 +1,100 @@
 import json
 import time
 import sys
+import mysql.connector
 import paho.mqtt.client as mqtt
+from datetime import datetime
 
+# =============================
+# MQTT CONFIG
+# =============================
 BROKER = "broker.hivemq.com"
 PORT = 1883
 TOPIC = "data/haiwell/python/+"
 
 NO_DATA_TIMEOUT = 10  # detik
 
-start_time = time.time()
-last_msg_time = None
-connected = False
+# =============================
+# DATABASE CONFIG
+# =============================
+DB_CONFIG = {
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "database": "autra_project"
+}
 
 # =============================
-# CALLBACK CONNECT
+# GLOBAL STATE
+# =============================
+start_time = time.time()
+last_msg_time = None
+status = "NO_DATA"
+
+# =============================
+# DATABASE CONNECT
+# =============================
+try:
+    db = mysql.connector.connect(**DB_CONFIG)
+    cursor = db.cursor()
+    print("🗄️ Connected ke database")
+except Exception as e:
+    print("❌ Database connection failed:", e)
+    sys.exit(1)
+
+# =============================
+# SAVE TO DATABASE
+# =============================
+def save_to_db(sensor1, sensor2, sensor3, status):
+    sql = """
+        INSERT INTO sensor_readings
+        (sensor1, sensor2, sensor3, status, received_at)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+    values = (
+        sensor1,
+        sensor2,
+        sensor3,
+        status,
+        datetime.now()
+    )
+    cursor.execute(sql, values)
+    db.commit()
+
+# =============================
+# MQTT CALLBACKS
 # =============================
 def on_connect(client, userdata, flags, rc):
-    global connected
     if rc == 0:
-        connected = True
         print("✅ Connected ke MQTT Broker")
         client.subscribe(TOPIC)
         print(f"📡 Subscribe ke topic: {TOPIC}")
-        print(f"⏳ Menunggu data MQTT MQTT masuk selama ({NO_DATA_TIMEOUT} detik)...")
+        print(f"⏳ Menunggu data MQTT ({NO_DATA_TIMEOUT} detik)...")
     else:
-        print("❌ Gagal connect ke MQTT Broker (rc:", rc, ")")
+        print("❌ MQTT connect failed")
         sys.exit(1)
 
-# =============================
-# CALLBACK MESSAGE
-# =============================
 def on_message(client, userdata, msg):
-    global last_msg_time
+    global last_msg_time, status
     last_msg_time = time.time()
+    status = "ONLINE"
+
+    data = json.loads(msg.payload.decode())
+
+    sensor1 = int(data.get("sensor1", 0))
+    sensor2 = int(data.get("sensor2", 0))
+    sensor3 = int(data.get("sensor3", 0))
 
     print("\n📥 Data masuk")
-    print("Topic:", msg.topic)
+    print("STATUS :", status)
+    print("Humidity   :", sensor1)
+    print("Temperature:", sensor2)
+    print("Lux        :", sensor3)
 
-    try:
-        data = json.loads(msg.payload.decode())
-        print("Humidity   :", data.get("sensor1"))
-        print("Temperature:", data.get("sensor2"))
-        print("Lux        :", data.get("sensor3"))
-    except Exception as e:
-        print("❌ Error parsing payload:", e)
+    save_to_db(sensor1, sensor2, sensor3, status)
 
-# =============================
-# CALLBACK DISCONNECT
-# =============================
 def on_disconnect(client, userdata, rc):
-    if connected:
-        print("🔌 MQTT disconnected")
+    print("🔌 MQTT disconnected")
 
 # =============================
 # MAIN
@@ -70,16 +113,20 @@ try:
     while True:
         now = time.time()
 
-        # BELUM ADA DATA SAMA SEKALI
+        # TIDAK PERNAH ADA DATA
         if last_msg_time is None:
             if now - start_time > NO_DATA_TIMEOUT:
-                print("❌ Tidak ada data MQTT masuk. Program dihentikan.")
+                status = "NO_DATA"
+                print("❌ STATUS NO_DATA. Program dihentikan.")
+                save_to_db(None, None, None, status)
                 break
 
-        # DATA PERNAH MASUK TAPI TERHENTI
+        # DATA TERHENTI
         else:
             if now - last_msg_time > NO_DATA_TIMEOUT:
-                print("❌ Data MQTT terhenti. Program dihentikan.")
+                status = "OFFLINE"
+                print("❌ STATUS OFFLINE. Program dihentikan.")
+                save_to_db(None, None, None, status)
                 break
 
         time.sleep(0.5)
@@ -90,5 +137,7 @@ except KeyboardInterrupt:
 finally:
     client.loop_stop()
     client.disconnect()
-    print("👋 Keluar dari program, Bye!")
+    cursor.close()
+    db.close()
+    print(f"👋 Keluar dari program, STATUS terakhir: {status}")
     sys.exit(0)

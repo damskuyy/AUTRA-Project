@@ -12,16 +12,94 @@
 @section('page-subtitle', 'Riwayat pembacaan sensor PLC')
 
 @section('content')
-    <!-- Export Buttons -->
+    <!-- Flash messages -->
+    @if(session('success'))
+        <div class="notification notification-success" style="margin-bottom:16px">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="notification notification-error" style="margin-bottom:16px">{{ session('error') }}</div>
+    @endif
+
+    <!-- Export Buttons & Generate -->
     <div class="export-section">
-        <button class="btn-export btn-export-excel" id="exportExcel">
-            <i class="fa-solid fa-file-excel"></i>
-            <span>Export Excel</span>
-        </button>
-        <button class="btn-export btn-export-pdf" id="exportPdf">
-            <i class="fa-solid fa-file-pdf"></i>
-            <span>Export PDF</span>
-        </button>
+        <style>
+        /* Local Laporan styles: match export buttons and a nicer empty state */
+        .btn-export-generate {
+            background: #ffffff;
+            color: #0f1724;
+            border-radius: 10px;
+            padding: 10px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 12px rgba(2,6,23,0.12);
+            border: none;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+        .btn-export-generate i { color: #0f1724; }
+        .btn-export-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(2,6,23,0.18);
+            background: #f8fafc;
+        }
+
+        .no-report {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(90deg, rgba(59,130,246,0.06), rgba(99,102,241,0.03));
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: #cbd5e1;
+            min-width: 240px;
+        }
+        .no-report-icon {
+            font-size: 20px;
+            color: #64748b;
+            background: rgba(15,23,36,0.06);
+            padding: 8px;
+            border-radius: 8px;
+        }
+        .no-report-title { font-weight: 600; color: #e2e8f0; }
+        .no-report-sub { font-size: 12px; color: #94a3b8; }
+        @media (max-width: 480px) {
+            .no-report { min-width: 160px; gap: 8px; padding: 6px 8px; }
+            .btn-export-generate { padding:8px 12px; }
+        }
+        </style>
+
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="btn-export btn-export-excel" id="exportExcel">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Export Excel</span>
+            </button>
+            <button class="btn-export btn-export-pdf" id="exportPdf">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Export PDF</span>
+            </button>
+
+            <form method="POST" action="{{ route('laporan.generate') }}" style="display:inline">
+                @csrf
+                <button class="btn-export btn-export-generate" type="submit" id="btnGenerate">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Generate Now</span>
+                </button>
+            </form>
+        </div>
+
+        <div style="margin-left:auto; text-align:right;">
+            @if(isset($lastReport) && $lastReport)
+                <div class="small-note">Last report: <strong>{{ $lastReport->waktu->format('d M Y H:i:s') }}</strong></div>
+            @else
+                <div class="no-report" role="status" aria-live="polite" title="No report generated yet">
+                    <i class="fa-solid fa-file-circle-xmark no-report-icon" aria-hidden="true"></i>
+                    <div class="no-report-text">
+                        <div class="no-report-title">Tidak ada laporan yang digenerate</div>
+                        <div class="no-report-sub">Tekan <strong>Generate Now</strong> untuk membuat laporan pertama.</div>
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
 
     <!-- Search & Filter Section -->
@@ -53,7 +131,7 @@
         <div class="table-header">
             <div class="table-title">
                 <i class="fa-solid fa-table"></i>
-                <h3>Data Sensor (<span id="totalRecords">{{ $sensorData->total() }}</span> records)</h3>
+                <h3>Data Sensor (<span id="totalRecords">{{ $reports->total() }}</span> records)</h3>
             </div>
         </div>
 
@@ -70,16 +148,16 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    @forelse($sensorData as $data)
+                    @forelse($reports as $data)
                     <tr>
                         <td class="id-cell">#{{ $data->id }}</td>
-                        <td>{{ $data->waktu }}</td>
+                        <td>{{ $data->waktu ?? $data->received_at }}</td>
                         <td class="temp-cell">{{ $data->suhu }}</td>
                         <td class="light-cell">{{ $data->cahaya }}</td>
                         <td class="humidity-cell">{{ $data->kelembapan }}</td>
                         <td>
-                            <span class="status-badge badge-{{ strtolower($data->status) }}">
-                                {{ $data->status }}
+                            <span class="status-badge badge-{{ strtolower($data->condition ?? ($data->status ?? 'Unknown')) }}">
+                                {{ $data->condition ?? ($data->status ?? 'Unknown') }}
                             </span>
                         </td>
                     </tr>
@@ -96,14 +174,14 @@
         </div>
 
         <!-- Pagination -->
-        @if($sensorData->hasPages())
+        @if($reports->hasPages())
         <div class="pagination-container">
             <div class="pagination-info">
-                Menampilkan {{ $sensorData->firstItem() }} - {{ $sensorData->lastItem() }} dari {{ $sensorData->total() }} data
+                Menampilkan {{ $reports->firstItem() }} - {{ $reports->lastItem() }} dari {{ $reports->total() }} data
             </div>
             
             <div class="pagination-links">
-                {{ $sensorData->links() }}
+                {{ $reports->links() }}
             </div>
         </div>
         @endif

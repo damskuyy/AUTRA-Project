@@ -18,8 +18,8 @@
 
 @section('topbar-actions')
     <div class="live-indicator">
-        <i class="fa-solid fa-circle"></i>
-        <span>Live</span>
+        <i class="fa-solid fa-circle {{ ($latest && $latest->status == 'ONLINE') ? 'text-success' : 'text-danger' }}"></i>
+        <span>{{ $latest->status ?? 'NO DATA' }}</span>
     </div>
 @endsection
 
@@ -35,7 +35,9 @@
                 </div>
             </div>
             <div class="card-value">
-                <span class="value" id="suhuValue">34.7</span>
+                <span class="value" id="suhuValue">
+                    {{ $latest->sensor2 ?? '-' }}
+                </span>
                 <span class="unit">°C</span>
             </div>
             <div class="card-status normal">
@@ -53,7 +55,9 @@
                 </div>
             </div>
             <div class="card-value">
-                <span class="value" id="cahayaValue">698</span>
+                <span class="value" id="cahayaValue">
+                    {{ $latest->sensor3 ?? '-' }}
+                </span>
                 <span class="unit">Lux</span>
             </div>
             <div class="card-status normal">
@@ -71,7 +75,9 @@
                 </div>
             </div>
             <div class="card-value">
-                <span class="value" id="kelembapanValue">60.2</span>
+                <span class="value" id="kelembapanValue">
+                    {{ $latest->sensor1 ?? '-' }}
+                </span>
                 <span class="unit">%</span>
             </div>
             <div class="card-status normal">
@@ -117,3 +123,12 @@
         </div>
     </div>
 @endsection
+
+<script>
+    const history = @json($history);
+
+    const labels = history.map(d => d.received_at);
+    const suhu = history.map(d => d.sensor2);
+    const cahaya = history.map(d => d.sensor3);
+    const kelembapan = history.map(d => d.sensor1);
+</script>

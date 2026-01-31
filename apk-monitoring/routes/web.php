@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SensorController;
 
 // ==========================================
 // AUTH ROUTES
@@ -17,13 +19,18 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // PROTECTED ROUTES
 // ==========================================
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return view('dashboard.index');
-    });
 
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/', [DashboardController::class, 'index']);
+    
+    // Route::get('/', function () {
+    //     return view('dashboard.index');
+    // });
+
+    // Route::get('/dashboard', function () {
+    //     return view('dashboard.index');
+    // })->name('dashboard');
 
     Route::get('/control', function () {
         return view('control.index');
@@ -36,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
     Route::get('/laporan/statistics', [LaporanController::class, 'statistics'])->name('laporan.statistics');
+    Route::post('/laporan/generate', [LaporanController::class, 'generateNow'])->name('laporan.generate');
 
     // API endpoint untuk menerima data dari PLC
     Route::post('/api/sensor-data', [LaporanController::class, 'store'])->name('api.sensor-data.store');
@@ -50,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifikasi/{id}/read', [NotifikasiController::class, 'markAsRead']);
     Route::post('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead']);
     Route::delete('/notifikasi/{id}', [NotifikasiController::class, 'destroy']);
+    Route::delete('/notifikasi', [NotifikasiController::class, 'destroyAll'])->name('notifikasi.destroyAll');
 
     // ==========================================
     // MANAGE USER ROUTES
@@ -64,11 +73,19 @@ Route::middleware('auth')->group(function () {
     // API REALTIME (untuk Dashboard)
     // ==========================================
     Route::get('/api/realtime', function () {
+        $latest = \App\Models\SensorReading::latest('received_at')->first();
+
         return response()->json([
             'time' => now()->format('H:i:s'),
-            'temperature' => rand(28, 35),
-            'light' => rand(300, 800),
-            'humidity' => rand(45, 70),
+            'temperature' => $latest->sensor2 ?? 0,
+            'light' => $latest->sensor3 ?? 0,
+            'humidity' => $latest->sensor1 ?? 0,
+            'status' => $latest->status ?? 'NO DATA'
         ]);
     });
+
+    // routes/web.php
+    Route::get('/api/sensor/latest', [SensorController::class, 'latest']);
+    Route::get('/api/sensor/history', [SensorController::class, 'history']);
+
 });
