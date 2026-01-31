@@ -283,7 +283,6 @@
                                                     <th>Merk</th>
                                                     <th>Ruangan</th>
                                                     <th>Status</th>
-                                                    <th>Kondisi</th>
                                                     <th width="90">Foto</th>
                                                     <th width="70">Aksi</th>
                                                 </tr>
@@ -299,12 +298,6 @@
                                                     <td>
                                                         <span class="badge bg-success">
                                                            {{ strtoupper($s->status ?? '-') }}
-                                                        </span>
-                                                    </td>
-
-                                                    <td>
-                                                        <span class="badge bg-info">
-                                                            {{ strtoupper($s->kondisi ?? '-') }}
                                                         </span>
                                                     </td>
 
@@ -326,17 +319,24 @@
 
                                                     {{-- AKSI --}}
                                                     <td class="text-center">
-                                                        <form action="{{ route('inventaris.destroy', $s->id) }}"
-                                                            method="POST"
-                                                            class="delete-form">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="btn btn-xs btn-danger">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </form>
+                                                        <div class="d-flex justify-content-center gap-1">
+                                                            <a href="{{ route('inventaris.show', $s->id) }}" 
+                                                            class="btn btn-xs btn-info">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
 
+                                                            <form action="{{ route('inventaris.destroy', $s->id) }}"
+                                                                method="POST"
+                                                                class="delete-form m-0">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-xs btn-danger">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </td>
+
                                                 </tr>
                                             @endforeach
 

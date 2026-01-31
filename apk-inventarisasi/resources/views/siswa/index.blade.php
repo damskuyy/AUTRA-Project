@@ -29,13 +29,16 @@
                             <button class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">
                                 <i class="fas fa-plus me-1"></i> Tambah Siswa
                             </button>
-                            <form action="{{ route('siswa.naik-kelas') }}" method="POST"
-                                onsubmit="return confirm('Yakin ingin memproses kenaikan kelas semua siswa?')">
+                            <form id="formNaikKelas" action="{{ route('siswa.naik-kelas') }}" method="POST">
                                 @csrf
-                                <button class="btn bg-gradient-warning btn-sm mb-0 me-2 ms-2">
+                                <button 
+                                    type="button"
+                                    id="btnNaikKelas"
+                                    class="btn bg-gradient-warning btn-sm mb-0 me-2 ms-2">
                                     <i class="fas fa-level-up-alt me-1"></i> Proses Kenaikan Kelas
                                 </button>
                             </form>
+
 
                         </div>
                     </div>
@@ -570,6 +573,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 </script>
 @endif
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btnNaikKelas  = document.getElementById('btnNaikKelas');
+    const formNaikKelas = document.getElementById('formNaikKelas');
+
+    btnNaikKelas.addEventListener('click', function () {
+        Swal.fire({
+            title: 'Konfirmasi Kenaikan Kelas',
+            text: 'Yakin ingin memproses kenaikan kelas semua siswa?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Proses',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                formNaikKelas.submit();
+            }
+        });
+    });
+});
+</script>
+
 @endpush
 
 @endsection
