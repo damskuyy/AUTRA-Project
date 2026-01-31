@@ -9,8 +9,10 @@ class ScanSarprasController extends Controller
 {
     public function byKodeBarang($kode)
     {
-        $res = Http::get(
-            "https://be-sarpras.aryajaka.site/inventarisasi-kib/by-kode-barang/".$kode
+        $baseUrl = config('services.sarpras.base_url');
+        
+        $res = Http::timeout(5)->get(
+            $baseUrl . "/inventarisasi-kib/by-kode-barang/" . $kode
         );
 
         if (!$res->successful()) {

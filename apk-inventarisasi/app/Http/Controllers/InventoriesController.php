@@ -16,14 +16,26 @@ class InventoriesController extends Controller
     public function index()
     {
         $alat = Inventory::with('barangMasuk')
-            ->whereHas('barangMasuk', fn($q) => $q->where('jenis_barang', 'alat'))
+            ->whereHas('barangMasuk', function ($q) {
+                $q->where('jenis_barang', 'alat')
+                ->where('from_sarpras', false);
+            })
             ->get()
             ->groupBy(fn($item) => $item->barangMasuk->nama_barang);
+            
         $bahan = Inventory::with('barangMasuk')->whereHas('barangMasuk', function($q) {
             $q->where('jenis_barang', 'bahan');
         })->get();
 
-        return view('inventaris.index', compact('alat', 'bahan'));
+        // Inventaris yang berasal dari SARPRAS (flag from_sarpras di tabel barang_masuks)
+        $sarpras = Inventory::with('barangMasuk')
+            ->whereHas('barangMasuk', fn($q) => $q->where('from_sarpras', true))
+            ->get()
+            ->groupBy(fn ($item) => $item->barangMasuk->nama_barang);
+            
+            
+
+        return view('inventaris.index', compact('alat', 'bahan', 'sarpras'));
     }
 
     public function create()

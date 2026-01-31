@@ -184,13 +184,8 @@ Route::middleware('auth')->group(function () {
     | SARPRAS
     |--------------------------------------------------------------------------
     */
-    Route::post(
-        '/barang-masuk/sarpras/scan',
-        [SarprasController::class, 'scan']
-    )->name('sarpras.scan');
+    Route::post('/barang-masuk/sarpras/scan',[SarprasController::class, 'scan'])->name('sarpras.scan');
 
-    Route::post(
-        '/barang-masuk/sarpras/store',
-        [SarprasController::class, 'store']
-    )->name('sarpras.store');
+    Route::post('/barang-masuk/sarpras/store',[SarprasController::class, 'store'])->name('sarpras.store');
+
 });

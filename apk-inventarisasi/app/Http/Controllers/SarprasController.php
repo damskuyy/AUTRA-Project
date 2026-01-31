@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangMasuk;
+use App\Models\Inventory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -70,20 +72,42 @@ class SarprasController extends Controller
             //'penempatan_rak'=> 'required',
         ]);
 
-        BarangMasuk::create([
-            'nama_barang'    => $request->nama_barang,
-            'jenis_barang'   => 'alat',
-            'merk'           => $request->merk,
-            'spesifikasi'    => $request->spesifikasi,
-            'jumlah'         => 1,
-            'kode_unik'      => $request->kode_unik,
-            'sumber'         => 'SARPRAS',
-            'ruangan_id'     => $request->ruangan_id,
-            //'penempatan_rak' => $request->penempatan_rak,
-            'tanggal_masuk'  => now(),
-            'from_sarpras'   => true,
-            'admin_id'       => auth()->id(),
-        ]);
+        DB::transaction(function () use ($request) {
+
+            $barangMasuk = BarangMasuk::create([
+                'nama_barang'   => $request->nama_barang,
+                'jenis_barang'  => 'alat',
+                'merk'          => $request->merk,
+                'spesifikasi'   => $request->spesifikasi,
+                'jumlah'        => 1,
+                'kode_unik'     => $request->kode_unik,
+                'sumber'        => 'SARPRAS',
+                'ruangan_id'    => $request->ruangan_id,
+                'tanggal_masuk' => now(),
+                'from_sarpras'  => true,
+                'admin_id'      => auth()->id(),
+                'foto'          => $request->foto,
+            ]);
+
+            $statusMap = [
+                'Tersedia'      => 'TERSEDIA',
+                'Hilang'=> 'HILANG',
+            ];
+
+            $kondisiMap = [
+                'Baik'   => 'BAIK',
+                'Rusak Ringan'  => 'RUSAK_RINGAN',
+                'Rusak Berat'  => 'RUSAK_BERAT',
+            ];
+
+            Inventory::create([
+                'barang_masuk_id' => $barangMasuk->id,
+                'status'          => $statusMap[$request->status] ?? 'TERSEDIA',
+                'kondisi'         => $kondisiMap[$request->kondisi] ?? 'BAIK',
+                'stok'            => 1,
+                'penempatan_rak'  => 'SARPRAS',
+            ]);
+        });
 
         // Bersihkan session supaya tidak double submit
         session()->forget('sarpras');
