@@ -90,7 +90,7 @@
         @foreach($pelanggarans as $pl)
         <tr>
             <td>{{ $pl->created_at }}</td>
-            <td>Banned Siswa</td>
+            <td>Pelanggaran Siswa</td>
             <td>{{ $pl->siswa->nama }} - {{ $pl->keterangan }}</td>
             <td>{{ $pl->admin->name ?? '-' }}</td>
         </tr>

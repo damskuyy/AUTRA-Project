@@ -122,4 +122,40 @@ class SensorData extends Model
             default => 'secondary'
         };
     }
+
+    /**
+     * Generate hourly summary based on SensorReading data.
+     * Returns the created SensorData instance or null when nothing created.
+     */
+    public static function generateHourlySummary($from = null, $to = null)
+    {
+        $from = $from ? \Carbon\Carbon::parse($from) : \Carbon\Carbon::now()->subHour();
+        $to = $to ? \Carbon\Carbon::parse($to) : \Carbon\Carbon::now();
+
+        // Check if PLC is online (latest reading online and recent)
+        $latest = \App\Models\SensorReading::latest('received_at')->first();
+        if (! $latest || $latest->status !== 'ONLINE' || $latest->received_at->lt(\Carbon\Carbon::now()->subMinutes(5))) {
+            return null; // PLC not online or no recent data
+        }
+
+        $rows = \App\Models\SensorReading::whereBetween('received_at', [$from, $to])->get();
+        if ($rows->isEmpty()) {
+            return null; // no data
+        }
+
+        // Mapping: sensor1 = humidity, sensor2 = temperature (suhu), sensor3 = lux (cahaya)
+        $avgHumidity = round($rows->avg('sensor1'), 2);
+        $avgTemp = round($rows->avg('sensor2'), 2);
+        $avgLux = round($rows->avg('sensor3'), 2);
+
+        $status = self::determineStatus($avgTemp, $avgLux, $avgHumidity);
+
+        return self::create([
+            'waktu' => \Carbon\Carbon::now(),
+            'suhu' => $avgTemp,
+            'cahaya' => $avgLux,
+            'kelembapan' => $avgHumidity,
+            'status' => $status,
+        ]);
+    }
 }

@@ -207,7 +207,8 @@ if (document.getElementById('loginForm')) {
 // DASHBOARD PAGE FUNCTIONALITY
 // ==========================================
 
-if (document.querySelector('.dashboard-page')) {
+// Only run dashboard scripts if dashboard-specific elements are present
+if (document.querySelector('#suhuChart') || document.querySelector('.sensor-cards') || document.getElementById('suhuValue')) {
     
     // Note: Authentication is handled by backend middleware
     // If user reaches this page, they are already authenticated
@@ -230,64 +231,161 @@ if (document.querySelector('.dashboard-page')) {
         timestamps: []
     };
 
-    // Initialize with data
-    function initializeData() {
-        const now = new Date();
-        for (let i = 30; i >= 0; i--) {
-            const time = new Date(now.getTime() - i * 60000);
-            sensorData.timestamps.push(formatTime(time));
-            sensorData.suhu.push(27 + Math.random() * 9);
-            sensorData.cahaya.push(300 + Math.random() * 500);
-            sensorData.kelembapan.push(50 + Math.random() * 20);
+    // ============================
+    // FETCH DATA FROM LARAVEL API
+    // ============================
+
+    async function loadHistory() {
+        try {
+            const res = await fetch('/api/sensor/history');
+            const data = await res.json();
+
+            sensorData.timestamps = data.map(d => formatTime(d.received_at));
+            sensorData.suhu = data.map(d => parseFloat(d.sensor2));
+            sensorData.cahaya = data.map(d => parseFloat(d.sensor3));
+            sensorData.kelembapan = data.map(d => parseFloat(d.sensor1));
+
+            updateSensorValues();
+            updateCharts();
+        } catch (e) {
+            console.error("History error:", e);
         }
     }
 
+    async function loadLatest() {
+        try {
+            const res = await fetch('/api/sensor/latest');
+            const d = await res.json();
+            if (!d) return;
+
+                    // Update card values (only if elements exist)
+            const suhuEl = document.getElementById('suhuValue');
+            const cahayaEl = document.getElementById('cahayaValue');
+            const kelembapanEl = document.getElementById('kelembapanValue');
+
+            if (suhuEl) suhuEl.innerText = safeNumber(d.sensor2);
+            if (cahayaEl) cahayaEl.innerText = safeNumber(d.sensor3, 0);
+            if (kelembapanEl) kelembapanEl.innerText = safeNumber(d.sensor1);
+
+            // Push chart data (guard when received_at missing)
+            if (d && (d.received_at || d.timestamp || d.time)) {
+                sensorData.timestamps.push(formatTime(d.received_at || d.timestamp || d.time));
+            } else {
+                sensorData.timestamps.push(formatTime());
+            }
+            sensorData.suhu.push(parseFloat(d.sensor2));
+            sensorData.cahaya.push(parseFloat(d.sensor3));
+            sensorData.kelembapan.push(parseFloat(d.sensor1));
+
+            // Limit 30 data
+            if (sensorData.timestamps.length > 30) {
+                sensorData.timestamps.shift();
+                sensorData.suhu.shift();
+                sensorData.cahaya.shift();
+                sensorData.kelembapan.shift();
+            }
+
+            updateCharts();
+
+        } catch (e) {
+            console.error("Latest error:", e);
+        }
+    }
+
+    function safeNumber(val, digits = 1) {
+        if (val === null || val === undefined || isNaN(val)) return '--';
+        return parseFloat(val).toFixed(digits);
+    }
+
+    // Initialize with data
+    // function initializeData() {
+    //     const now = new Date();
+    //     for (let i = 30; i >= 0; i--) {
+    //         const time = new Date(now.getTime() - i * 60000);
+    //         sensorData.timestamps.push(formatTime(time));
+    //         sensorData.suhu.push(27 + Math.random() * 9);
+    //         sensorData.cahaya.push(300 + Math.random() * 500);
+    //         sensorData.kelembapan.push(50 + Math.random() * 20);
+    //     }
+    // }
+
     // Format time
     function formatTime(date) {
-        return date.getHours().toString().padStart(2, '0') + '.' + 
-               date.getMinutes().toString().padStart(2, '0');
+        // Accept Date object or ISO string; default to current time when invalid
+        let d;
+        if (!date) {
+            d = new Date();
+        } else {
+            d = new Date(date);
+            if (isNaN(d.getTime())) d = new Date();
+        }
+
+        const hours = (typeof d.getHours === 'function') ? d.getHours() : new Date().getHours();
+        const minutes = (typeof d.getMinutes === 'function') ? d.getMinutes() : new Date().getMinutes();
+
+        return String(hours).padStart(2, '0') + '.' + String(minutes).padStart(2, '0');
     }
 
     // Update sensor values
     function updateSensorValues() {
-        const latestSuhu = sensorData.suhu[sensorData.suhu.length - 1];
-        const latestCahaya = sensorData.cahaya[sensorData.cahaya.length - 1];
+        const latestSuhu = (sensorData.suhu.length) ? sensorData.suhu[sensorData.suhu.length - 1] : null;
+        const latestCahaya = (sensorData.cahaya.length) ? sensorData.cahaya[sensorData.cahaya.length - 1] : null;
         
         const suhuEl = document.getElementById('suhuValue');
         const cahayaEl = document.getElementById('cahayaValue');
         const kelembapanEl = document.getElementById('kelembapanValue');
-        
-        if (suhuEl) suhuEl.textContent = latestSuhu.toFixed(1);
-        if (cahayaEl) cahayaEl.textContent = Math.round(latestCahaya);
-        if (kelembapanEl) kelembapanEl.textContent = sensorData.kelembapanCurrent.toFixed(1);
+
+        if (suhuEl) {
+            if (typeof latestSuhu === 'number' && !isNaN(latestSuhu)) {
+                suhuEl.textContent = latestSuhu.toFixed(1);
+            } else {
+                suhuEl.textContent = '--';
+            }
+        }
+
+        if (cahayaEl) {
+            if (typeof latestCahaya === 'number' && !isNaN(latestCahaya)) {
+                cahayaEl.textContent = Math.round(latestCahaya);
+            } else {
+                cahayaEl.textContent = '--';
+            }
+        }
+
+        if (kelembapanEl) {
+            if (typeof sensorData.kelembapanCurrent === 'number' && !isNaN(sensorData.kelembapanCurrent)) {
+                kelembapanEl.textContent = sensorData.kelembapanCurrent.toFixed(1);
+            } else {
+                kelembapanEl.textContent = '--';
+            }
+        }
     }
 
     // Generate new data
-    function generateNewData() {
-        sensorData.timestamps.push(formatTime(new Date()));
-        sensorData.timestamps.shift();
+    // function generateNewData() {
+    //     sensorData.timestamps.push(formatTime(new Date()));
+    //     sensorData.timestamps.shift();
         
-        const lastSuhu = sensorData.suhu[sensorData.suhu.length - 1];
-        const newSuhu = lastSuhu + (Math.random() - 0.5) * 2;
-        sensorData.suhu.push(Math.max(25, Math.min(38, newSuhu)));
-        sensorData.suhu.shift();
+    //     const lastSuhu = sensorData.suhu[sensorData.suhu.length - 1];
+    //     const newSuhu = lastSuhu + (Math.random() - 0.5) * 2;
+    //     sensorData.suhu.push(Math.max(25, Math.min(38, newSuhu)));
+    //     sensorData.suhu.shift();
         
-        const lastCahaya = sensorData.cahaya[sensorData.cahaya.length - 1];
-        const newCahaya = lastCahaya + (Math.random() - 0.5) * 150;
-        sensorData.cahaya.push(Math.max(200, Math.min(900, newCahaya)));
-        sensorData.cahaya.shift();
+    //     const lastCahaya = sensorData.cahaya[sensorData.cahaya.length - 1];
+    //     const newCahaya = lastCahaya + (Math.random() - 0.5) * 150;
+    //     sensorData.cahaya.push(Math.max(200, Math.min(900, newCahaya)));
+    //     sensorData.cahaya.shift();
         
-        const lastKelembapan = sensorData.kelembapan[sensorData.kelembapan.length - 1];
-        const newKelembapan = lastKelembapan + (Math.random() - 0.5) * 3;
-        sensorData.kelembapan.push(Math.max(40, Math.min(80, newKelembapan)));
-        sensorData.kelembapan.shift();
+    //     const lastKelembapan = sensorData.kelembapan[sensorData.kelembapan.length - 1];
+    //     const newKelembapan = lastKelembapan + (Math.random() - 0.5) * 3;
+    //     sensorData.kelembapan.push(Math.max(40, Math.min(80, newKelembapan)));
+    //     sensorData.kelembapan.shift();
         
-        sensorData.kelembapanCurrent += (Math.random() - 0.5) * 1;
-        sensorData.kelembapanCurrent = Math.max(50, Math.min(70, sensorData.kelembapanCurrent));
+    //     sensorData.kelembapanCurrent += (Math.random() - 0.5) * 1;
+    //     sensorData.kelembapanCurrent = Math.max(50, Math.min(70, sensorData.kelembapanCurrent));
         
-        updateSensorValues();
-        updateCharts();
-    }
+    //     updateSensorValues();
+    //     updateCharts();
+    // }
 
     // Chart.js variables
     let suhuChart, cahayaChart, kelembapanChart;
@@ -627,18 +725,21 @@ if (document.querySelector('.dashboard-page')) {
     }
 
     // Initialize dashboard
-    initializeData();
-    updateSensorValues();
+    loadHistory();
+    // initializeData();
+    // updateSensorValues();
 
     // Initialize charts after DOM loaded
     setTimeout(() => {
         initSuhuChart();
         initCahayaChart();
         initKelembapanChart();
-    }, 100);
+    }, 500);
 
+    
     // Update data every 3 seconds
-    setInterval(generateNewData, 3000);
+    setInterval(loadLatest, 3000);
+    // setInterval(generateNewData, 3000);
 }
 
 // ==========================================
@@ -762,10 +863,19 @@ if (document.querySelector('.control-grid')) {
     // Emergency Stop Button
     const emergencyBtn = document.getElementById('emergencyStop');
     if (emergencyBtn) {
-        emergencyBtn.addEventListener('click', function() {
-            const confirmed = confirm('⚠️ PERINGATAN!\n\nEmergency Stop akan mematikan SEMUA device.\nApakah Anda yakin?');
-            
-            if (confirmed) {
+        emergencyBtn.addEventListener('click', async function() {
+            const result = await Swal.fire({
+                title: '⚠️ PERINGATAN! Emergency Stop',
+                html: '<p>Emergency Stop akan mematikan <strong>SEMUA</strong> device.</p><p style="font-size:13px;color:#6b7280">Apakah Anda yakin?</p>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hentikan semua',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#ef4444',
+                reverseButtons: true
+            });
+
+            if (result.isConfirmed) {
                 // Turn off all devices
                 document.querySelectorAll('.control-card').forEach(card => {
                     const offButton = card.querySelector('.btn-off');
@@ -1039,42 +1149,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ========== DELETE USER ==========
     
-    function deleteUser(userId) {
-        const confirmed = confirm('Apakah Anda yakin ingin menghapus user ini?');
+    async function deleteUser(userId) {
+        const result = await Swal.fire({
+            title: 'Hapus user?',
+            html: '<p>Apakah Anda yakin ingin menghapus user ini? Tindakan ini tidak dapat dikembalikan.</p>',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hapus',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#ef4444',
+            reverseButtons: true
+        });
         
-        if (confirmed) {
-            const row = document.querySelector(`button[data-id="${userId}"]`).closest('tr');
-            
-            // Add fade out animation
-            row.style.animation = 'fadeOut 0.3s ease-out';
-            
-            // Send delete request
-            fetch(`/manage-user/${userId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    setTimeout(() => {
-                        row.remove();
-                        updateUserCount();
-                        showNotification(data.message, 'success');
-                    }, 300);
-                } else {
-                    row.style.animation = '';
-                    showNotification(data.message || 'Gagal menghapus user', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        if (!result.isConfirmed) return;
+
+        const row = document.querySelector(`button[data-id="${userId}"]`).closest('tr');
+        
+        // Add fade out animation
+        row.style.animation = 'fadeOut 0.3s ease-out';
+        
+        // Send delete request
+        fetch(`/manage-user/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                setTimeout(() => {
+                    row.remove();
+                    updateUserCount();
+                    showNotification(data.message, 'success');
+                }, 300);
+            } else {
                 row.style.animation = '';
-                showNotification('Terjadi kesalahan pada server', 'error');
-            });
-        }
+                showNotification(data.message || 'Gagal menghapus user', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            row.style.animation = '';
+            showNotification('Terjadi kesalahan pada server', 'error');
+        });
     }
 
     // ========== TABLE FUNCTIONS ==========
@@ -1343,44 +1462,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Mark all notifications as read
-    const markAllBtn = document.getElementById('markAllRead');
-    if (markAllBtn) {
-        markAllBtn.addEventListener('click', function() {
-            const unreadCards = document.querySelectorAll('.notification-card.unread');
-            
-            if (unreadCards.length === 0) {
-                showNotificationMessage('Semua notifikasi sudah dibaca', 'info');
-                return;
-            }
-            
-            const confirmed = confirm(`Tandai ${unreadCards.length} notifikasi sebagai sudah dibaca?`);
-            
-            if (confirmed) {
-                unreadCards.forEach(card => {
-                    const notifId = card.dataset.id;
-                    markAsRead(notifId, card, true); // true = skip individual notification
-                });
-                
-                showNotificationMessage('Semua notifikasi ditandai sebagai dibaca', 'success');
-            }
-        });
-    }
+    // Legacy global "mark all read" handler disabled.
+    // Use the page-specific handler in resources/views/notifikasi/index.blade.php
+    // which performs server-side updates via Fetch and shows SweetAlert2 dialogs.
+    // (Disabled to avoid duplicate handlers and native confirm dialogs.)
+    // const markAllBtn = document.getElementById('markAllRead');
+    // if (markAllBtn) {
+    //     markAllBtn.addEventListener('click', function() {
+    //         /* handler disabled */
+    //     });
+    // }
 
-    // Delete notification
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const notifId = this.dataset.id;
-            const card = this.closest('.notification-card');
-            
-            const confirmed = confirm('Apakah Anda yakin ingin menghapus notifikasi ini?');
-            
-            if (confirmed) {
-                deleteNotification(notifId, card);
-            }
-        });
-    });
+    // Legacy global delete handlers disabled.
+    // Page-specific script (resources/views/notifikasi/index.blade.php) handles deletion via Fetch + SweetAlert2
+    // document.querySelectorAll('.btn-delete').forEach(btn => {
+    //     btn.addEventListener('click', function(e) {
+    //         e.stopPropagation();
+    //         /* handler disabled */
+    //     });
+    // });
 
     // Function to mark as read
     function markAsRead(notifId, card, skipNotification = false) {
@@ -1680,9 +1780,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Uncomment to load stats on page load
-    // loadStatistics();
-
     // ========== AUTO REFRESH (Optional) ==========
     
     // Auto refresh every 30 seconds (optional)
@@ -1703,12 +1800,6 @@ document.addEventListener('DOMContentLoaded', function() {
             showNotification('Auto-refresh dinonaktifkan', 'info');
         }
     }
-
-    // Add auto-refresh button if needed
-    // const autoRefreshBtn = document.getElementById('toggleAutoRefresh');
-    // if (autoRefreshBtn) {
-    //     autoRefreshBtn.addEventListener('click', toggleAutoRefresh);
-    // }
 
     // ========== UTILITY FUNCTIONS ==========
     
@@ -1812,3 +1903,114 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('Laporan page with server-side export initialized');
 });
+
+
+/* ==========================================
+   MOBILE MENU TOGGLE - PUSH SIDEBAR VERSION
+   ========================================== */
+
+(function() {
+    'use strict';
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMobileMenu);
+    } else {
+        initMobileMenu();
+    }
+    
+    function initMobileMenu() {
+        console.log('🔧 Initializing push sidebar menu...');
+        
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const sidebar = document.querySelector('.sidebar');
+        const body = document.body;
+        let mobileOverlay = document.querySelector('.mobile-overlay');
+        
+        console.log('Hamburger:', hamburgerMenu);
+        console.log('Sidebar:', sidebar);
+        console.log('Body:', body);
+        
+        // Create overlay if doesn't exist
+        if (!mobileOverlay) {
+            console.log('📱 Creating mobile overlay...');
+            mobileOverlay = document.createElement('div');
+            mobileOverlay.className = 'mobile-overlay';
+            body.appendChild(mobileOverlay);
+        }
+        
+        if (!hamburgerMenu || !sidebar) {
+            console.error('❌ Required elements not found!');
+            return;
+        }
+        
+        console.log('✅ All elements ready!');
+        
+        // Toggle sidebar function
+        function toggleSidebar() {
+            console.log('🍔 Toggling sidebar...');
+            
+            const isOpen = body.classList.contains('sidebar-open');
+            
+            if (isOpen) {
+                // Close sidebar
+                body.classList.remove('sidebar-open');
+                hamburgerMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                console.log('❌ Sidebar closed');
+            } else {
+                // Open sidebar
+                body.classList.add('sidebar-open');
+                hamburgerMenu.classList.add('active');
+                mobileOverlay.classList.add('active');
+                console.log('✅ Sidebar opened');
+            }
+        }
+        
+        // Close sidebar function
+        function closeSidebar() {
+            body.classList.remove('sidebar-open');
+            hamburgerMenu.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            console.log('❌ Sidebar closed');
+        }
+        
+        // Event: Hamburger click
+        hamburgerMenu.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+        });
+        
+        // Event: Overlay click
+        mobileOverlay.addEventListener('click', closeSidebar);
+        
+        // Event: Nav item click (close on mobile)
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    console.log('📱 Nav clicked, closing sidebar');
+                    closeSidebar();
+                }
+            });
+        });
+        
+        // Event: Window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+                console.log('💻 Desktop mode, sidebar reset');
+            }
+        });
+        
+        // Event: Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && body.classList.contains('sidebar-open')) {
+                closeSidebar();
+                console.log('⌨️ Escape pressed, sidebar closed');
+            }
+        });
+        
+        console.log('✅ Push sidebar initialized!');
+    }
+})();

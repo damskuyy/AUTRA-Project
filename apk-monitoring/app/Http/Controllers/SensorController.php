@@ -5,22 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SensorReading;
 
-class DashboardController extends Controller
+class SensorController extends Controller
 {
+        public function latest()
+    {
+        return response()->json(
+            SensorReading::latest('received_at')->first()
+        );
+    }
+
+    public function history()
+    {
+        return response()->json(
+            SensorReading::orderBy('received_at', 'desc')
+                ->limit(30)
+                ->get()
+                ->reverse()
+                ->values()
+        );
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $latest = SensorReading::latest('received_at')->first();
-
-        // Ambil history untuk chart (100 data terakhir)
-        $history = SensorReading::orderBy('received_at', 'desc')
-            ->limit(100)
-            ->get()
-            ->reverse();
-
-        return view('dashboard.index', compact('latest', 'history'));
+        //
     }
 
     /**

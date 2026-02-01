@@ -28,11 +28,9 @@
                 <i class="fas fa-flask me-2"></i>Bahan
             </button>
         </li>
-        <li class="nav-item">
-            <button class="nav-link rounded-3 px-4 text-success"
-                    data-bs-toggle="tab"
-                    data-bs-target="#tabSarpras">
-                <i class="fas fa-qrcode me-2"></i>Sarpras
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sarpras-tab" data-bs-toggle="tab" data-bs-target="#tabSarpras" type="button">
+                <i class="fas fa-building me-2"></i>Sarpras
             </button>
         </li>
     </ul>
@@ -290,9 +288,10 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4">
 
-                    <h5 class="fw-bold text-success mb-3">
-                        <i class="fas fa-qrcode me-2"></i>Pendataan Sarpras
-                    </h5>
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-primary mb-1">Pendataan Sarpras</h5>
+                        <small class="text-muted">Input data sarpras baru yang masuk ke TOI</small>
+                    </div>
 
                     {{-- QR INPUT --}}
                     <div class="row g-3 align-items-end mb-2">
@@ -305,7 +304,7 @@
                         </div>
                         <div class="col-md-4 d-grid">
                             <button type="button"
-                                    class="btn btn-outline-success mb-0"
+                                    class="btn btn-outline-primary mb-0"
                                     onclick="openSarprasScanner()">
                                 <i class="fas fa-camera me-2"></i>Scan QR
                             </button>
@@ -359,9 +358,8 @@
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select name="status" class="form-select" required>
-                                    <option value="aktif">Aktif</option>
-                                    <option value="dipinjam">Dipinjam</option>
-                                    <option value="rusak">Rusak</option>
+                                    <option value="aktif">Tersedia</option>
+                                    <option value="dipinjam">Hilang</option>
                                 </select>
                             </div>
 
@@ -369,8 +367,8 @@
                                 <label class="form-label fw-semibold">Kondisi</label>
                                 <select name="kondisi" class="form-select" required>
                                     <option value="baik">Baik</option>
-                                    <option value="cukup">Cukup</option>
-                                    <option value="rusak">Rusak</option>
+                                    <option value="cukup">Rusak Ringan</option>
+                                    <option value="rusak">Rusak Berat</option>
                                 </select>
                             </div>
 
@@ -385,7 +383,7 @@
                         </div>
 
                         <div class="text-end mt-4">
-                            <button class="btn btn-success px-4">
+                            <button class="btn btn-primary px-4">
                                 <i class="fas fa-save me-2"></i>Simpan Sarpras
                             </button>
                         </div>

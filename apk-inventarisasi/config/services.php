@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    
+    'sarpras' => [
+        'base_url' => env('SARPRAS_API_BASE_URL'),
+    ],
+
 
 ];

@@ -17,10 +17,18 @@
 <div class="container-fluid py-4">
 
     {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-bold mb-0">Inventaris Barang</h4>
-            <small class="text-muted">Kelola alat dan bahan laboratorium</small>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm bg-gradient-primary">
+                <div class="card-body">
+                    <h4 class="mb-1 fw-bold text-white">
+                        <i class="fas fa-history me-2"></i> Inventaris Barang
+                    </h4>
+                    <p class="mb-0 text-sm text-white opacity-8">
+                        Kelola alat dan bahan laboratorium
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -35,6 +43,12 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="bahan-tab" data-bs-toggle="tab" data-bs-target="#tabBahan" type="button">
                 <i class="fas fa-flask me-2"></i>Bahan
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sarpras-tab" data-bs-toggle="tab" data-bs-target="#tabSarpras" type="button">
+                <i class="fas fa-building me-2"></i>Sarpras
             </button>
         </li>
     </ul>
@@ -211,6 +225,7 @@
                                             <button class="btn btn-xs btn-danger">
                                                 <i class="fas fa-trash"></i>
                                             </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -221,14 +236,153 @@
             </div>
         </div>
 
+        {{-- ================= TAB SARPRAS ================= --}}
+        <div class="tab-pane fade" id="tabSarpras">
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white border-0 d-flex justify-content-between">
+                    <input type="text" id="searchSarpras" class="form-control w-25" placeholder="Cari sarpras...">
+                </div>
+
+                <div class="card-body pt-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <tbody>
+
+                            @foreach ($sarpras as $nama => $items)
+                                @php $first = $items->first(); @endphp
+
+                                {{-- HEADER BARANG --}}
+                                <tr class="table-light sarpras-row"
+                                    data-search="{{ strtolower($nama.' '.$first->barangMasuk->merk) }}">
+                                    <td>
+                                        <strong>{{ $nama }}</strong><br>
+                                    </td>
+                                    <td width="150">
+                                        <span class="badge bg-info">
+                                            {{ $items->count() }} {{ $first->barangMasuk->satuan ?? 'Unit' }}
+                                        </span>
+                                    </td>
+                                    <td width="120">
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-primary mb-0"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#sarpras-{{ Str::slug($nama) }}">
+                                            Detail
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                {{-- DETAIL --}}
+                                <tr class="collapse bg-white" id="sarpras-{{ Str::slug($nama) }}">
+                                    <td colspan="3">
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th>Kode Unik</th>
+                                                    <th>Merk</th>
+                                                    <th>Ruangan</th>
+                                                    <th>Status</th>
+                                                    <th width="90">Foto</th>
+                                                    <th width="70">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            @foreach ($items as $s)
+                                                <tr>
+                                                    <td>{{ $s->barangMasuk->kode_unik }}</td>
+                                                    <td>{{ $s->barangMasuk->merk ?? '-' }}</td>
+                                                    <td>{{ $s->barangMasuk->ruangan->nama_ruangan ?? '-' }}</td>
+
+                                                    <td>
+                                                        <span class="badge bg-success">
+                                                           {{ strtoupper($s->status ?? '-') }}
+                                                        </span>
+                                                    </td>
+
+                                                    {{-- FOTO --}}
+                                                    <td class="text-center">
+                                                        @if($s->barangMasuk->foto)
+                                                            <img src="{{ $s->barangMasuk->foto }}"
+                                                                class="img-thumbnail sarpras-foto"
+                                                                style="
+                                                                    width: 60px;
+                                                                    height: 60px;
+                                                                    object-fit: cover;
+                                                                    cursor: pointer;"
+                                                                data-img="{{ $s->barangMasuk->foto }}">
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </td>
+
+                                                    {{-- AKSI --}}
+                                                    <td class="text-center">
+                                                        <div class="d-flex justify-content-center gap-1">
+                                                            <a href="{{ route('inventaris.show', $s->id) }}" 
+                                                            class="btn btn-xs btn-info">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+
+                                                            <form action="{{ route('inventaris.destroy', $s->id) }}"
+                                                                method="POST"
+                                                                class="delete-form m-0">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-xs btn-danger">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                            @endforeach
+
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                            @endforeach
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
+</div>
+
+{{-- ================= MODAL FOTO SARPRAS ================= --}}
+<div class="modal fade" id="fotoModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <img id="modalFoto" class="img-fluid rounded">
+      </div>
+    </div>
+  </div>
 </div>
 
 @endsection
 
+
+
 @push('scripts')
 
 <script>
+    // MODAL FOTO SARPRAS
+    document.querySelectorAll('.sarpras-foto').forEach(img => {
+        img.addEventListener('click', function () {
+            document.getElementById('modalFoto').src = this.dataset.img;
+            new bootstrap.Modal(document.getElementById('fotoModal')).show();
+        });
+    });
     // SEARCH ALAT
     document.getElementById('searchAlat').addEventListener('keyup', function () {
         let keyword = this.value.toLowerCase();
@@ -254,21 +408,40 @@
         });
     });
 
+    // SEARCH SARPRAS
+    document.getElementById('searchSarpras').addEventListener('keyup', function () {
+        let keyword = this.value.toLowerCase();
+        document.querySelectorAll('.sarpras-row').forEach(row => {
+            let text = row.getAttribute('data-search');
+            row.style.display = text.includes(keyword) ? '' : 'none';
+        });
+    });
 
-    // SWEETALERT CONFIRM DELETE
+    // Prevent Enter key in search inputs from triggering form submission (avoids accidental delete)
+    document.querySelectorAll('#searchAlat, #searchBahan, #searchSarpras').forEach(input => {
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // Trigger the same filtering logic as if keyup happened
+                this.dispatchEvent(new Event('keyup'));
+            }
+        });
+    });
+
+
+    /// DELETE SARPRAS
     document.querySelectorAll('.delete-form').forEach(form => {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
             Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: 'Data yang dihapus tidak bisa dikembalikan!',
+                title: 'Hapus Sarpras?',
+                text: 'Data sarpras akan dihapus, inventaris tidak terpengaruh',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                confirmButtonText: 'Ya, hapus'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -276,6 +449,7 @@
             });
         });
     });
+
 </script>
 
 @if(session('qr_generated'))
@@ -287,6 +461,31 @@
         showConfirmButton: false,
         timer: 1500,
         timerProgressBar: true
+    });
+</script>
+@endif
+
+{{-- Show success or error messages from session (e.g., setelah hapus) --}}
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: @json(session('success')),
+        showConfirmButton: false,
+        timer: 1800,
+        timerProgressBar: true
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: @json(session('error')),
+        showConfirmButton: true
     });
 </script>
 @endif

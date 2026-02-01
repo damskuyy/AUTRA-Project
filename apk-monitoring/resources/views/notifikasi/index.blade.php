@@ -14,12 +14,19 @@
 @endsection
 
 @section('content')
-    <!-- Mark All Read Button -->
+    <!-- Mark All Read & Delete All Buttons -->
     <div class="notification-actions">
-        <button class="btn-mark-all-read" id="markAllRead">
-            <i class="fa-solid fa-check-double"></i>
-            <span>Tandai Semua Dibaca</span>
-        </button>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="btn-mark-all-read" id="markAllRead">
+                <i class="fa-solid fa-check-double"></i>
+                <span>Tandai Semua Dibaca</span>
+            </button>
+
+            <button class="btn-delete-all" id="btnDeleteAll">
+                <i class="fa-solid fa-trash"></i>
+                <span>Hapus Semua</span>
+            </button>
+        </div>
     </div>
 
     <!-- Notifications List -->
@@ -88,126 +95,17 @@
 
 @push('scripts')
 <script>
-// Mark single notification as read
-document.querySelectorAll('.btn-mark-read').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const notifId = this.dataset.id;
-        const card = this.closest('.notification-card');
-        
-        // Simulate API call
-        markAsRead(notifId, card);
-    });
-});
+// Use event delegation, Fetch API, and SweetAlert2 for confirmation/alerts
+const listContainer = document.querySelector('.notifications-list');
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-// Mark all notifications as read
-const markAllBtn = document.getElementById('markAllRead');
-if (markAllBtn) {
-    markAllBtn.addEventListener('click', function() {
-        const unreadCards = document.querySelectorAll('.notification-card.unread');
-        
-        if (unreadCards.length === 0) {
-            showNotification('Semua notifikasi sudah dibaca', 'info');
-            return;
-        }
-        
-        const confirmed = confirm(`Tandai ${unreadCards.length} notifikasi sebagai sudah dibaca?`);
-        
-        if (confirmed) {
-            unreadCards.forEach(card => {
-                const notifId = card.dataset.id;
-                markAsRead(notifId, card);
-            });
-            
-            showNotification('Semua notifikasi ditandai sebagai dibaca', 'success');
-        }
-    });
-}
-
-// Delete notification
-document.querySelectorAll('.btn-delete').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const notifId = this.dataset.id;
-        const card = this.closest('.notification-card');
-        
-        const confirmed = confirm('Apakah Anda yakin ingin menghapus notifikasi ini?');
-        
-        if (confirmed) {
-            deleteNotification(notifId, card);
-        }
-    });
-});
-
-// Function to mark as read
-function markAsRead(notifId, card) {
-    // In production, you would make an AJAX call here
-    // For now, we'll just update the UI
-    
-    // Remove unread class
-    card.classList.remove('unread');
-    card.classList.add('read');
-    
-    // Remove "Baru" badge
-    const badge = card.querySelector('.badge-new');
-    if (badge) {
-        badge.remove();
-    }
-    
-    // Remove check button
-    const checkBtn = card.querySelector('.btn-mark-read');
-    if (checkBtn) {
-        checkBtn.remove();
-    }
-    
-    // Update counter
-    updateUnreadCount();
-    
-    // Add animation
-    card.style.animation = 'markRead 0.5s ease-out';
-    setTimeout(() => {
-        card.style.animation = '';
-    }, 500);
-}
-
-// Function to delete notification
-function deleteNotification(notifId, card) {
-    // In production, you would make an AJAX call here
-    
-    // Add fade out animation
-    card.style.animation = 'fadeOut 0.3s ease-out';
-    
-    setTimeout(() => {
-        const wasUnread = card.classList.contains('unread');
-        card.remove();
-        
-        if (wasUnread) {
-            updateUnreadCount();
-        }
-        
-        // Check if list is empty
-        const remainingCards = document.querySelectorAll('.notification-card');
-        if (remainingCards.length === 0) {
-            showEmptyState();
-        }
-        
-        showNotification('Notifikasi berhasil dihapus', 'success');
-    }, 300);
-}
-
-// Update unread counter
 function updateUnreadCount() {
     const unreadCount = document.querySelectorAll('.notification-card.unread').length;
     const counter = document.getElementById('unreadCount');
-    
-    if (counter) {
-        counter.textContent = unreadCount;
-    }
+    if (counter) counter.textContent = unreadCount;
 }
 
-// Show empty state
 function showEmptyState() {
-    const listContainer = document.querySelector('.notifications-list');
     listContainer.innerHTML = `
         <div class="empty-notifications">
             <i class="fa-solid fa-bell-slash"></i>
@@ -217,24 +115,180 @@ function showEmptyState() {
     `;
 }
 
+// Event delegation for mark-read and delete buttons
+listContainer.addEventListener('click', async function (e) {
+    const markBtn = e.target.closest('.btn-mark-read');
+    const deleteBtn = e.target.closest('.btn-delete');
+
+    if (markBtn) {
+        e.stopPropagation();
+        const id = markBtn.dataset.id;
+        const card = markBtn.closest('.notification-card');
+
+        // Send request to mark as read
+        try {
+            const res = await fetch(`/notifikasi/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            if (!res.ok) throw new Error('Gagal menandai notifikasi.');
+
+            // Update UI
+            card.classList.remove('unread');
+            card.classList.add('read');
+            const badge = card.querySelector('.badge-new'); if (badge) badge.remove();
+            const checkBtn = card.querySelector('.btn-mark-read'); if (checkBtn) checkBtn.remove();
+            updateUnreadCount();
+
+            Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Notifikasi ditandai sebagai dibaca', timer: 1500, showConfirmButton: false });
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Terjadi kesalahan' });
+        }
+    }
+
+    if (deleteBtn) {
+        e.stopPropagation();
+        const id = deleteBtn.dataset.id;
+        const card = deleteBtn.closest('.notification-card');
+
+        const result = await Swal.fire({
+            title: 'Hapus notifikasi?',
+            text: 'Anda akan menghapus notifikasi ini.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hapus',
+            cancelButtonText: 'Batal',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`/notifikasi/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+
+                if (!res.ok) throw new Error('Gagal menghapus notifikasi.');
+
+                const wasUnread = card.classList.contains('unread');
+                card.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => card.remove(), 300);
+                if (wasUnread) updateUnreadCount();
+
+                const remaining = document.querySelectorAll('.notification-card');
+                if (remaining.length === 0) showEmptyState();
+
+                Swal.fire({ icon: 'success', title: 'Dihapus', text: 'Notifikasi berhasil dihapus', timer: 1400, showConfirmButton: false });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Terjadi kesalahan' });
+            }
+        }
+    }
+});
+
+// Mark all read handler
+const markAllBtn = document.getElementById('markAllRead');
+if (markAllBtn) {
+    markAllBtn.addEventListener('click', async function () {
+        const unreadCount = document.querySelectorAll('.notification-card.unread').length;
+        if (unreadCount === 0) {
+            Swal.fire({ icon: 'info', title: 'Info', text: 'Semua notifikasi sudah dibaca', timer: 1200, showConfirmButton: false });
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: 'Tandai semua sebagai dibaca?',
+            text: `Tandai ${unreadCount} notifikasi sebagai dibaca?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, tandai',
+            cancelButtonText: 'Batal',
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await fetch(`/notifikasi/read-all`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+            if (!res.ok) throw new Error('Gagal menandai semua notifikasi.');
+
+            // Update UI: remove badges, remove buttons, set read
+            document.querySelectorAll('.notification-card.unread').forEach(card => {
+                card.classList.remove('unread');
+                card.classList.add('read');
+                const badge = card.querySelector('.badge-new'); if (badge) badge.remove();
+                const checkBtn = card.querySelector('.btn-mark-read'); if (checkBtn) checkBtn.remove();
+            });
+            updateUnreadCount();
+
+            Swal.fire({ icon: 'success', title: 'Selesai', text: 'Semua notifikasi telah ditandai sebagai dibaca', timer: 1400, showConfirmButton: false });
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Terjadi kesalahan' });
+        }
+    });
+}
+
+// Delete all handler
+const btnDeleteAll = document.getElementById('btnDeleteAll');
+if (btnDeleteAll) {
+    btnDeleteAll.addEventListener('click', async function () {
+        const total = document.querySelectorAll('.notification-card').length;
+        if (total === 0) {
+            Swal.fire({ icon: 'info', title: 'Info', text: 'Tidak ada notifikasi untuk dihapus', timer: 1200, showConfirmButton: false });
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: 'Hapus semua notifikasi?',
+            html: `<p>Anda akan menghapus <strong style="color:#ef4444">${total}</strong> notifikasi.</p><p style="font-size:13px;color:#6b7280">Tindakan ini tidak dapat dikembalikan.</p>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hapus semua',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#ef4444',
+            reverseButtons: true
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await fetch(`/notifikasi`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+            if (!res.ok) throw new Error('Gagal menghapus semua notifikasi.');
+
+            // Clear UI
+            showEmptyState();
+            updateUnreadCount();
+
+            Swal.fire({ icon: 'success', title: 'Dihapus', text: 'Semua notifikasi berhasil dihapus', timer: 1400, showConfirmButton: false });
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Terjadi kesalahan' });
+        }
+    });
+}
+
 // Add CSS animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeOut {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(100px);
-        }
-    }
-    
-    @keyframes markRead {
-        0% { transform: scale(1); }
-        50% { transform: scale(0.98); }
-        100% { transform: scale(1); }
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(100px); }
     }
 `;
 document.head.appendChild(style);
