@@ -1,29 +1,29 @@
-port :
-inventaris 8000
-monitoring 8001
-landing page 3000
-
 # AUTRA Project
 
  **Ringkasan**
 
 Repositori ini berisi beberapa aplikasi yang saling berkaitan:
 
-- `apk-inventarisasi` — aplikasi Laravel untuk manajemen inventaris.
-- `apk-monitoring` — aplikasi Laravel untuk monitoring sensor & PLC (termasuk skrip Python di `plc/`).
-- `landing-page` — situs frontend Next.js + Tailwind untuk landing page.
-- SQL dump: `autra_project.sql` dan skrip backup `backup_autra.bat`.
+* `apk-inventarisasi` — aplikasi Laravel untuk manajemen inventaris.
+* `apk-monitoring` — aplikasi Laravel untuk monitoring sensor & PLC (termasuk skrip Python di `plc/`).
+* `landing-page` — situs frontend Next.js + Tailwind untuk landing page.
+* SQL dump: `autra_project.sql` dan skrip backup `backup_autra.bat`.
+
+Port Yang Digunakan :
+apk-inventarisasi = 8000
+apk-monitoring = 8001
+landing-page = 3000
 
 ---
 
 ## Tech stack
 
-- Backend: **PHP** + **Laravel** (modern, Laravel 9/10 kompatibel)
-- Frontend: **Tailwind CSS**, **Vite**, **Next.js** (untuk `landing-page`)
-- DB: **MySQL / MariaDB**
-- Package managers: **Composer**, **npm / yarn / pnpm**
-- Scripting (PLC): **Python 3.8+** (pustaka di `apk-monitoring/plc/requirements.txt`)
-- Dev tools: Git, PHPUnit / Laravel Test Suite
+* Backend: **PHP** + **Laravel** (modern, Laravel 9/10 kompatibel)
+* Frontend: **Tailwind CSS**, **Vite**, **Next.js** (untuk `landing-page`)
+* DB: **MySQL / MariaDB**
+* Package managers: **Composer**, **npm / yarn / pnpm**
+* Scripting (PLC): **Python 3.8+**
+* Dev tools: Git, PHPUnit / Laravel Test Suite
 
 ---
 
@@ -31,13 +31,14 @@ Repositori ini berisi beberapa aplikasi yang saling berkaitan:
 
 Sebelum instalasi, pastikan terpasang:
 
-- Windows (direkomendasikan XAMPP) atau Linux/macOS
-- PHP 8.1+ dengan ekstensi umum (PDO, OpenSSL, Mbstring, Ctype, JSON, Tokenizer, XML, BCMath)
-- Composer
-- Node.js (v16+ direkomendasikan) dan npm/yarn/pnpm
-- MySQL / MariaDB
-- Python 3.8+ (hanya untuk skrip PLC di `apk-monitoring/plc`)
-- Git
+* Windows (direkomendasikan XAMPP) atau Linux/macOS
+* PHP 8.1+ dengan ekstensi umum (PDO, OpenSSL, Mbstring, Ctype, JSON, Tokenizer, XML, BCMath)
+* Composer
+* Node.js (v16+ direkomendasikan) dan npm/yarn/pnpm
+* MySQL / MariaDB
+* Python 3.8+ (hanya untuk skrip PLC di `apk-monitoring/plc`)
+* MQTT Broker (Mosquitto / EMQX / PLC MQTT Gateway)
+* Git
 
 ---
 
@@ -66,10 +67,8 @@ Sebelum instalasi, pastikan terpasang:
    php artisan key:generate
    # atur konfigurasi DB di .env (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
    php artisan migrate --seed
-   npm install
-   npm run dev
    php artisan storage:link   # jika perlu
-   php artisan serve --port=8001  # contoh port (ubah sesuai kebutuhan)
+   php artisan serve --port=8000  # contoh port (ubah sesuai kebutuhan)
    ```
 
    Ulangi untuk `apk-monitoring` (ganti direktori dan port jika diperlukan).
@@ -80,37 +79,17 @@ Sebelum instalasi, pastikan terpasang:
    cd landing-page
    npm install
    npm run dev
-   # akses biasanya http://localhost:3000
-   ```
-
-5. Skrip PLC (opsional, `apk-monitoring/plc`):
-
-   ```bash
-   cd apk-monitoring/plc
-   python -m venv venv     # opsional, gunakan virtualenv
-   venv\Scripts\activate # Windows
-   pip install -r requirements.txt
-   # contoh menjalankan pembaca MQTT/PLC
-   python mqtt_reader.py
-   ```
-
-6. Menjalankan test:
-
-   ```bash
-   # di folder aplikasi Laravel
-   php artisan test
-   # atau
-   ./vendor/bin/phpunit
+   # akses http://localhost:3000
    ```
 
 ---
 
 ## Catatan & tips
 
-- Pastikan setiap `.env` sudah diisi dengan kredensial DB dan konfigurasi yang benar (MAIL, QUEUE, dsb.).
-- Gunakan `autra_project.sql` jika ingin memulai dengan data yang sudah ada.
-- Untuk environment produksi, jangan gunakan `php artisan serve`; gunakan webserver (Apache/Nginx) dan supervisor untuk queue.
-- Backup: `backup_autra.bat` tersedia untuk backup DB (periksa dan sesuaikan sebelum dipakai).
+* Pastikan setiap `.env` sudah diisi dengan kredensial DB dan konfigurasi yang benar (MAIL, QUEUE, dsb.).
+* Gunakan `autra_project.sql` jika ingin memulai dengan data yang sudah ada.
+* Untuk environment produksi, jangan gunakan `php artisan serve`; gunakan webserver (Apache/Nginx) dan supervisor untuk queue.
+* Backup: `backup_autra.bat` tersedia untuk backup DB (periksa dan sesuaikan sebelum dipakai).
 
 ---
 
@@ -120,15 +99,15 @@ Berikut lokasi berkas yang berhubungan dengan API dan titik masuk (routes, contr
 
 ### `apk-inventarisasi` (Laravel)
 
-- **Routes (API):** `apk-inventarisasi/routes/api.php`
+* **Routes (API):** `apk-inventarisasi/routes/api.php`
   - Contoh endpoint: `GET /api/sarpras/by-kode-barang/{kode}` → `App\Http\Controllers\Api\ScanSarprasController@byKodeBarang`
-- **Routes (Web/UI):** `apk-inventarisasi/routes/web.php` (resource routes seperti `inventaris`, `peminjaman`, dsb.)
-- **Controller (API):** `apk-inventarisasi/app/Http/Controllers/Api/ScanSarprasController.php`
-- **Controller (Web):** `apk-inventarisasi/app/Http/Controllers/` (mis.`InventoriesController`, `PeminjamanController`, `ScanController`)
-- **Models:** `apk-inventarisasi/app/Models/` (mis. `Inventory.php`, `Siswa.php`)
-- **Import/Export:** `apk-inventarisasi/app/Imports/` dan `apk-inventarisasi/app/Exports/` (`SiswaImport`, `RiwayatExport`)
-- **Config eksternal API:** `apk-inventarisasi/config/services.php` — kunci `sarpras.base_url` (env `SARPRAS_API_BASE_URL`)
-- **Migrations & Seeders:** `apk-inventarisasi/database/migrations/` dan `.../seeders/`
+* **Routes (Web/UI):** `apk-inventarisasi/routes/web.php` (resource routes seperti `inventaris`, `peminjaman`, dsb.)
+* **Controller (API):** `apk-inventarisasi/app/Http/Controllers/Api/ScanSarprasController.php`
+* **Controller (Web):** `apk-inventarisasi/app/Http/Controllers/` (mis.`InventoriesController`, `PeminjamanController`, `ScanController`)
+* **Models:** `apk-inventarisasi/app/Models/` (mis. `Inventory.php`, `Siswa.php`)
+* **Import/Export:** `apk-inventarisasi/app/Imports/` dan `apk-inventarisasi/app/Exports/` (`SiswaImport`, `RiwayatExport`)
+* **Config eksternal API:** `apk-inventarisasi/config/services.php` — kunci `sarpras.base_url` (env `SARPRAS_API_BASE_URL`)
+* **Migrations & Seeders:** `apk-inventarisasi/database/migrations/` dan `.../seeders/`
 
 Contoh memanggil API lokal (dianggap aplikasi berjalan di `http://localhost:8001`):
 
@@ -139,6 +118,8 @@ curl "http://localhost:8001/api/sarpras/by-kode-barang/KODE123"
 ---
 
 ### `apk-monitoring` (Laravel + PLC)
+
+## AUTRA Monitoring System
 
 ### Tech Stack
 
@@ -152,13 +133,13 @@ curl "http://localhost:8001/api/sarpras/by-kode-barang/KODE123"
 
 * Python 3.10+
 * paho-mqtt (MQTT Client)
-* MySQL Connector (mysql-connector-python / pymysql)
+* MySQL Connector (mysql-connector-python)
 
 **Frontend:**
 
 * Blade Template (Laravel)
 * Chart.js (Realtime Chart)
-* Vanilla JavaScript (Fetch API)
+* JavaScript (Fetch API)
 * CSS Custom Dashboard UI
 
 ---
@@ -197,7 +178,7 @@ Sebelum menjalankan project dari repository GitHub, pastikan software berikut su
 #### 1. Clone Repository
 
 ```bash
-git clone https://github.com/[username]/AUTRA-Project.git
+git clone [Link Repo]
 cd AUTRA-Project/apk-monitoring
 ```
 
@@ -253,6 +234,9 @@ cd plc
 ```
 
 Install library Python:
+```bash
+pip install paho-mqtt
+```
 
 ```bash
 pip install paho-mqtt mysql-connector-python
@@ -272,28 +256,7 @@ Script ini akan:
 
 ---
 
-### Workflow Sistem
-
-1. PLC mengirim data ke MQTT Broker
-2. Python script membaca MQTT dan simpan ke MySQL
-3. Laravel mengambil data dari database
-4. Dashboard menampilkan data realtime via API polling
-
----
-
-### Notes Penting
-
-* Jika PLC tidak terhubung, dashboard akan menampilkan **NO DATA / OFFLINE**
-* Interval polling dashboard default: 3 detik (bisa diubah di JavaScript)
-* Data sensor tersimpan maksimal 100 record (rolling buffer)
-
----
-
-## 3. System Architecture (Professional Overview)
-
-### High-Level Architecture
-
-**End-to-End Data Pipeline:**
+## 3. System Architecture
 
 PLC / Sensor Device → MQTT Broker → Python Data Collector → MySQL Database → Laravel Backend → Web Dashboard
 
@@ -305,47 +268,6 @@ PLC / Sensor Device → MQTT Broker → Python Data Collector → MySQL Database
 * **MySQL Database**: Menyimpan data sensor historis dan status konektivitas PLC.
 * **Laravel Backend**: Menyediakan API, business logic, dan data aggregation untuk dashboard.
 * **Web Dashboard (Frontend)**: Visualisasi realtime data menggunakan Chart.js dan Blade template.
-
-### Logical Data Flow
-
-1. PLC publish data ke MQTT topic tertentu.
-2. Python service menerima payload MQTT.
-3. Data diparsing dan divalidasi.
-4. Data disimpan ke MySQL dengan timestamp (`received_at`).
-5. Laravel mengambil data terbaru dan histori melalui Eloquent ORM.
-6. Frontend melakukan polling API untuk update chart dan card sensor.
-
----
-
-## 4. Deployment Guide (Production Ready)
-
-### Recommended Production Stack
-
-* **OS**: Ubuntu Server 22.04 LTS
-* **Web Server**: Nginx atau Apache
-* **PHP Runtime**: PHP 8.2+ (PHP-FPM)
-* **Database**: MySQL 8 / MariaDB 10+
-* **MQTT Broker**: Mosquitto atau EMQX
-* **Python Runtime**: Python 3.10+ (service mode)
-
-### Production Deployment Steps (Summary)
-
-1. Provision Linux server (VPS / On-Premise).
-2. Install PHP, Composer, MySQL, Python, dan MQTT Broker.
-3. Clone repository ke server.
-4. Konfigurasi `.env` Laravel untuk database production.
-5. Jalankan migration dan seed database.
-6. Konfigurasi Nginx/Apache virtual host.
-7. Jalankan Python MQTT collector sebagai **systemd service** atau **Docker container**.
-8. Aktifkan security (firewall, SSL/TLS, authentication).
-
-### Performance Best Practices
-
-* Enable Laravel cache (config, route, view).
-* Tambahkan index database pada kolom `received_at`.
-* Batasi query histori (rolling window data).
-* Atur polling interval frontend minimal 2–5 detik.
-* Untuk skala besar, gunakan WebSocket (Laravel Echo / Socket.IO) menggantikan polling.
 
 ---
 
@@ -375,18 +297,8 @@ PLC / Sensor Device → MQTT Broker → Python Data Collector → MySQL Database
 
 ---
 
-## Professional Notes
-
-Sistem ini dirancang sebagai **Industrial IoT Monitoring Dashboard** dan dapat digunakan untuk:
-
-* Smart Factory Monitoring
-* Industrial Automation Dashboard
-* Academic Research / Final Project (Skripsi / Thesis)
-* Proof-of-Concept SCADA Web Interface
----
-
 ### `landing-page` (Next.js)
 
-- Project statis/SSR di `landing-page/app/` dan `landing-page/components/`.
-- Jika ingin memanggil backend, tambahkan variabel environment (contoh: `NEXT_PUBLIC_API_BASE_URL`) dan gunakan `fetch`/`axios` di komponen.
-- File konfigurasi utama: `landing-page/next.config.ts` (images dan setelan Next.js lainnya).
+* Project statis/SSR di `landing-page/app/` dan `landing-page/components/`.
+* Jika ingin memanggil backend, tambahkan variabel environment (contoh: `NEXT_PUBLIC_API_BASE_URL`) dan gunakan `fetch`/`axios` di komponen.
+* File konfigurasi utama: `landing-page/next.config.ts` (images dan setelan Next.js lainnya).
