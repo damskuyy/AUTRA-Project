@@ -61,12 +61,18 @@ class LogController extends Controller
 
         // ================= BARANG MASUK =================
         if (!$jenis || $jenis === 'barang_masuk') {
-            $barangMasuks = BarangMasuk::with(['admin', 'ruangan'])
-                ->when($from && $to, fn ($q) =>
-                    $q->whereBetween('tanggal_masuk', [$from, $to])
-                )
-                ->latest()
-                ->get();
+            // Barang masuk hanya tampil jika tidak ada filter siswa atau kelas
+            if (!$siswa && !$kelas) {
+                $barangMasuks = BarangMasuk::with(['admin', 'ruangan'])
+                    ->when($from, fn ($q) =>
+                        $q->whereDate('created_at', '>=', $from)
+                    )
+                    ->when($to, fn ($q) =>
+                        $q->whereDate('created_at', '<=', $to)
+                    )
+                    ->latest()
+                    ->get();
+            }
         }
 
         // ================= PEMINJAMAN =================

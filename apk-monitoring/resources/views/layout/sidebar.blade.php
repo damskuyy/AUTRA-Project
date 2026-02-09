@@ -19,10 +19,10 @@
                 <span>Dashboard</span>
             </a>
 
-            <a href="{{ url('/control') }}" class="nav-item {{ Request::is('control') ? 'active' : '' }}">
+            {{-- <a href="{{ url('/control') }}" class="nav-item {{ Request::is('control') ? 'active' : '' }}">
                 <i class="fa-solid fa-sliders"></i>
                 <span>Control</span>
-            </a>
+            </a> --}}
 
             <a href="{{ url('/laporan') }}" class="nav-item {{ Request::is('laporan') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-lines"></i>

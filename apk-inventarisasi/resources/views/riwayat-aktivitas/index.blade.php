@@ -146,7 +146,8 @@
             <div id="activityList">
 
                 {{-- BARANG MASUK --}}
-                @foreach ($barangMasuks as $bm)
+                @if(!request('siswa') && !request('kelas'))
+                    @foreach ($barangMasuks as $bm)
                     <div class="activity-item mb-3 p-3 border rounded" data-type="barang_masuk">
                         <div class="d-flex justify-content-between">
                             <div>
@@ -161,7 +162,8 @@
                             <div class="text-end text-muted small">{{ $bm->admin->name ?? '-' }}</div>
                         </div>
                     </div>
-                @endforeach
+                    @endforeach
+                @endif
                 {{-- TRANSAKSI MASSAL --}}
                 @foreach ($transaksiMassals as $tm)
                 <div class="activity-item mb-3 p-3 border rounded" data-type="transaksi_massal">

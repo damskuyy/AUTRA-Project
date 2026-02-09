@@ -65,12 +65,12 @@
                 {{-- ================= TABS ================= --}}
                 <ul class="nav nav-tabs mb-4">
                     <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabAlat">
+                        <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabAlat">
                             <i class="fas fa-tools me-2"></i>Alat
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBahan">
+                        <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBahan">
                             <i class="fas fa-flask me-2"></i>Bahan
                         </button>
                     </li>
@@ -201,7 +201,7 @@
                 <div class="row mt-4">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Jam Kembali</label>
-                        <input type="time" name="jam_kembali" class="form-control" required>
+                        <input type="time" name="jam_kembali" class="form-control">
                     </div>
 
                     <div class="col-md-6">
@@ -214,15 +214,15 @@
                         </select>
 
                         <input type="text"
-                               name="keperluan_manual"
                                id="keperluanManual"
-                               class="form-control mt-2 d-none">
+                               class="form-control mt-2 d-none"
+                               placeholder="Masukkan keperluan lainnya...">
                     </div>
                 </div>
 
                 {{-- ================= SUBMIT ================= --}}
                 <div class="mt-4 text-end">
-                    <button class="btn btn-primary px-4">
+                    <button type="submit" class="btn btn-primary px-4">
                         <i class="fas fa-paper-plane me-1"></i> Submit
                     </button>
                 </div>
@@ -237,6 +237,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ================= RAK FILTER =================
     function setupRakFilter(selectId, itemSelector) {
         const select = document.getElementById(selectId);
         const items  = document.querySelectorAll(itemSelector);
@@ -255,6 +256,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupRakFilter('filterRakAlat', '.inventaris-alat');
     setupRakFilter('filterRakBahan', '.inventaris-bahan');
+
+    // ================= KEPERLUAN HANDLER =================
+    const keperluanSelect = document.getElementById('keperluanSelect');
+    const keperluanManual = document.getElementById('keperluanManual');
+    const form = document.querySelector('form');
+
+    if (keperluanSelect && keperluanManual) {
+        keperluanSelect.addEventListener('change', () => {
+            if (keperluanSelect.value === '__manual') {
+                // Pilih Lainnya - tampilkan input dan kosongkan select
+                keperluanManual.classList.remove('d-none');
+                keperluanManual.focus();
+                keperluanSelect.value = '';
+            } else {
+                // Pilih opsi lain - sembunyikan input dan keep select value
+                keperluanManual.classList.add('d-none');
+                keperluanManual.value = '';
+            }
+        });
+
+        // Saat submit
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                // Jika input manual visible dan ada isi, gunakan nilai input
+                if (!keperluanManual.classList.contains('d-none') && keperluanManual.value.trim()) {
+                    // Ganti select value dengan nilai input
+                    keperluanSelect.value = keperluanManual.value;
+                }
+                // Jika select punya value, itu yang akan dikirim
+                // Jika tidak ada pilihan, select akan kosong dan dikirim kosong (nullable)
+            });
+        }
+    }
 });
 </script>
 @endpush

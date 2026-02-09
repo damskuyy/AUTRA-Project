@@ -47,7 +47,7 @@ except Exception as e:
 # =============================
 def save_to_db(sensor1, sensor2, sensor3, status):
     sql = """
-        INSERT INTO sensor_readings
+        INSERT INTO mon_sensor_readings
         (sensor1, sensor2, sensor3, status, received_at)
         VALUES (%s, %s, %s, %s, %s)
     """
@@ -81,9 +81,24 @@ def on_message(client, userdata, msg):
 
     data = json.loads(msg.payload.decode())
 
-    sensor1 = int(data.get("sensor1", 0))
-    sensor2 = int(data.get("sensor2", 0))
-    sensor3 = int(data.get("sensor3", 0))
+    try:
+        raw_s1 = float(data.get("sensor1", 0))
+    except (TypeError, ValueError):
+        raw_s1 = 0.0
+    try:
+        raw_s2 = float(data.get("sensor2", 0))
+    except (TypeError, ValueError):
+        raw_s2 = 0.0
+    try:
+        raw_s3 = float(data.get("sensor3", 0))
+    except (TypeError, ValueError):
+        raw_s3 = 0.0
+
+    # If the device reports values scaled by 10 (common on some sensors),
+    # convert them back to human-readable. Heuristic: if value > 100, divide by 10.
+    sensor1 = raw_s1 / 10.0 if raw_s1 > 100 else raw_s1
+    sensor2 = raw_s2 / 10.0 if raw_s2 > 100 else raw_s2
+    sensor3 = raw_s3
 
     print("\n📥 Data masuk")
     print("STATUS :", status)
