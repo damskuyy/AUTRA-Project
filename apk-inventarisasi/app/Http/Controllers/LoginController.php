@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('login');
+        $email = Cookie::get('remembered_email');
+        return view('login', ['rememberedEmail' => $email]);
     }
 
     public function login(Request $request)
@@ -23,6 +25,13 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
+            if ($request->has('remember')) {
+                // store email for 30 days (minutes)
+                Cookie::queue('remembered_email', $request->email, 60 * 24 * 30);
+            } else {
+                Cookie::queue(Cookie::forget('remembered_email'));
+            }
+
             return redirect()->intended('/dashboard');
         }
 
@@ -36,7 +45,6 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect('/')->with('status', 'Berhasil logout.');
     }
 }

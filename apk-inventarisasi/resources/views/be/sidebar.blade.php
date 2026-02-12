@@ -7,7 +7,7 @@
        id="iconSidenav"></i>
 
     <a class="navbar-brand m-0 d-flex align-items-center justify-content-center gap-2 w-100"
-       href="#">
+       href="{{ route('dashboard') }}">
         <img
             src="{{ asset('be/img/logos/logo-autra-nonBG.png') }}"
             class="navbar-brand-img"

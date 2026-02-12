@@ -66,7 +66,7 @@
                                         <!-- Email Field -->
                                         <div class="mb-3">
                                             <label for="email" class="form-label">Email</label>
-                                            <div class="input-group">
+                                            <div class="input-group position-relative">
                                                 <span class="input-group-text">
                                                     <i class="fas fa-envelope"></i>
                                                 </span>
@@ -76,7 +76,7 @@
                                                     id="email"
                                                     name="email" 
                                                     placeholder="Email" 
-                                                    value="{{ old('email') }}"
+                                                    value="{{ old('email', $rememberedEmail ?? '') }}"
                                                     required
                                                 />
                                             </div>
@@ -86,26 +86,30 @@
                                         <div class="mb-3">
                                             <label for="password" class="form-label">Password</label>
                                             <div class="input-group">
-                                                <span class="input-group-text">
+                                                <span class="input-group-text" style="z-index:3;background:transparent;">
                                                     <i class="fas fa-lock"></i>
                                                 </span>
                                                 <input 
                                                     type="password" 
-                                                    class="form-control" 
+                                                    class="form-control pe-5" 
                                                     id="password"
                                                     name="password" 
                                                     placeholder="Password" 
                                                     required
                                                 />
+                                                <button type="button" id="togglePassword" class="btn" aria-label="Tampilkan password" title="Lihat/ sembunyikan password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:2;border:none;background:transparent;padding:0.375rem 0.5rem;">
+                                                    <i class="fas fa-eye" id="passwordIcon"></i>
+                                                </button>
                                             </div>
                                         </div>
 
                                         <!-- Remember & Forgot -->
                                         <div class="d-flex align-items-center justify-content-between mb-3">
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
+                                                <input class="form-check-input" type="checkbox" id="rememberMe" name="remember" {{ !empty($rememberedEmail) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="rememberMe">Ingat Saya</label>
                                             </div>
+                                            {{-- <a href="#" class="text-primary text-gradient font-weight-bold text-xs">Lupa Password?</a> --}}
                                         </div>
 
                                         <!-- Submit Button -->
@@ -124,6 +128,23 @@
     </main>
 
     <!-- Core JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toggle = document.getElementById('togglePassword');
+            var password = document.getElementById('password');
+            var icon = document.getElementById('passwordIcon');
+            if (toggle && password && icon) {
+                toggle.addEventListener('click', function() {
+                    var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                        // return focus to password input so caret remains visible
+                        password.focus();
+                });
+            }
+        });
+    </script>
     <script src="{{asset('be/js/core/popper.min.js')}}"></script>
     <script src="{{asset('be/js/core/bootstrap.min.js')}}"></script>
     <script src="{{asset('be/js/plugins/perfect-scrollbar.min.js')}}"></script>
