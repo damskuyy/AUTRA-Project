@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
         'inventaris/generate-qr-bulk/{barangMasuk}',
         [InventoriesController::class, 'generateQrBulk']
     )->name('inventaris.generateQrBulk');
+    Route::get('/inventaris/qr-print/{barangMasuk}', [InventoriesController::class, 'printQrBulk'])
+    ->name('inventaris.printQrBulk');
 
     Route::resource('items', ItemsController::class);
     Route::resource('ruangan', RuanganController::class);

@@ -24,6 +24,7 @@ class LogController extends Controller
         $siswa  = $request->siswa;
         $kelas  = $request->kelas;
         $jenis  = $request->jenis;
+        $barang = $request->barang;
 
         // default kosong
         $barangMasuks  = collect();
@@ -70,6 +71,9 @@ class LogController extends Controller
                     ->when($to, fn ($q) =>
                         $q->whereDate('created_at', '<=', $to)
                     )
+                    ->when($barang, fn ($q) =>
+                        $q->where('nama_barang', 'like', "%$barang%")
+                    )
                     ->latest()
                     ->get();
             }
@@ -90,6 +94,11 @@ class LogController extends Controller
                 ->when($kelas, fn ($q) =>
                     $q->whereHas('siswa', fn ($s) =>
                         $s->where('kelas', $kelas)
+                    )
+                )
+                ->when($barang, fn ($q) =>
+                    $q->whereHas('inventory.barangMasuk', fn ($b) =>
+                        $b->where('nama_barang', 'like', "%$barang%")
                     )
                 )
                 ->latest()
@@ -116,6 +125,11 @@ class LogController extends Controller
                 ->when($kelas, fn ($q) =>
                     $q->whereHas('peminjaman.siswa', fn ($s) =>
                         $s->where('kelas', $kelas)
+                    )
+                )
+                ->when($barang, fn ($q) =>
+                    $q->whereHas('peminjaman.inventory.barangMasuk', fn ($b) =>
+                        $b->where('nama_barang', 'like', "%$barang%")
                     )
                 )
                 ->get();
@@ -145,13 +159,18 @@ class LogController extends Controller
                         $s->where('kelas', $kelas)
                     )
                 )
+                ->when($barang, fn ($q) =>
+                    $q->whereHas('inventory.barangMasuk', fn ($b) =>
+                        $b->where('nama_barang', 'like', "%$barang%")
+                    )
+                )
                 ->latest()
                 ->get();
         }
 
         // ================= PELANGGARAN =================
         if (!$jenis || $jenis === 'banned') {
-            $pelanggarans = Pelanggaran::with(['siswa', 'admin'])
+            $pelanggarans = Pelanggaran::with(['siswa', 'admin', 'peminjaman.inventory.barangMasuk'])
                 ->when($from && $to, fn ($q) =>
                     $q->whereBetween('created_at', [$from, $to])
                 )
@@ -163,6 +182,11 @@ class LogController extends Controller
                 ->when($kelas, fn ($q) =>
                     $q->whereHas('siswa', fn ($s) =>
                         $s->where('kelas', $kelas)
+                    )
+                )
+                ->when($barang, fn ($q) =>
+                    $q->whereHas('peminjaman.inventory.barangMasuk', fn ($b) =>
+                        $b->where('nama_barang', 'like', "%$barang%")
                     )
                 )
                 ->latest()
@@ -184,6 +208,11 @@ class LogController extends Controller
                 ->when($kelas, fn ($q) =>
                     $q->whereHas('siswa', fn ($s) =>
                         $s->where('kelas', $kelas)
+                    )
+                )
+                ->when($barang, fn ($q) =>
+                    $q->whereHas('inventaris.barangMasuk', fn ($b) =>
+                        $b->where('nama_barang', 'like', "%$barang%")
                     )
                 )
                 ->latest()

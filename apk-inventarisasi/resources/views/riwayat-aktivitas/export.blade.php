@@ -91,7 +91,12 @@
         <tr>
             <td>{{ $pl->created_at }}</td>
             <td>Pelanggaran Siswa</td>
-            <td>{{ $pl->siswa->nama }} - {{ $pl->keterangan }}</td>
+            <td>
+                {{ $pl->siswa->nama }} - 
+                {{ $pl->peminjaman->inventory->barangMasuk->nama_barang ?? '-' }}
+                <br>
+                {{ $pl->keterangan }}
+            </td>
             <td>{{ $pl->admin->name ?? '-' }}</td>
         </tr>
         @endforeach

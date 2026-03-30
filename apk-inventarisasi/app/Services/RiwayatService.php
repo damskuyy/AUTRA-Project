@@ -21,25 +21,58 @@ class RiwayatService
         $jenis = $request->jenis;
 
         $barangMasuks = BarangMasuk::with('admin')
-            ->when($from && $to, fn($q) =>
-                $q->whereBetween('tanggal_masuk', [$from, $to])
-            )->get();
+        ->when($from && $to, fn($q) =>
+            $q->whereBetween('tanggal_masuk', [$from, $to])
+        )
+        ->when($barang, fn($q) =>
+            $q->where('nama_barang', 'like', "%$barang%")
+        )
+        ->get();
 
         $peminjamans = Peminjaman::with(['inventory.barangMasuk','siswa','admin'])
-            ->whereHas('pengembalian')
-            ->when($siswa, fn($q) =>
-                $q->whereHas('siswa', fn($s) =>
-                    $s->where('nama','like',"%$siswa%")
-                )
+        ->whereHas('pengembalian')
+        ->when($siswa, fn($q) =>
+            $q->whereHas('siswa', fn($s) =>
+                $s->where('nama','like',"%$siswa%")
             )
-            ->when($kelas, fn ($q) =>
-                $q->whereHas('siswa', fn ($s) =>
-                    $s->where('kelas', $kelas)
-                )
-            )->get();
+        )
+        ->when($kelas, fn ($q) =>
+            $q->whereHas('siswa', fn ($s) =>
+                $s->where('kelas', $kelas)
+            )
+        )
+        // 🔥 PINDAH KE LUAR (INI KUNCINYA)
+        ->when($barang, fn($q) =>
+            $q->whereHas('inventory.barangMasuk', fn($b) =>
+                $b->where('nama_barang','like',"%$barang%")
+            )
+        )
+        ->get();
 
-        $pengembalians = Pengembalian::with(['peminjaman.inventory.barangMasuk','peminjaman.siswa','admin'])
-            ->get();
+        $pengembalians = Pengembalian::with([
+            'peminjaman.inventory.barangMasuk',
+            'peminjaman.siswa',
+            'admin'
+        ])
+        ->when($from && $to, fn ($q) =>
+            $q->whereBetween('created_at', [$from, $to])
+        )
+        ->when($siswa, fn ($q) =>
+            $q->whereHas('peminjaman.siswa', fn ($s) =>
+                $s->where('nama', 'like', "%$siswa%")
+            )
+        )
+        ->when($kelas, fn ($q) =>
+            $q->whereHas('peminjaman.siswa', fn ($s) =>
+                $s->where('kelas', $kelas)
+            )
+        )
+        ->when($barang, fn ($q) =>
+            $q->whereHas('peminjaman.inventory.barangMasuk', fn ($b) =>
+                $b->where('nama_barang','like',"%$barang%")
+            )
+        )
+        ->get();
 
         $pemakaians = PemakaianBahan::with([
                 'inventory.barangMasuk',
@@ -57,6 +90,11 @@ class RiwayatService
             ->when($kelas, fn ($q) =>
                 $q->whereHas('siswa', fn ($s) =>
                     $s->where('kelas', $kelas)
+                )
+            )
+            ->when($barang, fn ($q) =>
+                $q->whereHas('inventory.barangMasuk', fn ($b) =>
+                    $b->where('nama_barang','like',"%$barang%")
                 )
             )
             ->get();
@@ -79,12 +117,39 @@ class RiwayatService
                 $s->where('kelas', $kelas)
             )
         )
+        ->when($barang, fn ($q) =>
+            $q->whereHas('inventaris.barangMasuk', fn ($b) =>
+                $b->where('nama_barang','like',"%$barang%")
+            )
+        )
         ->get();
 
 
 
-        $pelanggarans = Pelanggaran::with(['siswa','admin'])
-            ->get();
+        $pelanggarans = Pelanggaran::with([
+            'siswa',
+            'admin',
+            'peminjaman.inventory.barangMasuk'
+        ])
+        ->when($from && $to, fn ($q) =>
+            $q->whereBetween('created_at', [$from, $to])
+        )
+        ->when($siswa, fn ($q) =>
+            $q->whereHas('siswa', fn ($s) =>
+                $s->where('nama', 'like', "%$siswa%")
+            )
+        )
+        ->when($kelas, fn ($q) =>
+            $q->whereHas('siswa', fn ($s) =>
+                $s->where('kelas', $kelas)
+            )
+        )
+        ->when($barang, fn ($q) =>
+            $q->whereHas('peminjaman.inventory.barangMasuk', fn ($b) =>
+                $b->where('nama_barang','like',"%$barang%")
+            )
+        )
+        ->get();
 
         if ($jenis) {
             $barangMasuks = $jenis === 'barang_masuk' ? $barangMasuks : collect();

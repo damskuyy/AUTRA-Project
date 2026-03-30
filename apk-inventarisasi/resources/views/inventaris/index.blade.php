@@ -141,6 +141,11 @@
                                                         <i class="fas fa-qrcode"></i>
                                                     </a>
 
+                                                    <a href="{{ route('inventaris.printQrBulk', $a->barangMasuk->id) }}"
+                                                    class="btn btn-xs btn-success">
+                                                        <i class="fas fa-print"></i>
+                                                    </a>
+
 
 
                                                     <form action="{{ route('inventaris.destroy', $a->id) }}"
@@ -491,4 +496,3 @@
 @endif
 
 @endpush
-

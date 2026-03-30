@@ -31,10 +31,15 @@ class RiwayatExport implements FromArray, WithHeadings
         $data = RiwayatService::get($this->request);
         $rows = [];
 
+        $barang = $this->request->barang;
+
         /** =========================
          * BARANG MASUK
          * ========================= */
         foreach ($data['barangMasuks'] as $item) {
+            if ($barang && !str_contains(strtolower($item->nama_barang), strtolower($barang))) {
+                continue;
+            }
             $rows[] = [
                 $item->tanggal_masuk,
                 'Barang Masuk',
@@ -47,6 +52,11 @@ class RiwayatExport implements FromArray, WithHeadings
          * PEMINJAMAN
          * ========================= */
         foreach ($data['peminjamans'] as $item) {
+            $namaBarang = $item->inventory->barangMasuk->nama_barang ?? '';
+
+            if ($barang && !str_contains(strtolower($namaBarang), strtolower($barang))) {
+                continue;
+            }
             $rows[] = [
                 $item->created_at,
                 'Peminjaman',
@@ -59,6 +69,11 @@ class RiwayatExport implements FromArray, WithHeadings
          * PENGEMBALIAN
          * ========================= */
         foreach ($data['pengembalians'] as $item) {
+            $namaBarang = $item->peminjaman->inventory->barangMasuk->nama_barang ?? '';
+
+            if ($barang && !str_contains(strtolower($namaBarang), strtolower($barang))) {
+                continue;
+            }
             $rows[] = [
                 $item->created_at,
                 'Pengembalian',
@@ -71,6 +86,11 @@ class RiwayatExport implements FromArray, WithHeadings
          * PEMAKAIAN
          * ========================= */
         foreach ($data['pemakaians'] as $item) {
+            $namaBarang = $item->inventory->barangMasuk->nama_barang ?? '';
+
+            if ($barang && !str_contains(strtolower($namaBarang), strtolower($barang))) {
+                continue;
+            }
             $rows[] = [
                 $item->created_at,
                 'Pemakaian',
@@ -85,17 +105,23 @@ class RiwayatExport implements FromArray, WithHeadings
         foreach ($data['transaksiMassals'] as $tm) {
 
             $items = $tm->inventaris->map(function ($inv) {
+                return $inv->barangMasuk->nama_barang;
+            });
+
+            if ($barang && !$items->contains(fn($i) => str_contains(strtolower($i), strtolower($barang)))) {
+                continue;
+            }
+
+            $detail = $tm->inventaris->map(function ($inv) {
                 return
                     $inv->barangMasuk->nama_barang .
-                    ' x' . $inv->pivot->quantity .
-                    ' (Rak: ' . ($inv->penempatan_rak ?? '-') . ')';
+                    ' x' . $inv->pivot->quantity;
             })->implode(', ');
 
             $rows[] = [
                 $tm->jam_transaksi,
                 'Transaksi Massal',
-                $tm->siswa->nama . ' | ' . $items .
-                ($tm->keperluan ? ' | Keperluan: '.$tm->keperluan : ''),
+                $tm->siswa->nama . ' | ' . $detail,
                 $tm->admin->name ?? '-',
             ];
         }
@@ -106,6 +132,11 @@ class RiwayatExport implements FromArray, WithHeadings
          * PELANGGARAN / BANNED
          * ========================= */
         foreach ($data['pelanggarans'] as $item) {
+            $namaBarang = $item->peminjaman->inventory->barangMasuk->nama_barang ?? '';
+
+            if ($barang && !str_contains(strtolower($namaBarang), strtolower($barang))) {
+                continue;
+            }
             $rows[] = [
                 $item->created_at,
                 'Pelanggaran',

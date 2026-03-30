@@ -194,6 +194,22 @@ class InventoriesController extends Controller
         return sprintf('%s-%03d', $fullPrefix, $number);
     }
 
+    public function printQrBulk(Request $request, BarangMasuk $barangMasuk)
+    {
+        $size = $request->size ?? 100;
+
+        $inventaris = Inventory::where('barang_masuk_id', $barangMasuk->id)->get();
+
+        // CEK kalau masih ada yang belum punya QR
+        foreach ($inventaris as $item) {
+            if (!$item->kode_qr_jurusan) {
+                return back()->with('error', 'Masih ada QR yang belum digenerate!');
+            }
+        }
+
+        return view('inventaris.print_qr_bulk', compact('inventaris', 'size'));
+    }
+
 
 
 

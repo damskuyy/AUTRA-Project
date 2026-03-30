@@ -122,6 +122,12 @@
                                         <option value="banned" {{ request('jenis')=='banned'?'selected':'' }}>Pelanggaran</option>
                                     </select>
                                 </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold">Nama Barang</label>
+                                    <input type="text" name="barang" value="{{ request('barang') }}" 
+                                        class="form-control form-control-sm" 
+                                        placeholder="Cari barang...">
+                                </div>
 
                                 <div class="col-md-4 d-flex align-items-end gap-2 mt-5">
                                     <button class="btn btn-primary w-50 btn-sm" type="submit"><i class="fas fa-search me-1"></i> Terapkan Filter</button>
