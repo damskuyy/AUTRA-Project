@@ -2014,3 +2014,237 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Push sidebar initialized!');
     }
 })();
+
+/* ==========================================
+   MQTT SERVICE CONTROLLER
+   ========================================== */
+
+document.addEventListener('DOMContentLoaded', function() {
+    const mqttServiceBtn = document.getElementById('mqttServiceBtn');
+    const mqttDropdown = document.getElementById('mqttDropdown');
+    const mqttStatusBadge = document.getElementById('mqttStatusBadge');
+    const mqttStatusLabel = document.getElementById('mqttStatusLabel');
+    const mqttStartBtn = document.getElementById('mqttStartBtn');
+    const mqttStopBtn = document.getElementById('mqttStopBtn');
+    const mqttRestartBtn = document.getElementById('mqttRestartBtn');
+    const mqttLogsBtn = document.getElementById('mqttLogsBtn');
+
+    if (!mqttServiceBtn) return;
+
+    let statusCheckInterval;
+
+    // Toggle dropdown
+    mqttServiceBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mqttDropdown.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!mqttServiceBtn.contains(e.target) && !mqttDropdown.contains(e.target)) {
+            mqttDropdown.classList.remove('active');
+        }
+    });
+
+    // Check status
+    function checkMqttStatus() {
+        fetch('/mqtt/status', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateUI(data.status, data.pid);
+        })
+        .catch(error => {
+            console.error('Error checking MQTT status:', error);
+            updateUI('error', null);
+        });
+    }
+
+    // Update UI based on status
+    function updateUI(status, pid) {
+        // Remove all status classes
+        mqttServiceBtn.classList.remove('status-running', 'status-stopped', 'status-loading');
+        mqttStatusLabel.classList.remove('status-running', 'status-stopped');
+
+        if (status === 'running') {
+            mqttServiceBtn.classList.add('status-running');
+            mqttStatusLabel.classList.add('status-running');
+            mqttStatusLabel.textContent = `Running (PID: ${pid})`;
+            
+            // Show/hide buttons
+            mqttStartBtn.style.display = 'none';
+            mqttStopBtn.style.display = 'flex';
+            mqttRestartBtn.style.display = 'flex';
+        } else if (status === 'stopped') {
+            mqttServiceBtn.classList.add('status-stopped');
+            mqttStatusLabel.classList.add('status-stopped');
+            mqttStatusLabel.textContent = 'Stopped';
+            
+            // Show/hide buttons
+            mqttStartBtn.style.display = 'flex';
+            mqttStopBtn.style.display = 'none';
+            mqttRestartBtn.style.display = 'none';
+        } else {
+            mqttServiceBtn.classList.add('status-stopped');
+            mqttStatusLabel.textContent = 'Unknown';
+            
+            mqttStartBtn.style.display = 'flex';
+            mqttStopBtn.style.display = 'none';
+            mqttRestartBtn.style.display = 'none';
+        }
+    }
+
+    // Start MQTT
+    mqttStartBtn.addEventListener('click', function() {
+        this.disabled = true;
+        mqttServiceBtn.classList.add('status-loading');
+        mqttStatusLabel.textContent = 'Starting...';
+
+        fetch('/mqtt/start', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                checkMqttStatus();
+            } else {
+                showNotification(data.message, 'error');
+                updateUI('stopped', null);
+            }
+            this.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error starting MQTT:', error);
+            showNotification('Gagal menjalankan MQTT Service', 'error');
+            this.disabled = false;
+            updateUI('stopped', null);
+        });
+    });
+
+    // Stop MQTT
+    mqttStopBtn.addEventListener('click', function() {
+        Swal.fire({
+            title: 'Stop MQTT Service?',
+            text: 'Data sensor akan berhenti diterima',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Stop',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#ef4444',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.disabled = true;
+                mqttServiceBtn.classList.add('status-loading');
+                mqttStatusLabel.textContent = 'Stopping...';
+
+                fetch('/mqtt/stop', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        checkMqttStatus();
+                    } else {
+                        showNotification(data.message, 'error');
+                        updateUI('running', null);
+                    }
+                    this.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error stopping MQTT:', error);
+                    showNotification('Gagal menghentikan MQTT Service', 'error');
+                    this.disabled = false;
+                    updateUI('running', null);
+                });
+            }
+        });
+    });
+
+    // Restart MQTT
+    mqttRestartBtn.addEventListener('click', function() {
+        this.disabled = true;
+        mqttServiceBtn.classList.add('status-loading');
+        mqttStatusLabel.textContent = 'Restarting...';
+
+        fetch('/mqtt/restart', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('MQTT Service berhasil di-restart', 'success');
+                checkMqttStatus();
+            } else {
+                showNotification(data.message, 'error');
+                checkMqttStatus();
+            }
+            this.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error restarting MQTT:', error);
+            showNotification('Gagal restart MQTT Service', 'error');
+            this.disabled = false;
+            checkMqttStatus();
+        });
+    });
+
+    // View Logs
+    mqttLogsBtn.addEventListener('click', function() {
+        fetch('/mqtt/logs?lines=100', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            Swal.fire({
+                title: 'MQTT Service Logs',
+                html: `<pre style="text-align: left; max-height: 400px; overflow-y: auto; background: #1e293b; padding: 16px; border-radius: 8px; color: #e2e8f0; font-size: 12px;">${data.logs}</pre>`,
+                width: '80%',
+                confirmButtonText: 'Close',
+                confirmButtonColor: '#3b82f6'
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching logs:', error);
+            showNotification('Gagal mengambil log', 'error');
+        });
+    });
+
+    // Initial status check
+    checkMqttStatus();
+
+    // Auto-refresh status every 5 seconds
+    statusCheckInterval = setInterval(checkMqttStatus, 5000);
+
+    // Clear interval on page unload
+    window.addEventListener('beforeunload', function() {
+        if (statusCheckInterval) {
+            clearInterval(statusCheckInterval);
+        }
+    });
+
+    console.log('✅ MQTT Service Controller initialized');
+});

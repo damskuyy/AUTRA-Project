@@ -5,12 +5,6 @@ import mysql.connector
 import paho.mqtt.client as mqtt
 from datetime import datetime
 
-# Set UTF-8 encoding untuk Windows
-if sys.platform == 'win32':
-    import codecs
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
-    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
-
 # =============================
 # MQTT CONFIG
 # =============================
@@ -43,9 +37,9 @@ status = "NO_DATA"
 try:
     db = mysql.connector.connect(**DB_CONFIG)
     cursor = db.cursor()
-    print("[DB] Connected ke database")
+    print("🗄️ Connected ke database")
 except Exception as e:
-    print("[ERROR] Database connection failed:", e)
+    print("❌ Database connection failed:", e)
     sys.exit(1)
 
 # =============================
@@ -72,12 +66,12 @@ def save_to_db(sensor1, sensor2, sensor3, status):
 # =============================
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("[OK] Connected ke MQTT Broker")
+        print("✅ Connected ke MQTT Broker")
         client.subscribe(TOPIC)
-        print("[MQTT] Subscribe ke topic:", TOPIC)
-        print("[WAIT] Menunggu data MQTT ({} detik)...".format(NO_DATA_TIMEOUT))
+        print(f"📡 Subscribe ke topic: {TOPIC}")
+        print(f"⏳ Menunggu data MQTT ({NO_DATA_TIMEOUT} detik)...")
     else:
-        print("[ERROR] MQTT connect failed")
+        print("❌ MQTT connect failed")
         sys.exit(1)
 
 def on_message(client, userdata, msg):
@@ -100,13 +94,14 @@ def on_message(client, userdata, msg):
     except (TypeError, ValueError):
         raw_s3 = 0.0
 
-    # If the device reports values scaled by 10, convert them back
+    # If the device reports values scaled by 10 (common on some sensors),
+    # convert them back to human-readable. Heuristic: if value > 100, divide by 10.
     sensor1 = raw_s1 / 10.0 if raw_s1 > 100 else raw_s1
     sensor2 = raw_s2 / 10.0 if raw_s2 > 100 else raw_s2
     sensor3 = raw_s3
 
-    print("\n[DATA] Data masuk")
-    print("STATUS     :", status)
+    print("\n📥 Data masuk")
+    print("STATUS :", status)
     print("Humidity   :", sensor1)
     print("Temperature:", sensor2)
     print("Lux        :", sensor3)
@@ -114,12 +109,12 @@ def on_message(client, userdata, msg):
     save_to_db(sensor1, sensor2, sensor3, status)
 
 def on_disconnect(client, userdata, rc):
-    print("[DISC] MQTT disconnected")
+    print("🔌 MQTT disconnected")
 
 # =============================
 # MAIN
 # =============================
-print("[INIT] Mencoba connect ke MQTT...")
+print("⏳ Mencoba connect ke MQTT...")
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -137,7 +132,7 @@ try:
         if last_msg_time is None:
             if now - start_time > NO_DATA_TIMEOUT:
                 status = "NO_DATA"
-                print("[ERROR] STATUS NO_DATA. Program dihentikan.")
+                print("❌ STATUS NO_DATA. Program dihentikan.")
                 save_to_db(None, None, None, status)
                 break
 
@@ -145,19 +140,19 @@ try:
         else:
             if now - last_msg_time > NO_DATA_TIMEOUT:
                 status = "OFFLINE"
-                print("[ERROR] STATUS OFFLINE. Program dihentikan.")
+                print("❌ STATUS OFFLINE. Program dihentikan.")
                 save_to_db(None, None, None, status)
                 break
 
         time.sleep(0.5)
 
 except KeyboardInterrupt:
-    print("\n[STOP] Program dihentikan user")
+    print("\n🛑 Program dihentikan user")
 
 finally:
     client.loop_stop()
     client.disconnect()
     cursor.close()
     db.close()
-    print("[EXIT] Keluar dari program, STATUS terakhir: {}".format(status))
+    print(f"👋 Keluar dari program, STATUS terakhir: {status}")
     sys.exit(0)

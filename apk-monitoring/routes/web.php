@@ -88,4 +88,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/sensor/latest', [SensorController::class, 'latest']);
     Route::get('/api/sensor/history', [SensorController::class, 'history']);
 
+    // ==========================================
+    // MQTT SERVICE ROUTES
+    // ==========================================
+    Route::prefix('mqtt')->group(function () {
+        Route::post('/start', [App\Http\Controllers\MqttController::class, 'start'])->name('mqtt.start');
+        Route::post('/stop', [App\Http\Controllers\MqttController::class, 'stop'])->name('mqtt.stop');
+        Route::post('/restart', [App\Http\Controllers\MqttController::class, 'restart'])->name('mqtt.restart');
+        Route::get('/status', [App\Http\Controllers\MqttController::class, 'status'])->name('mqtt.status');
+        Route::get('/logs', [App\Http\Controllers\MqttController::class, 'logs'])->name('mqtt.logs');
+    });
+
 });

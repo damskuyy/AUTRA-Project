@@ -15,6 +15,51 @@
     <div class="topbar-right">
         @yield('topbar-actions')
 
+        <!-- MQTT Service Button -->
+        <div class="mqtt-service-container">
+            <button class="mqtt-service-btn" id="mqttServiceBtn">
+                <i class="fa-solid fa-satellite-dish"></i>
+                <span class="mqtt-status-text">MQTT</span>
+                <span class="mqtt-status-badge" id="mqttStatusBadge">
+                    <i class="fa-solid fa-circle"></i>
+                </span>
+            </button>
+
+            <!-- MQTT Dropdown Menu -->
+            <div class="mqtt-dropdown" id="mqttDropdown">
+                <div class="mqtt-dropdown-header">
+                    <i class="fa-solid fa-satellite-dish"></i>
+                    <div class="mqtt-info">
+                        <span class="mqtt-title">MQTT Service</span>
+                        <span class="mqtt-status-label" id="mqttStatusLabel">Checking...</span>
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                
+                <button class="mqtt-action-btn" id="mqttStartBtn" style="display: none;">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Start Service</span>
+                </button>
+                
+                <button class="mqtt-action-btn" id="mqttStopBtn" style="display: none;">
+                    <i class="fa-solid fa-stop"></i>
+                    <span>Stop Service</span>
+                </button>
+                
+                <button class="mqtt-action-btn" id="mqttRestartBtn" style="display: none;">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>Restart Service</span>
+                </button>
+                
+                <div class="dropdown-divider"></div>
+                
+                <button class="mqtt-action-btn" id="mqttLogsBtn">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>View Logs</span>
+                </button>
+            </div>
+        </div>
+
         <div class="user-profile-container">
             <div class="user-profile">
                 <div class="user-avatar" style="@auth background: {{ Auth::user()->avatar_color ?? '#f97316' }}@else background: #f97316 @endauth">
