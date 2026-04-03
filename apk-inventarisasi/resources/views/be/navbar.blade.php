@@ -20,7 +20,15 @@
         </nav>
     </div>
 
-    <div class="ms-auto d-flex align-items-center">
+    <div class="ms-auto d-flex align-items-center gap-3">
+        <a href="{{ route('notifications.index') }}" class="position-relative text-dark text-decoration-none">
+            <i class="fas fa-bell fa-lg"></i>
+            @if(!empty($lowStockNotificationsCount) && $lowStockNotificationsCount > 0)
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ $lowStockNotificationsCount }}
+                </span>
+            @endif
+        </a>
         <div class="dropdown">
             <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="avatar avatar-sm me-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle">
@@ -48,6 +56,14 @@
                 <li>
                     <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('profile.index') }}">
                         <i class="fas fa-user-cog me-3 text-primary"></i>Profile Settings
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('notifications.index') }}">
+                        <i class="fas fa-bell me-3 text-warning"></i>Notifikasi Stok
+                        @if(!empty($lowStockNotificationsCount) && $lowStockNotificationsCount > 0)
+                            <span class="badge bg-danger ms-auto">{{ $lowStockNotificationsCount }}</span>
+                        @endif
                     </a>
                 </li>
 
@@ -86,3 +102,30 @@
         })
     }
 </script>
+
+@if(request()->routeIs('dashboard') && !empty($lowStockNotificationsCount) && $lowStockNotificationsCount > 0)
+@php
+    $lowStockData = $lowStockNotifications->map(function ($item) {
+        return [
+            'nama_barang' => $item->nama_barang,
+            'total_stok' => $item->total_stok,
+            'satuan' => $item->satuan,
+        ];
+    })->values();
+@endphp
+<script>
+    const lowStockItems = @json($lowStockData);
+
+    Swal.fire({
+        title: 'Stok bahan hampir habis',
+        html: `
+            <p>Mohon untuk segera melakukan restock guna antisipasi kehabisan bahan.</p>
+            <ul style="text-align:left; padding-left:1.25rem; margin:0;">
+                ${lowStockItems.map(item => `<li><strong>${item.nama_barang}</strong>: ${item.total_stok} ${item.satuan}</li>`).join('')}
+            </ul>
+        `,
+        icon: 'warning',
+        confirmButtonText: 'Mengerti'
+    });
+</script>
+@endif

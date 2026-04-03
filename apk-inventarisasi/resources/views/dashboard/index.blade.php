@@ -39,6 +39,45 @@
 </div>
 {{-- ================= END WELCOME CARD ================= --}}
 
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-success text-white py-3 d-flex align-items-center justify-content-between">
+                    <h6 class="mb-0">Stok Bahan Tersedia</h6>
+                    <small class="text-white-50">Geser untuk melihat lebih banyak bahan</small>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-row gap-3 overflow-auto pb-2" style="scrollbar-width: thin;">
+                        @forelse ($bahanTersedia as $bahan)
+                        <div class="flex-shrink-0" style="width: calc(25% - 0.75rem); min-width: 260px;">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body d-flex flex-column justify-content-between">
+                                    <div>
+                                        <p class="text-uppercase text-xs text-secondary mb-1">Bahan</p>
+                                        <h5 class="mb-2">{{ $bahan->nama_barang }}</h5>
+                                        <p class="text-sm text-muted mb-0">Total stok bahan tersedia saat ini.</p>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mt-3">
+                                        <span class="badge bg-primary fs-6 py-2 px-3">
+                                            {{ number_format($bahan->total_stok) }}
+                                        </span>
+                                        <div class="avatar avatar-sm bg-gradient-info text-white rounded-circle d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-flask"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="text-center text-muted py-4 w-100">
+                            Tidak ada bahan tersedia.
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-12">

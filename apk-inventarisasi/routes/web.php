@@ -17,6 +17,7 @@ use App\Http\Controllers\{
     LogController,
     ExportController,
     ProfileController,
+    NotificationController,
     SarprasController
 };
 
@@ -180,6 +181,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])
         ->name('profile.password');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notifications.index');
 
     /*
     |--------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
 use App\Models\Ruangan;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,20 @@ class DashboardController extends Controller
             )->groupBy('ruangan_id', 'nama_barang');
         }])->get();
 
-        return view('dashboard.index', compact('ruangans'));
+        $bahanTersedia = Inventory::with('barangMasuk')
+            ->whereHas('barangMasuk', function ($q) {
+                $q->where('jenis_barang', 'bahan');
+            })
+            ->get()
+            ->groupBy(fn ($item) => $item->barangMasuk->nama_barang)
+            ->map(function ($items, $nama) {
+                return (object) [
+                    'nama_barang' => $nama,
+                    'total_stok' => $items->sum('stok'),
+                ];
+            })
+            ->values();
+
+        return view('dashboard.index', compact('ruangans', 'bahanTersedia'));
     }
 }
